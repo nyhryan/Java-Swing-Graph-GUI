@@ -1,3 +1,5 @@
+package algorithm;
+
 /**
  * 그래프의 노드 표현 클래스
  */
@@ -21,8 +23,6 @@ public class GraphNode {
         return nodeNumber;
     }
 
-    /**
-     * 노드 번호
-     */
+    // 노드 번호
     private int nodeNumber;
 }

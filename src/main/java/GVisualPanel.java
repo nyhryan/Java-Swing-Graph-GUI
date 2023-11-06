@@ -1,3 +1,7 @@
+import algorithm.AlgorithmRunner;
+import algorithm.FloydAlgorithm;
+import algorithm.Graph;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,6 +14,12 @@ public class GVisualPanel extends JPanel {
 
         graph.addNode(0);
         graph.addNode(1);
+
+        algorithmRunner = new AlgorithmRunner(new FloydAlgorithm());
+        SwingUtilities.invokeLater(() -> {
+            algorithmRunner.run();
+            repaint();
+        });
     }
 
     @Override
@@ -56,4 +66,6 @@ public class GVisualPanel extends JPanel {
 
     // 그래프 객체
     private Graph graph = new Graph();
+    private AlgorithmRunner algorithmRunner;
+
 }

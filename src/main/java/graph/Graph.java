@@ -26,6 +26,7 @@ public class Graph {
 
     public void addNode(GraphNode node) {
         nodes.add(node);
+        adjacencyList.put(node, new ArrayList<>());
     }
 
     public ArrayList<GraphNode> getNodes() {

@@ -4,8 +4,7 @@ import graph.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 /**
  * 그래프(노드, 간선)를 그리는 패널
@@ -78,7 +77,7 @@ public class GVisualPanel extends JPanel {
                 // 노드를 그린다.
                 g2d.setColor(Color.WHITE);
                 g2d.fillOval(x, y, NODE_RADIUS, NODE_RADIUS);
-                g2d.drawRect(x,y,NODE_RADIUS,NODE_RADIUS);
+                g2d.drawRect(x, y, NODE_RADIUS, NODE_RADIUS);
 
                 // 노드 중앙에 이름을 그린다.
                 String nameToDraw = name;
@@ -103,7 +102,7 @@ public class GVisualPanel extends JPanel {
 //    private AlgorithmRunner algorithmRunner;
 }
 
-class DoubleClickToAddNode implements MouseListener {
+class DoubleClickToAddNode extends MouseAdapter {
     /**
      * 더블클릭으로 노드 추가하는 리스너 생성자
      * @param graph 그래프 객체 레퍼런스
@@ -120,9 +119,6 @@ class DoubleClickToAddNode implements MouseListener {
             // Get nodeName at least two letters long from JOptionPane.showInputDialog, or show error dialog
             while (nodeName.length() < 2) {
                 nodeName = JOptionPane.showInputDialog("새 노드 이름을 입력하세요.");
-                if (nodeName == null) {
-                    return;
-                }
                 if (nodeName.length() < 2) {
                     JOptionPane.showMessageDialog(null, "노드 이름은 최소 2글자 이상이어야 합니다.");
                 }
@@ -137,22 +133,6 @@ class DoubleClickToAddNode implements MouseListener {
         }
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
 
-    }
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    private Graph graph;
+    private final Graph graph;
 }

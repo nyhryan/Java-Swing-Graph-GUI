@@ -1,9 +1,11 @@
 import algorithm.AlgorithmRunner;
 import algorithm.FloydAlgorithm;
-import algorithm.Graph;
+import graph.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * 그래프(노드, 간선)를 그리는 패널
@@ -12,14 +14,30 @@ public class GVisualPanel extends JPanel {
     public GVisualPanel() {
         setBackground(Color.GRAY);
 
-        graph.addNode(0);
-        graph.addNode(1);
+        setLayout(new BorderLayout());
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        toolBar.setRollover(true);
+        toolBar.add(addToolBarButton("노드 추가"));
+        toolBar.add(addToolBarButton("노드 삭제"));
+        toolBar.add(addToolBarButton("간선 추가"));
 
-        algorithmRunner = new AlgorithmRunner(new FloydAlgorithm());
-        SwingUtilities.invokeLater(() -> {
-            algorithmRunner.run();
-            repaint();
-        });
+        add(toolBar, BorderLayout.NORTH);
+
+        // 화면을 더블클릭한 위치에 새로운 노드 추가
+        addMouseListener(new DoubleClickToAddNode(graph));
+
+//        algorithmRunner = new AlgorithmRunner(new FloydAlgorithm());
+//        SwingUtilities.invokeLater(() -> {
+//            algorithmRunner.run();
+//            repaint();
+//        });
+    }
+
+    private JButton addToolBarButton(String name) {
+        JButton button = new JButton(name);
+        button.setFont(new Font("Arial", Font.PLAIN, 20));
+        return button;
     }
 
     @Override
@@ -41,31 +59,100 @@ public class GVisualPanel extends JPanel {
 
         // 그래프의 노드가 1개 이상이면 화면에 그린다.
         if (!nodes.isEmpty()) {
-            int offset = 100;
-            int x = 50, y = 50;
             // 모든 노드들을 순회하며 화면에 원과 노드 번호 그리기
             for (var node : nodes) {
-                int index = node.getNodeNumber();
+                String name = node.getName();
+                int currentIndex = nodes.indexOf(node);
+                int x = node.getX();
+                int y = node.getY();
 
-                if (nodes.indexOf(node) != nodes.size() - 1) {
-                    g2d.drawLine(x + 25, y + 25, x + offset + 25, y + offset + 25);
+                // 간선을 먼저 그리고
+                if (nodes.indexOf(node) != nodes.size() - 1 && nodes.get(currentIndex + 1) != null) {
+                    g2d.drawLine(
+                            x + NODE_RADIUS / 2,
+                            y + NODE_RADIUS / 2,
+                            nodes.get(currentIndex + 1).getX() + NODE_RADIUS / 2,
+                            nodes.get(currentIndex + 1).getY() + NODE_RADIUS / 2);
                 }
 
+                // 노드를 그린다.
                 g2d.setColor(Color.WHITE);
-                g2d.fillOval(x, y, 50, 50);
+                g2d.fillOval(x, y, NODE_RADIUS, NODE_RADIUS);
+                g2d.drawRect(x,y,NODE_RADIUS,NODE_RADIUS);
 
+                // 노드 중앙에 이름을 그린다.
+                String nameToDraw = name;
                 g2d.setColor(Color.BLACK);
                 g2d.setFont(new Font("Arial", Font.PLAIN, 20));
-                g2d.drawString(Integer.toString(index), x + 20, y + 35);
 
-                x += offset;
-                y += offset;
+                // 이름이 3글자 이상이면 세글자 뒤는 ...으로 표시
+                if (name.length() > 3) {
+                    nameToDraw = name.substring(0, 3) + "...";
+                    g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+                }
+                int width = g2d.getFontMetrics().stringWidth(nameToDraw);
+                int height = g2d.getFontMetrics().getHeight();
+                g2d.drawString(nameToDraw, x + (NODE_RADIUS - width) / 2, y + NODE_RADIUS / 2 + height / 4);
             }
         }
     }
 
     // 그래프 객체
     private Graph graph = new Graph();
-    private AlgorithmRunner algorithmRunner;
+    private static final int NODE_RADIUS = 50;
+//    private AlgorithmRunner algorithmRunner;
+}
 
+class DoubleClickToAddNode implements MouseListener {
+    /**
+     * 더블클릭으로 노드 추가하는 리스너 생성자
+     * @param graph 그래프 객체 레퍼런스
+     */
+    public DoubleClickToAddNode(Graph graph) {
+        this.graph = graph;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // 왼쪽 더블클릭 한 경우에만 리스너 수행
+        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+            String nodeName = "";
+            // Get nodeName at least two letters long from JOptionPane.showInputDialog, or show error dialog
+            while (nodeName.length() < 2) {
+                nodeName = JOptionPane.showInputDialog("새 노드 이름을 입력하세요.");
+                if (nodeName == null) {
+                    return;
+                }
+                if (nodeName.length() < 2) {
+                    JOptionPane.showMessageDialog(null, "노드 이름은 최소 2글자 이상이어야 합니다.");
+                }
+            }
+
+            GraphNode newNode = new GraphNode(nodeName);
+            newNode.setX(e.getX());
+            newNode.setY(e.getY());
+            graph.addNode(newNode);
+
+            e.getComponent().repaint();
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    private Graph graph;
 }

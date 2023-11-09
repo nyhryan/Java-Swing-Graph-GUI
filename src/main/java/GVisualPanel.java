@@ -17,9 +17,23 @@ public class GVisualPanel extends JPanel {
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
-        toolBar.add(addToolBarButton("노드 추가"));
-        toolBar.add(addToolBarButton("노드 삭제"));
-        toolBar.add(addToolBarButton("간선 추가"));
+
+        JLabel currentModeLabel = new JLabel("모드 선택");
+
+        toolBar.add(addToolBarButton("노드 추가", e -> {
+            mode = Mode.ADD_NODE;
+            currentModeLabel.setText("노드 추가");
+        }));
+        toolBar.add(addToolBarButton("간선 추가", e -> {
+            mode = Mode.ADD_EDGE;
+            currentModeLabel.setText("간선 추가");
+        }));
+        toolBar.add(addToolBarButton("삭제", e -> {
+            mode = Mode.REMOVE;
+            currentModeLabel.setText("삭제");
+        }));
+        toolBar.addSeparator();
+        toolBar.add(currentModeLabel);
 
         add(toolBar, BorderLayout.NORTH);
 
@@ -33,9 +47,10 @@ public class GVisualPanel extends JPanel {
 //        });
     }
 
-    private JButton addToolBarButton(String name) {
+    private JButton addToolBarButton(String name, ActionListener listener) {
         JButton button = new JButton(name);
         button.setFont(new Font("Arial", Font.PLAIN, 20));
+        button.addActionListener(listener);
         return button;
     }
 
@@ -99,6 +114,14 @@ public class GVisualPanel extends JPanel {
     // 그래프 객체
     private Graph graph = new Graph();
     private static final int NODE_RADIUS = 50;
+
+    public enum Mode {ADD_NODE, ADD_EDGE, REMOVE, DEFAULT};
+
+    public Mode getMode() {
+        return mode;
+    }
+
+    private Mode mode = Mode.DEFAULT;
 //    private AlgorithmRunner algorithmRunner;
 }
 
@@ -113,8 +136,12 @@ class DoubleClickToAddNode extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // 왼쪽 더블클릭 한 경우에만 리스너 수행
-        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+        GVisualPanel panel = (GVisualPanel) e.getComponent();
+        GVisualPanel.Mode currentMode = panel.getMode();
+
+        // 노드 추가 모드 + 왼쪽 더블클릭 한 경우에만 리스너 수행
+        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1 &&
+                currentMode == GVisualPanel.Mode.ADD_NODE) {
             String nodeName = "";
             // Get nodeName at least two letters long from JOptionPane.showInputDialog, or show error dialog
             while (nodeName.length() < 2) {

@@ -13,17 +13,7 @@ public class GMainFrame extends JFrame {
         setSize(new Dimension(800, 600));
         setLayout(new CardLayout());
 
-        try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        setLocationRelativeTo(null); // 화면 중앙에 프로그램을 배치
 
         // 현재 메인 프레임에 서브 패널들을 추가한다.
         add("Algorithm.Graph Mode", gVisualPanel);

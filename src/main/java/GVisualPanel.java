@@ -5,6 +5,8 @@ import graph.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+
 
 /**
  * 그래프(노드, 간선)를 그리는 패널
@@ -12,33 +14,8 @@ import java.awt.event.*;
 public class GVisualPanel extends JPanel {
     public GVisualPanel() {
         setBackground(Color.GRAY);
-
         setLayout(new BorderLayout());
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-        toolBar.setRollover(true);
 
-        JLabel currentModeLabel = new JLabel("모드 선택");
-
-        toolBar.add(addToolBarButton("노드 추가", e -> {
-            mode = Mode.ADD_NODE;
-            currentModeLabel.setText("노드 추가");
-        }));
-        toolBar.add(addToolBarButton("간선 추가", e -> {
-            mode = Mode.ADD_EDGE;
-            currentModeLabel.setText("간선 추가");
-        }));
-        toolBar.add(addToolBarButton("삭제", e -> {
-            mode = Mode.REMOVE;
-            currentModeLabel.setText("삭제");
-        }));
-        toolBar.addSeparator();
-        toolBar.add(currentModeLabel);
-
-        add(toolBar, BorderLayout.NORTH);
-
-        // 화면을 더블클릭한 위치에 새로운 노드 추가
-        addMouseListener(new DoubleClickToAddNode(graph));
 
 //        algorithmRunner = new AlgorithmRunner(new FloydAlgorithm());
 //        SwingUtilities.invokeLater(() -> {
@@ -47,12 +24,6 @@ public class GVisualPanel extends JPanel {
 //        });
     }
 
-    private JButton addToolBarButton(String name, ActionListener listener) {
-        JButton button = new JButton(name);
-        button.setFont(new Font("Arial", Font.PLAIN, 20));
-        button.addActionListener(listener);
-        return button;
-    }
 
     @Override
     protected void paintComponent(Graphics g) {

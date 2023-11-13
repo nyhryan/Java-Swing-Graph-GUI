@@ -43,7 +43,7 @@ class GVisualPanelWrapper extends JPanel {
         return gInfoPanel;
     }
 
-    private GInfoPanel gInfoPanel = new GInfoPanel(gVisualPanel.getGraph());
+    private GInfoPanel gInfoPanel;
 
     public GVisualPanel getgVisualPanel() {
         return gVisualPanel;

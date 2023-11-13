@@ -1,5 +1,3 @@
-import algorithm.AlgorithmRunner;
-import algorithm.FloydAlgorithm;
 import graph.*;
 
 import javax.swing.*;
@@ -40,10 +38,11 @@ public class GVisualPanel extends JPanel {
         g2d.setRenderingHints(rh);
 
         // 그리는데 사용할 인접 리스트의 사본
-        ArrayList<LinkedList<GraphEdge>> adjacencyList = new ArrayList<>(graph.getAdjacencyList());
+        ArrayList<LinkedList<GraphEdge>> adjacencyListCopy = new ArrayList<>(graph.getAdjacencyList());
+        adjacencyListCopy.replaceAll(LinkedList::new);
 
         // 간선을 먼저 그린다.
-        for (var nodes : adjacencyList) {
+        for (var nodes : adjacencyListCopy) {
             for (var edge : nodes) {
                 GraphNode from = edge.getFrom();
                 GraphNode to = edge.getTo();
@@ -71,11 +70,8 @@ public class GVisualPanel extends JPanel {
                 g2d.setColor(Color.WHITE);
                 g2d.drawString(weight, weightX - weightWidth / 2, weightY - weightHeight / 2 + weightHeight / 4 * 3);
 
-                // 인접 리스트에서 현재 간선의 반대쪽 끝에 붙어있는 노드를 가져온다.
-                var toNodeFromAdjacencyList = adjacencyList.get(graph.getNodes().indexOf(to));
-
                 // 인접 리스트 사본에서 현재 간선의 반대방향의 간선을 지운다.
-                toNodeFromAdjacencyList.removeIf(e -> e.getTo().equals(from));
+                adjacencyListCopy.get(graph.getNodes().indexOf(to)).removeIf(e -> e.getTo().equals(from));
 
             }
         }
@@ -138,8 +134,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
      */
     public GVisualPanelMouseAdapter(GVisualPanelWrapper parentWrapperPanel) {
         this.gVisualPanelWrapper = parentWrapperPanel;
-        this.gVisualPanel = parentWrapperPanel.getgVisualPanel();
-        this.graph = gVisualPanel.getGraph();
+        this.graph = parentWrapperPanel.getgVisualPanel().getGraph();
     }
 
     @Override
@@ -147,6 +142,8 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
         GVisualPanel panel = (GVisualPanel) e.getComponent();
         GVisualPanel.Mode currentMode = panel.getMode();
+        var adjacencyList = panel.getGraph().getAdjacencyList();
+        var nodes = panel.getGraph().getNodes();
 
         // 노드 추가 모드 + 왼쪽 더블클릭 한 경우에만 리스너 수행
         if (currentMode == GVisualPanel.Mode.NODE_MODE && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
@@ -168,7 +165,6 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
                 }
             }
 
-
             GraphNode newNode = new GraphNode(nodeName);
             newNode.setX(e.getX());
             newNode.setY(e.getY());
@@ -185,12 +181,12 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
             // 찾는 것에 성공했다면, nodes 배열하고 인접리스트에서 제거
             if (node != null) {
-                graph.getAdjacencyList().remove(graph.getNodes().indexOf(node));
-
                 String name = node.getName();
-                graph.getAdjacencyList().forEach(list -> list.removeIf(edge -> edge.getTo().getName().equals(name)));
 
-                graph.getNodes().remove(node);
+                adjacencyList.remove(graph.getNodes().indexOf(node));
+                adjacencyList.forEach(list -> list.removeIf(edge -> edge.getTo().getName().equals(name)));
+
+                nodes.remove(node);
             }
             e.getComponent().repaint();
             gVisualPanelWrapper.getgInfoPanel().repaint();
@@ -225,6 +221,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
                 return;
             }
 
+
             double edgeWeight = Double.parseDouble(JOptionPane.showInputDialog("간선의 가중치를 입력하세요."));
             if (edgeWeight <= 0) {
                 JOptionPane.showMessageDialog(null, "간선의 가중치는 0보다 커야 합니다.");
@@ -232,24 +229,37 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
             }
 
             // find start node from graph nodes
-            GraphNode startNode = null;
-            for (GraphNode node : graph.getNodes()) {
-                if (node.getName().equals(startNodeName)) {
-                    startNode = node;
-                    break;
-                }
-            }
-            GraphNode endNode = null;
-            for (GraphNode node : graph.getNodes()) {
-                if (node.getName().equals(endNodeName)) {
-                    endNode = node;
-                    break;
+            GraphNode startNode = nodes
+                    .stream()
+                    .filter(node -> node.getName().equals(startNodeName)) // startNodeName과 이름이 같은 노드를 찾는다.
+                    .findFirst().orElse(null);
+            GraphNode endNode = nodes
+                    .stream()
+                    .filter(node -> node.getName().equals(endNodeName)) // endNodeName과 이름이 같은 노드를 찾는다.
+                    .findFirst().orElse(null);
+
+
+            // 간선이 이미 존재하는지 체크
+            for (GraphEdge edge : adjacencyList.get(nodes.indexOf(startNode))) {
+                if (edge.getTo().equals(endNode)) {
+                    edge.setWeight(edgeWeight);
+                    // 반대 방향 간선도 같이 가중치를 갱신
+                    for (GraphEdge edge2 : adjacencyList.get(nodes.indexOf(endNode))) {
+                        if (edge2.getTo().equals(startNode)) {
+                            edge2.setWeight(edgeWeight);
+                            break;
+                        }
+                    }
+
+                    e.getComponent().repaint();
+                    gVisualPanelWrapper.getgInfoPanel().repaint();
+
+                    return;
                 }
             }
 
             // add edge to graph
             graph.addEdge(startNode, endNode, edgeWeight);
-
 
             e.getComponent().repaint();
             gVisualPanelWrapper.getgInfoPanel().repaint();
@@ -257,9 +267,9 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
         // 간선 지우기
         if (currentMode == GVisualPanel.Mode.EDGE_MODE && e.getButton() == MouseEvent.BUTTON3) {
-            String[] nodeNames = new String[graph.getNodes().size()];
-            for (int i = 0; i < graph.getNodes().size(); i++) {
-                nodeNames[i] = graph.getNodes().get(i).getName();
+            String[] nodeNames = new String[nodes.size()];
+            for (int i = 0; i < nodes.size(); i++) {
+                nodeNames[i] = nodes.get(i).getName();
             }
 
             // pick a start node, end node, and get edge weight input from user
@@ -280,25 +290,32 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
             }
 
             // find start node from graph nodes
-            GraphNode startNode = graph.getNodes().stream().filter(node -> node.getName().equals(startNodeName)).findFirst().orElse(null);
-            GraphNode endNode = graph.getNodes().stream().filter(node -> node.getName().equals(endNodeName)).findFirst().orElse(null);
+            GraphNode startNode = nodes
+                    .stream()
+                    .filter(node -> node.getName().equals(startNodeName)) // startNodeName과 이름이 같은 노드를 찾는다.
+                    .findFirst().orElse(null);
+            GraphNode endNode = nodes
+                    .stream()
+                    .filter(node -> node.getName().equals(endNodeName)) // endNodeName과 이름이 같은 노드를 찾는다.
+                    .findFirst().orElse(null);
 
             // remove edge from graph
-            graph.getAdjacencyList().get(graph.getNodes().indexOf(startNode)).removeIf(edge -> edge.getTo().equals(endNode));
-            graph.getAdjacencyList().get(graph.getNodes().indexOf(endNode)).removeIf(edge -> edge.getTo().equals(startNode));
+            adjacencyList.get(nodes.indexOf(startNode))
+                    .removeIf(edge -> edge.getTo().equals(endNode));
+            adjacencyList.get(nodes.indexOf(endNode))
+                    .removeIf(edge -> edge.getFrom().equals(startNode));
 
             e.getComponent().repaint();
             gVisualPanelWrapper.getgInfoPanel().repaint();
         }
-
     }
 
+    // 노드 이동 모드에서 노드를 드래드한 경우 노드를 이동시킨다.
     @Override
     public void mouseDragged(MouseEvent e) {
         GVisualPanel panel = (GVisualPanel) e.getComponent();
         GVisualPanel.Mode currentMode = panel.getMode();
 
-        // 노드 이동 모드에서 노드를 드래드한 경우 노드를 이동시킨다.
         if (currentMode == GVisualPanel.Mode.MOVE) {
             GraphNode node = selectNodeFromClick(e);
             if (node != null) {
@@ -324,5 +341,4 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
     private final Graph graph;
     private final GVisualPanelWrapper gVisualPanelWrapper;
-    private final GVisualPanel gVisualPanel;
 }

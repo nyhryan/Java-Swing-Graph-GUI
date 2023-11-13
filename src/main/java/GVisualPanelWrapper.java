@@ -3,6 +3,8 @@ import java.awt.*;
 
 class GVisualPanelWrapper extends JPanel {
     public GVisualPanelWrapper() {
+        gInfoPanel  = new GInfoPanel(gVisualPanel.getGraph());
+
         setLayout(new BorderLayout());
 
         // 화면 상단에 툴바를 추가한다.
@@ -13,10 +15,8 @@ class GVisualPanelWrapper extends JPanel {
         JScrollPane scrollPane = new JScrollPane(gVisualPanel);
         gVisualPanel.setPreferredSize(new Dimension(2000, 2000));
 
-        JScrollPane scrollPane2 = new JScrollPane(gInfoPanel);
-
         // 스플릿 패널에 그래프와 그래프 정보를 그리는 패널을 추가한다.
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, scrollPane2);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, gInfoPanel);
         splitPane.setDividerLocation(0.5);
         splitPane.setResizeWeight(0.7);
         splitPane.setOneTouchExpandable(true);

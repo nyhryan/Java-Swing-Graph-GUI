@@ -175,6 +175,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
             graph.addNode(newNode);
 
             e.getComponent().repaint();
+            gVisualPanelWrapper.getgInfoPanel().repaint();
         }
 
         // 노드 삭제
@@ -192,6 +193,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
                 graph.getNodes().remove(node);
             }
             e.getComponent().repaint();
+            gVisualPanelWrapper.getgInfoPanel().repaint();
         }
 
         // 간선 그리기
@@ -250,6 +252,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
 
             e.getComponent().repaint();
+            gVisualPanelWrapper.getgInfoPanel().repaint();
         }
 
         // 간선 지우기
@@ -285,6 +288,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
             graph.getAdjacencyList().get(graph.getNodes().indexOf(endNode)).removeIf(edge -> edge.getTo().equals(startNode));
 
             e.getComponent().repaint();
+            gVisualPanelWrapper.getgInfoPanel().repaint();
         }
 
     }

@@ -53,7 +53,7 @@ public class GVisualPanel extends JPanel {
                 int x2 = to.getX();
                 int y2 = to.getY();
 
-                g2d.setColor(Color.BLACK);
+                g2d.setColor(edge.getColor());
                 g2d.drawLine(x1, y1, x2, y2);
 
                 // 가중치를 그린다.
@@ -66,7 +66,7 @@ public class GVisualPanel extends JPanel {
                 int weightWidth = g2d.getFontMetrics().stringWidth(weight);
                 int weightHeight = g2d.getFontMetrics().getHeight();
 
-                g2d.setColor(Color.BLACK);
+                g2d.setColor(edge.getColor());
                 g2d.fillRoundRect(weightX - weightWidth / 2, weightY - weightHeight / 2, weightWidth, weightHeight, 5, 5);
                 g2d.setColor(Color.WHITE);
                 g2d.drawString(weight, weightX - weightWidth / 2, weightY - weightHeight / 2 + weightHeight / 4 * 3);
@@ -82,9 +82,9 @@ public class GVisualPanel extends JPanel {
 
         // 노드를 그린다.
         for (var node : graph.getNodes()) {
-            g2d.setColor(Color.WHITE);
+            g2d.setColor(node.getFillColor());
             g2d.fillOval(node.getX() - NODE_RADIUS / 2, node.getY() - NODE_RADIUS / 2, NODE_RADIUS, NODE_RADIUS);
-            g2d.setColor(Color.BLACK);
+            g2d.setColor(node.getStrokeColor());
             g2d.drawOval(node.getX() - NODE_RADIUS / 2, node.getY() - NODE_RADIUS / 2, NODE_RADIUS, NODE_RADIUS);
 
             // 노드 중앙에 이름을 그린다.

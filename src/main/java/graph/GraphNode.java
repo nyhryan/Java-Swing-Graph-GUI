@@ -52,7 +52,7 @@ public class GraphNode {
 
 
     // 노드 이름
-    private String name;
+    private final String name;
 
     // 노드의 화면상 좌표
     private int x;

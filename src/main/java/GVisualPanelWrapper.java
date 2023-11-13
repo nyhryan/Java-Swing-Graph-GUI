@@ -37,13 +37,13 @@ class GVisualPanelWrapper extends JPanel {
     }
 
     // 그래프를 그리는 패널
-    private GVisualPanel gVisualPanel = new GVisualPanel();
+    private final GVisualPanel gVisualPanel = new GVisualPanel();
 
     public GInfoPanel getgInfoPanel() {
         return gInfoPanel;
     }
 
-    private GInfoPanel gInfoPanel;
+    private final GInfoPanel gInfoPanel;
 
     public GVisualPanel getgVisualPanel() {
         return gVisualPanel;

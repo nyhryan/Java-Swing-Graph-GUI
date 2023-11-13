@@ -33,8 +33,8 @@ public class GraphEdge {
         this.color = color;
     }
 
-    private GraphNode from;
-    private GraphNode to;
+    private final GraphNode from;
+    private final GraphNode to;
 
     private double weight;
 

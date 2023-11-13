@@ -77,5 +77,5 @@ class GInfoPanel extends JPanel {
 
     private final Graph graph;
     private final ArrayList<LinkedList<GraphEdge>> adjacencyList;
-    private JEditorPane editorPane;
+    private final JEditorPane editorPane;
 }

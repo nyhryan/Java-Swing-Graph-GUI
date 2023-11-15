@@ -1,6 +1,7 @@
+package components;
+
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.UIManager.*;
 
 /**
  * GUI 프로그램의 메인 프레임

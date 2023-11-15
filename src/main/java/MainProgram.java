@@ -1,3 +1,5 @@
+import components.GMainFrame;
+
 import javax.swing.*;
 
 public class MainProgram {

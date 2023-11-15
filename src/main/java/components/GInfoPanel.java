@@ -1,3 +1,6 @@
+package components;
+
+import algorithm.TestAlgorithm;
 import graph.Graph;
 import graph.GraphEdge;
 

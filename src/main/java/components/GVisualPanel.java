@@ -1,5 +1,6 @@
-import graph.*;
+package components;
 
+import graph.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

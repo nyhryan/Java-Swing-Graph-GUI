@@ -3,9 +3,9 @@ package components;
 import javax.swing.*;
 import java.awt.*;
 
-class GVisualPanelWrapper extends JPanel {
+public class GVisualPanelWrapper extends JPanel {
     public GVisualPanelWrapper() {
-        gInfoPanel  = new GInfoPanel(gVisualPanel.getGraph());
+        gInfoPanel  = new GInfoPanel(this);
 
         setLayout(new BorderLayout());
 

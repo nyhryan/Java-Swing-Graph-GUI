@@ -14,8 +14,13 @@ import java.util.LinkedList;
  * 그래프 정보를 표시하는 패널
  */
 class GInfoPanel extends JPanel {
-    public GInfoPanel(Graph graph) {
-        this.graph = graph;
+    /**
+     * @param gVisualPanelWrapper 이 패널을 가지는 부모 래퍼 클래스 레퍼런스
+     */
+    public GInfoPanel(GVisualPanelWrapper gVisualPanelWrapper) {
+        this.gVisualPanelWrapper = gVisualPanelWrapper;
+
+        graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
         adjacencyList = graph.getAdjacencyList();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -78,6 +83,7 @@ class GInfoPanel extends JPanel {
 //        editorPane.setText(editorPane.getText() + "<hr><p>노드 개수: " + adjacencyList.size() + "</p></body></html>");
     }
 
+    private final GVisualPanelWrapper gVisualPanelWrapper;
     private final Graph graph;
     private final ArrayList<LinkedList<GraphEdge>> adjacencyList;
     private final JEditorPane editorPane;

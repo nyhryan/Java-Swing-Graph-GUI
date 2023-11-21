@@ -1,6 +1,7 @@
 package components;
 
 import graph.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -140,7 +141,6 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
         GVisualPanel panel = (GVisualPanel) e.getComponent();
         GVisualPanel.Mode currentMode = panel.getMode();
         var adjacencyList = panel.getGraph().getAdjacencyList();
@@ -178,7 +178,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
         // 노드 삭제
         if (currentMode == GVisualPanel.Mode.NODE_MODE && e.getButton() == MouseEvent.BUTTON3) {
             // 클릭한 노드를 찾아오기
-            GraphNode node = selectNodeFromClick(e);
+            GraphNode node = selectNodeFromCursorPos(e);
 
             // 찾는 것에 성공했다면, nodes 배열하고 인접리스트에서 제거
             if (node != null) {
@@ -192,122 +192,15 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
             e.getComponent().repaint();
             gVisualPanelWrapper.getgInfoPanel().repaint();
         }
+    }
 
-        // 간선 그리기
+    @Override
+    public void mousePressed(MouseEvent e) {
+        GVisualPanel panel = (GVisualPanel) e.getComponent();
+        GVisualPanel.Mode currentMode = panel.getMode();
+
         if (currentMode == GVisualPanel.Mode.EDGE_MODE && e.getButton() == MouseEvent.BUTTON1) {
-            if (graph.getNodes().size() < 2) {
-                JOptionPane.showMessageDialog(null, "노드가 2개 이상 있어야 간선을 추가할 수 있습니다.");
-                return;
-            }
-
-            String[] nodeNames = new String[graph.getNodes().size()];
-            for (int i = 0; i < graph.getNodes().size(); i++) {
-                nodeNames[i] = graph.getNodes().get(i).getName();
-            }
-
-            // pick a start node, end node, and get edge weight input from user
-            String startNodeName = (String) JOptionPane.showInputDialog(
-                    null, "시작 노드를 선택하세요.", "간선 추가", JOptionPane.QUESTION_MESSAGE, null, nodeNames, nodeNames[0]);
-            if (startNodeName == null) {
-                return;
-            }
-
-            String endNodeName = (String) JOptionPane.showInputDialog(
-                    null, "끝 노드를 선택하세요.", "간선 추가", JOptionPane.QUESTION_MESSAGE, null, nodeNames, nodeNames[0]);
-            if (startNodeName.equals(endNodeName)) {
-                JOptionPane.showMessageDialog(null, "시작 노드와 끝 노드는 같을 수 없습니다.");
-                return;
-            }
-            if (endNodeName == null) {
-                return;
-            }
-
-
-            double edgeWeight = Double.parseDouble(JOptionPane.showInputDialog("간선의 가중치를 입력하세요."));
-            if (edgeWeight <= 0) {
-                JOptionPane.showMessageDialog(null, "간선의 가중치는 0보다 커야 합니다.");
-                return;
-            }
-
-            // find start node from graph nodes
-            GraphNode startNode = nodes
-                    .stream()
-                    .filter(node -> node.getName().equals(startNodeName)) // startNodeName과 이름이 같은 노드를 찾는다.
-                    .findFirst().orElse(null);
-            GraphNode endNode = nodes
-                    .stream()
-                    .filter(node -> node.getName().equals(endNodeName)) // endNodeName과 이름이 같은 노드를 찾는다.
-                    .findFirst().orElse(null);
-
-
-            // 간선이 이미 존재하는지 체크
-            for (GraphEdge edge : adjacencyList.get(nodes.indexOf(startNode))) {
-                if (edge.getTo().equals(endNode)) {
-                    edge.setWeight(edgeWeight);
-                    // 반대 방향 간선도 같이 가중치를 갱신
-                    for (GraphEdge edge2 : adjacencyList.get(nodes.indexOf(endNode))) {
-                        if (edge2.getTo().equals(startNode)) {
-                            edge2.setWeight(edgeWeight);
-                            break;
-                        }
-                    }
-
-                    e.getComponent().repaint();
-                    gVisualPanelWrapper.getgInfoPanel().repaint();
-
-                    return;
-                }
-            }
-
-            // add edge to graph
-            graph.addEdge(startNode, endNode, edgeWeight);
-
-            e.getComponent().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        }
-
-        // 간선 지우기
-        if (currentMode == GVisualPanel.Mode.EDGE_MODE && e.getButton() == MouseEvent.BUTTON3) {
-            String[] nodeNames = new String[nodes.size()];
-            for (int i = 0; i < nodes.size(); i++) {
-                nodeNames[i] = nodes.get(i).getName();
-            }
-
-            // pick a start node, end node, and get edge weight input from user
-            String startNodeName = (String) JOptionPane.showInputDialog(
-                    null, "시작 노드를 선택하세요.", "간선 제거", JOptionPane.QUESTION_MESSAGE, null, nodeNames, nodeNames[0]);
-            if (startNodeName == null) {
-                return;
-            }
-
-            String endNodeName = (String) JOptionPane.showInputDialog(
-                    null, "끝 노드를 선택하세요.", "간선 제거", JOptionPane.QUESTION_MESSAGE, null, nodeNames, nodeNames[0]);
-            if (startNodeName.equals(endNodeName)) {
-                JOptionPane.showMessageDialog(null, "시작 노드와 끝 노드는 같을 수 없습니다.");
-                return;
-            }
-            if (endNodeName == null) {
-                return;
-            }
-
-            // find start node from graph nodes
-            GraphNode startNode = nodes
-                    .stream()
-                    .filter(node -> node.getName().equals(startNodeName)) // startNodeName과 이름이 같은 노드를 찾는다.
-                    .findFirst().orElse(null);
-            GraphNode endNode = nodes
-                    .stream()
-                    .filter(node -> node.getName().equals(endNodeName)) // endNodeName과 이름이 같은 노드를 찾는다.
-                    .findFirst().orElse(null);
-
-            // remove edge from graph
-            adjacencyList.get(nodes.indexOf(startNode))
-                    .removeIf(edge -> edge.getTo().equals(endNode));
-            adjacencyList.get(nodes.indexOf(endNode))
-                    .removeIf(edge -> edge.getFrom().equals(startNode));
-
-            e.getComponent().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
+            edgeStartNode = selectNodeFromCursorPos(e);
         }
     }
 
@@ -318,7 +211,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
         GVisualPanel.Mode currentMode = panel.getMode();
 
         if (currentMode == GVisualPanel.Mode.MOVE) {
-            GraphNode node = selectNodeFromClick(e);
+            GraphNode node = selectNodeFromCursorPos(e);
             if (node != null) {
                 node.setX(e.getX());
                 node.setY(e.getY());
@@ -327,7 +220,65 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
         }
     }
 
-    private GraphNode selectNodeFromClick(MouseEvent e) {
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        GVisualPanel panel = (GVisualPanel) e.getComponent();
+        GVisualPanel.Mode currentMode = panel.getMode();
+        var adjacencyList = panel.getGraph().getAdjacencyList();
+        var nodes = panel.getGraph().getNodes();
+
+
+        if (currentMode == GVisualPanel.Mode.EDGE_MODE) {
+            edgeEndNode = selectNodeFromCursorPos(e);
+            // get edge weight from dialog box
+            if (edgeEndNode != null) {
+                double edgeWeight = Double.parseDouble(JOptionPane.showInputDialog("간선의 가중치를 입력하세요."));
+                if (edgeWeight < 0) {
+                    JOptionPane.showMessageDialog(null, "간선의 가중치는 0보다 커야 합니다.");
+                    return;
+                }
+                else if (edgeWeight == 0.0) {
+                    // remove edge from graph
+                    adjacencyList.get(nodes.indexOf(edgeStartNode))
+                            .removeIf(edge -> edge.getTo().equals(edgeEndNode));
+                    adjacencyList.get(nodes.indexOf(edgeEndNode))
+                            .removeIf(edge -> edge.getTo().equals(edgeStartNode));
+
+                    e.getComponent().repaint();
+                    gVisualPanelWrapper.getgInfoPanel().repaint();
+                    return;
+                }
+
+                // 간선이 이미 존재하는지 체크
+                for (GraphEdge edge : adjacencyList.get(nodes.indexOf(edgeStartNode))) {
+                    if (edge.getTo().equals(edgeEndNode)) {
+                        edge.setWeight(edgeWeight);
+                        // 반대 방향 간선도 같이 가중치를 갱신
+                        for (GraphEdge edge2 : adjacencyList.get(nodes.indexOf(edgeEndNode))) {
+                            if (edge2.getTo().equals(edgeStartNode)) {
+                                edge2.setWeight(edgeWeight);
+                                break;
+                            }
+                        }
+
+                        e.getComponent().repaint();
+                        gVisualPanelWrapper.getgInfoPanel().repaint();
+
+                        return;
+                    }
+                }
+
+                // add edge to graph
+                graph.addEdge(edgeStartNode, edgeEndNode, edgeWeight);
+
+                e.getComponent().repaint();
+                gVisualPanelWrapper.getgInfoPanel().repaint();
+
+            }
+        }
+    }
+
+    private GraphNode selectNodeFromCursorPos(MouseEvent e) {
         GraphNode node = null;
         for (GraphNode n : graph.getNodes()) {
             if (e.getX() >= n.getX() - GVisualPanel.NODE_RADIUS && e.getX() <= n.getX() + GVisualPanel.NODE_RADIUS &&
@@ -342,4 +293,6 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
     private final Graph graph;
     private final GVisualPanelWrapper gVisualPanelWrapper;
+    private GraphNode edgeStartNode = null;
+    private GraphNode edgeEndNode = null;
 }

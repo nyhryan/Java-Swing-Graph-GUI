@@ -1,8 +1,7 @@
 package components;
 
-import algorithm.TestAlgorithm;
-import graph.Graph;
-import graph.GraphEdge;
+import algorithm.*;
+import graph.*;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;

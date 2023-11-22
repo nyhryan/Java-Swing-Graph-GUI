@@ -9,16 +9,12 @@ public class GVisualPanelWrapper extends JPanel {
 
         setLayout(new BorderLayout());
 
-<<<<<<< HEAD
         // 그래프를 그리는 패널 생성
         GVisualPanel gVisualPanel = new GVisualPanel();
 
         // 화면 상단에 툴바를 추가한다.
         JToolBar toolBar = new GVisualPanelToolBar(this);
-=======
-        // 화면 상단에 툴바를 추가한다.
-        JToolBar toolBar = new GVisualPanelToolBar(gVisualPanel);
->>>>>>> parent of 7b7ed82 (make move button)
+
         add(toolBar, BorderLayout.NORTH);
 
         // 그래프를 그리는 스크롤 패널

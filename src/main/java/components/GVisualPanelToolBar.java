@@ -9,10 +9,18 @@ class GVisualPanelToolBar extends JToolBar {
     /**
      * 툴바 생성자
      *
+<<<<<<< HEAD
+     * @param visualPanelWrapper GVisualPanelWrapper 레퍼런스
+     */
+    public GVisualPanelToolBar(GVisualPanelWrapper visualPanelWrapper) {
+        this.visualPanelWrapper = visualPanelWrapper;
+        this.parentPanel = visualPanelWrapper.getgVisualPanel();
+=======
      * @param parentPanel GVisualPanel 레퍼런스
      */
     public GVisualPanelToolBar(GVisualPanel parentPanel) {
         this.parentPanel = parentPanel;
+>>>>>>> parent of 7b7ed82 (make move button)
 
         setFloatable(false);
         setMargin(new Insets(1, 1, 1, 1));
@@ -34,6 +42,13 @@ class GVisualPanelToolBar extends JToolBar {
             currentModeLabel.setText("모드: 이동");
         }));
 
+<<<<<<< HEAD
+        // "Quiz Panel로 이동" 버튼 추가
+        addSeparator();
+        addQuizPanelButton();
+
+=======
+>>>>>>> parent of 7b7ed82 (make move button)
         addSeparator();
         add(currentModeLabel);
     }
@@ -53,5 +68,27 @@ class GVisualPanelToolBar extends JToolBar {
         return button;
     }
 
+<<<<<<< HEAD
+    private void addQuizPanelButton() {
+        JButton quizPanelButton = new JButton("Quiz Panel로 이동");
+        quizPanelButton.setToolTipText("Quiz Panel로 이동");
+        quizPanelButton.setFont(parentPanel.getFont());
+        quizPanelButton.addActionListener(e -> moveToQuizPanel());
+        add(quizPanelButton);
+    }
+
+    private void moveToQuizPanel() {
+        GQuizPanel quizPanel = new GQuizPanel();
+        visualPanelWrapper.removeAll();
+        visualPanelWrapper.add(quizPanel, BorderLayout.CENTER);
+        visualPanelWrapper.revalidate();
+        visualPanelWrapper.repaint();
+    }
+
+    private final GVisualPanel parentPanel;
+    private final GVisualPanelWrapper visualPanelWrapper;
+}
+=======
     private final GVisualPanel parentPanel;
 }
+>>>>>>> parent of 7b7ed82 (make move button)

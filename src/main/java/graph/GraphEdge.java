@@ -2,13 +2,17 @@ package graph;
 
 import java.awt.*;
 
-public class GraphEdge {
+public class GraphEdge implements Comparable<GraphEdge> {
     public GraphEdge(GraphNode from, GraphNode to, double weight) {
         this.from = from;
         this.to = to;
         this.weight = weight;
     }
 
+    @Override
+    public int compareTo(GraphEdge e) {
+        return Double.compare(this.weight, e.weight);
+    }
 
     public GraphNode getFrom() {
         return from;
@@ -21,6 +25,7 @@ public class GraphEdge {
     public double getWeight() {
         return weight;
     }
+
     public void setWeight(double edgeWeight) {
         this.weight = edgeWeight;
     }
@@ -37,8 +42,5 @@ public class GraphEdge {
     private final GraphNode to;
 
     private double weight;
-
-
     private Color color = Color.BLACK;
-
 }

@@ -5,16 +5,15 @@ import java.awt.*;
 
 public class GVisualPanelWrapper extends JPanel {
     public GVisualPanelWrapper() {
+        // 이 둘 순서 바뀌면 프로그램이 정상 작동하지 않음. 주의!
+        // gInfoPanel은 gVisualPanel의 정보에 의존하기 떄문에 순서를 지켜야한다.
+        gVisualPanel = new GVisualPanel(this);
         gInfoPanel = new GInfoPanel(this);
 
         setLayout(new BorderLayout());
 
-        // 그래프를 그리는 패널 생성
-        GVisualPanel gVisualPanel = new GVisualPanel();
-
         // 화면 상단에 툴바를 추가한다.
-        JToolBar toolBar = new GVisualPanelToolBar(this);
-
+        JToolBar toolBar = new GVisualPanelToolBar(gVisualPanel);
         add(toolBar, BorderLayout.NORTH);
 
         // 그래프를 그리는 스크롤 패널
@@ -42,16 +41,15 @@ public class GVisualPanelWrapper extends JPanel {
 
     }
 
-    // 그래프를 그리는 패널
-    private final GVisualPanel gVisualPanel = new GVisualPanel();
+    public GVisualPanel getgVisualPanel() {
+        return gVisualPanel;
+    }
 
     public GInfoPanel getgInfoPanel() {
         return gInfoPanel;
     }
 
+    // 그래프를 그리는 패널
+    private final GVisualPanel gVisualPanel;
     private final GInfoPanel gInfoPanel;
-
-    public GVisualPanel getgVisualPanel() {
-        return gVisualPanel;
-    }
 }

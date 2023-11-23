@@ -7,11 +7,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+
 /**
  * 그래프(노드, 간선)를 그리는 패널
  */
 public class GVisualPanel extends JPanel {
-    public GVisualPanel() {
+    public GVisualPanel(GVisualPanelWrapper gVisualPanelWrapper) {
+        this.gVisualPanelWrapper = gVisualPanelWrapper;
+
         setBackground(Color.GRAY);
         setLayout(new BorderLayout());
     }
@@ -116,6 +119,8 @@ public class GVisualPanel extends JPanel {
 
     private Mode mode = Mode.DEFAULT;
     private final Font font = new Font("Sans Serif", Font.PLAIN, 16);
+
+    private GVisualPanelWrapper gVisualPanelWrapper;
 }
 
 class GVisualPanelMouseAdapter extends MouseAdapter {

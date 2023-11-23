@@ -44,9 +44,8 @@ public class Graph {
     /**
      * 그래프에 있는 모든 노드 ArrayList
      */
-    private ArrayList<GraphNode> nodes = new ArrayList<>();
+    protected ArrayList<GraphNode> nodes = new ArrayList<>();
 
     // 노드와 자신의 인접노드들을 담는 인접리스트
-    private ArrayList<LinkedList<GraphEdge>> adjacencyList = new ArrayList<>();
-
+    protected ArrayList<LinkedList<GraphEdge>> adjacencyList = new ArrayList<>();
 }

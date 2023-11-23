@@ -112,7 +112,8 @@ public class GVisualPanel extends JPanel {
     }
 
     // 그래프 객체
-    private final Graph graph = new Graph();
+//    private final Graph graph = new Graph();
+    private final Graph graph = new RandomGraph();
     public static final int NODE_RADIUS = 40;
 
     public enum Mode {NODE_MODE, EDGE_MODE, MOVE, DEFAULT}

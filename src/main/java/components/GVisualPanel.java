@@ -121,7 +121,7 @@ public class GVisualPanel extends JPanel {
     private Mode mode = Mode.DEFAULT;
     private final Font font = new Font("Sans Serif", Font.PLAIN, 16);
 
-    private GVisualPanelWrapper gVisualPanelWrapper;
+    private final GVisualPanelWrapper gVisualPanelWrapper;
 }
 
 class GVisualPanelMouseAdapter extends MouseAdapter {

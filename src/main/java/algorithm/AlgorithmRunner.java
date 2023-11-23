@@ -9,5 +9,5 @@ public class AlgorithmRunner {
     public void run() {
         algorithm.run();
     }
-    private IGraphAlgorithm algorithm;
+    private final IGraphAlgorithm algorithm;
 }

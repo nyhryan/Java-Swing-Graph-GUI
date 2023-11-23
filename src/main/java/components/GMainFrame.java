@@ -21,5 +21,5 @@ public class GMainFrame extends JFrame {
 //        add("Quiz Mode", gQuizPanel);
     }
 
-   private GQuizPanel gQuizPanel = new GQuizPanel();
+   private final GQuizPanel gQuizPanel = new GQuizPanel();
 }

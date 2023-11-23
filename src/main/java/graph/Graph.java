@@ -11,19 +11,6 @@ public class Graph {
 
     }
 
-    /**
-     * 그래프에 노드 추가
-     *
-     * @param name 노드 이름
-     */
-    public void addNode(String name) {
-        nodes.add(new GraphNode(name));
-    }
-
-    public void addNode(int integerName) {
-        nodes.add(new GraphNode(Integer.toString(integerName)));
-    }
-
     public void addNode(GraphNode node) {
         nodes.add(node);
         adjacencyList.add(new LinkedList<>());
@@ -44,8 +31,8 @@ public class Graph {
     /**
      * 그래프에 있는 모든 노드 ArrayList
      */
-    protected ArrayList<GraphNode> nodes = new ArrayList<>();
+    protected final ArrayList<GraphNode> nodes = new ArrayList<>();
 
     // 노드와 자신의 인접노드들을 담는 인접리스트
-    protected ArrayList<LinkedList<GraphEdge>> adjacencyList = new ArrayList<>();
+    protected final ArrayList<LinkedList<GraphEdge>> adjacencyList = new ArrayList<>();
 }

@@ -78,16 +78,10 @@ public class GraphNode implements java.io.Serializable {
 
     // 노드 이름
     private final String name;
-
     // 노드의 화면상 좌표
     private int x;
     private int y;
-
-
-
     private Color fillColor = Color.WHITE;
-
-
     private Color strokeColor = Color.BLACK;
     private double distance = Double.POSITIVE_INFINITY;
     private boolean visited = false;

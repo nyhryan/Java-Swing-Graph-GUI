@@ -21,10 +21,9 @@ public class GVisualPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
         // 더 나은 Graphic2D를 사용함.
         Graphics2D g2d = (Graphics2D) g;
+        super.paintComponent(g2d);
 
         // Anti-aliasing 활성화
         RenderingHints rh = new RenderingHints(
@@ -185,7 +184,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
             nodeName = JOptionPane.showInputDialog("새 노드 이름을 입력하세요.");
 
             // 노드 이름이 2글자 이상이어야 한다.
-            if (nodeName == null || nodeName.length() < 1) {
+            if (nodeName == null || nodeName.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "노드 이름은 최소 1글자 이상이어야 합니다.");
                 return;
             }

@@ -13,21 +13,19 @@ public class TestAlgorithm implements IGraphAlgorithm {
 
     // 알고리즘을 실행하는 메소드
     public void run() {
-        traverseNodes();
-    }
+        synchronized (graph) {
+            // 1초 간격으로 순회하며 노드를 방문
+            for (var node : graph.getNodes()) {
+                try {
+                    sleep(ANIMATION_DELAY);
+                    gVisualPanelWrapper.repaint();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-    // 1초 간격으로 순회하며 노드를 방문하는 메소드
-    private synchronized void traverseNodes() {
-        for (var node : graph.getNodes()) {
-            try {
-                sleep(1000);
-                gVisualPanelWrapper.repaint();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                node.setFillColor(Color.GREEN);
+                System.out.println(node.getName());
             }
-
-            node.setFillColor(Color.GREEN);
-            System.out.println(node.getName());
         }
     }
 

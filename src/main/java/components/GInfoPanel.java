@@ -39,14 +39,15 @@ public class GInfoPanel extends JPanel {
 
         // 알고리즘 테스트 버튼
         JPanel buttonPanel = new JPanel();
-        JButton testBtn = new JButton("Test");
-        testBtn.addActionListener(e -> {
-            // 버튼을 누르면 알고리즘 테스트를 위한 쓰레드 생성 및 시작
-            SwingUtilities.invokeLater(() -> {
-                Thread t = new Thread(new TestAlgorithm(gVisualPanelWrapper));
-                t.start();
-            });
-        });
+        buttonPanel.setLayout(new GridLayout(4,2));
+//        JButton testBtn = new JButton("Test");
+//        testBtn.addActionListener(e -> {
+//            // 버튼을 누르면 알고리즘 테스트를 위한 쓰레드 생성 및 시작
+//            SwingUtilities.invokeLater(() -> {
+//                Thread t = new Thread(new TestAlgorithm(gVisualPanelWrapper));
+//                t.start();
+//            });
+//        });
 
 
         JButton dijkstraBtn = new JButton("Dijkstra Algorithm");
@@ -104,10 +105,13 @@ public class GInfoPanel extends JPanel {
         });
 
         // 알고리즘 버튼을 임시로 추가
-        buttonPanel.add(testBtn);
         buttonPanel.add(dijkstraBtn);
         buttonPanel.add(dijkstraStopBtn);
         buttonPanel.add(new JButton("3"));
+        buttonPanel.add(new JButton("4"));
+        buttonPanel.add(new JButton("4"));
+        buttonPanel.add(new JButton("4"));
+        buttonPanel.add(new JButton("4"));
         buttonPanel.add(new JButton("4"));
 
         add(buttonPanel);

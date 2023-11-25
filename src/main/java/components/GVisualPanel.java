@@ -144,6 +144,12 @@ public class GVisualPanel extends JPanel {
         gVisualPanelWrapper.getgInfoPanel().repaint();
     }
 
+    public void resetGraph() {
+        graph.resetGraphProperties();
+        repaint();
+        gVisualPanelWrapper.getgInfoPanel().repaint();
+    }
+
     public int getAnimationDelay() {
         return animationDelay;
     }

@@ -47,11 +47,17 @@ public class Graph implements Serializable {
         adjacencyList.get(nodes.indexOf(endNode)).add(new GraphEdge(endNode, startNode, weight));
     }
 
-    public void resetGraphNodes() {
+    public void resetGraphProperties() {
         for (GraphNode node : nodes) {
             node.setVisited(false);
             node.setDistanceFromStart(Double.POSITIVE_INFINITY);
             node.setFillColor(Color.WHITE);
+        }
+
+        for (var edges: adjacencyList) {
+            for (var edge : edges) {
+                edge.setColor(Color.BLACK);
+            }
         }
     }
 

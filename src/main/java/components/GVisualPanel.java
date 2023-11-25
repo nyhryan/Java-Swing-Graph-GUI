@@ -132,9 +132,24 @@ public class GVisualPanel extends JPanel {
         return graph;
     }
 
+    public void setRandomGraph() {
+        Graph randomGraph = new RandomGraph();
+        graph.setNodes(randomGraph.getNodes());
+        graph.setAdjacencyList(randomGraph.getAdjacencyList());
+        repaint();
+        gVisualPanelWrapper.getgInfoPanel().repaint();
+    }
+
+    public void setEmptyGraph() {
+        Graph emptyGraph = new Graph();
+        graph.setNodes(emptyGraph.getNodes());
+        graph.setAdjacencyList(emptyGraph.getAdjacencyList());
+        repaint();
+        gVisualPanelWrapper.getgInfoPanel().repaint();
+    }
+
     // 그래프 객체
-//    private final Graph graph = new Graph();
-    private final Graph graph = new RandomGraph();
+    private Graph graph = new Graph();
     public static final int NODE_RADIUS = 40;
 
     public enum Mode {NODE_MODE, EDGE_MODE, MOVE, DIJKSTRA_MODE, DEFAULT}
@@ -264,25 +279,6 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
                     e.getComponent().repaint();
                     gVisualPanelWrapper.getgInfoPanel().repaint();
                     return;
-                }
-
-                // 간선이 이미 존재하는지 체크
-                for (GraphEdge edge : adjacencyList.get(nodes.indexOf(edgeStartNode))) {
-                    if (edge.getTo().equals(edgeEndNode)) {
-                        edge.setWeight(edgeWeight);
-                        // 반대 방향 간선도 같이 가중치를 갱신
-                        for (GraphEdge edge2 : adjacencyList.get(nodes.indexOf(edgeEndNode))) {
-                            if (edge2.getTo().equals(edgeStartNode)) {
-                                edge2.setWeight(edgeWeight);
-                                break;
-                            }
-                        }
-
-                        e.getComponent().repaint();
-                        gVisualPanelWrapper.getgInfoPanel().repaint();
-
-                        return;
-                    }
                 }
 
                 // add edge to graph

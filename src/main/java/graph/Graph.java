@@ -19,8 +19,40 @@ public class Graph implements Serializable {
     }
 
     public void addEdge(GraphNode startNode, GraphNode endNode, double weight) {
+        boolean isWeightUpdated = false;
+        // check if edge already exsits
+        for (var edge : adjacencyList.get(nodes.indexOf(startNode))) {
+            if (edge.getFrom().equals(startNode) && edge.getTo().equals(endNode)) {
+                // update if weight parameter is different, else return
+                if (edge.getWeight() != weight) {
+                    edge.setWeight(weight);
+                }
+                else return;
+            }
+        }
+        // check the opposite direction edge too
+        for (var edge : adjacencyList.get(nodes.indexOf(endNode))) {
+            if (edge.getFrom().equals(endNode) && edge.getTo().equals(startNode)) {
+                if (edge.getWeight() != weight) {
+                    edge.setWeight(weight);
+                    isWeightUpdated = true;
+                }
+                else return;
+            }
+        }
+
+        if (isWeightUpdated) return;
+
         adjacencyList.get(nodes.indexOf(startNode)).add(new GraphEdge(startNode, endNode, weight));
         adjacencyList.get(nodes.indexOf(endNode)).add(new GraphEdge(endNode, startNode, weight));
+    }
+
+    public void resetGraphNodes() {
+        for (GraphNode node : nodes) {
+            node.setVisited(false);
+            node.setDistance(Double.POSITIVE_INFINITY);
+            node.setFillColor(Color.WHITE);
+        }
     }
 
     public void saveGraph(String path) {
@@ -61,18 +93,24 @@ public class Graph implements Serializable {
     public ArrayList<GraphNode> getNodes() {
         return nodes;
     }
+    public void setNodes(ArrayList<GraphNode> nodes) {
+        this.nodes = nodes;
+    }
+
     public ArrayList<LinkedList<GraphEdge>> getAdjacencyList() {
         return adjacencyList;
     }
 
-    /**
-     * 그래프에 있는 모든 노드 ArrayList
-     */
-    protected final ArrayList<GraphNode> nodes = new ArrayList<>();
+    public void setAdjacencyList(ArrayList<LinkedList<GraphEdge>> adjacencyList) {
+        this.adjacencyList = adjacencyList;
+    }
+
     @Serial
     private static final long serialVersionUID = 1L;
 
+    // 그래프에 있는 모든 노드 ArrayList
+    protected ArrayList<GraphNode> nodes = new ArrayList<>();
 
     // 노드와 자신의 인접노드들을 담는 인접리스트
-    protected final ArrayList<LinkedList<GraphEdge>> adjacencyList = new ArrayList<>();
+    protected ArrayList<LinkedList<GraphEdge>> adjacencyList = new ArrayList<>();
 }

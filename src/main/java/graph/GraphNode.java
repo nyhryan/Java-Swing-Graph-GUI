@@ -1,11 +1,12 @@
 package graph;
 
 import java.awt.*;
+import java.io.Serial;
 
 /**
  * 그래프의 노드 표현 클래스
  */
-public class GraphNode {
+public class GraphNode implements java.io.Serializable {
     /**
      * 노드 생성자
      * @param name 노드 이름
@@ -50,6 +51,8 @@ public class GraphNode {
         this.strokeColor = strokeColor;
     }
 
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     // 노드 이름
     private final String name;

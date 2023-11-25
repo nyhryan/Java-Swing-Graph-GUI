@@ -14,6 +14,7 @@ public class GMainFrame extends JFrame {
         setSize(new Dimension(800, 600));
 
         setLocationRelativeTo(null); // 화면 중앙에 프로그램을 배치
+        setJMenuBar(new GMenuBar(gVisualPanelWrapper));
 
         // 현재 메인 프레임에 서브 패널들을 추가한다.
         setLayout(new CardLayout());

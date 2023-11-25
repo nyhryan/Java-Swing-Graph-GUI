@@ -1,8 +1,9 @@
 package graph;
 
 import java.awt.*;
+import java.io.Serial;
 
-public class GraphEdge implements Comparable<GraphEdge> {
+public class GraphEdge implements Comparable<GraphEdge>, java.io.Serializable {
     public GraphEdge(GraphNode from, GraphNode to, double weight) {
         this.from = from;
         this.to = to;
@@ -37,6 +38,9 @@ public class GraphEdge implements Comparable<GraphEdge> {
     public void setColor(Color color) {
         this.color = color;
     }
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final GraphNode from;
     private final GraphNode to;

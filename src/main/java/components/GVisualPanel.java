@@ -157,7 +157,7 @@ public class GVisualPanel extends JPanel {
     private Graph graph = new Graph();
     public static final int NODE_RADIUS = 40;
 
-    public enum Mode {NODE_MODE, EDGE_MODE, MOVE, DIJKSTRA_MODE, DEFAULT}
+    public enum Mode {NODE_MODE, EDGE_MODE, MOVE, DIJKSTRA_MODE, FLOYD_MODE, DEFAULT}
 
     private Mode mode = Mode.DEFAULT;
     private final Font font = new Font("Sans Serif", Font.PLAIN, 16);

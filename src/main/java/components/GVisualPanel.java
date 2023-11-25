@@ -96,6 +96,27 @@ public class GVisualPanel extends JPanel {
             int width = g2d.getFontMetrics().stringWidth(nameToDraw);
             int height = g2d.getFontMetrics().getHeight();
             g2d.drawString(nameToDraw, node.getX() - width / 2, node.getY() + height / 4);
+
+            // 노드의 거리와 선행 노드를 이름 아래에 하얀색 박스 안에 검은색 텍스트로 그린다.
+            if (node.getDistance() == Double.POSITIVE_INFINITY) continue;
+
+            String distance = Double.toString(node.getDistance());
+            String previousNode = node.getPreviousNode() == null ? "" : node.getPreviousNode().getName();
+            String textToDraw = String.format("선행: %s - 거리: %s", previousNode, distance);
+
+            width = g2d.getFontMetrics().stringWidth(textToDraw);
+            height = g2d.getFontMetrics().getHeight();
+
+            g2d.setColor(Color.WHITE);
+            g2d.fillRoundRect(node.getX() - width / 2, node.getY() + height / 4, width, height, 5, 5);
+
+            g2d.setColor(Color.BLACK);
+            g2d.drawRoundRect(node.getX() - width / 2, node.getY() + height / 4, width, height, 5, 5);
+
+            g2d.drawString(textToDraw, node.getX() - width / 2, node.getY() + height / 4 * 5);
+
+
+
         }
     }
 
@@ -116,7 +137,7 @@ public class GVisualPanel extends JPanel {
     private final Graph graph = new RandomGraph();
     public static final int NODE_RADIUS = 40;
 
-    public enum Mode {NODE_MODE, EDGE_MODE, MOVE, DEFAULT}
+    public enum Mode {NODE_MODE, EDGE_MODE, MOVE, DIJKSTRA_MODE, DEFAULT}
 
     private Mode mode = Mode.DEFAULT;
     private final Font font = new Font("Sans Serif", Font.PLAIN, 16);

@@ -8,25 +8,23 @@ import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  * 그래프 정보를 표시하는 패널
  */
-class GInfoPanel extends JPanel {
+public class GInfoPanel extends JPanel {
     /**
      * @param gVisualPanelWrapper 이 패널을 가지는 부모 래퍼 클래스 레퍼런스
      */
     public GInfoPanel(GVisualPanelWrapper gVisualPanelWrapper) {
         this.gVisualPanelWrapper = gVisualPanelWrapper;
 
-        graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
-        adjacencyList = graph.getAdjacencyList();
-
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         // 그래프 정보를 출력할 창에 CSS를 적용한다.
         HTMLEditorKit kit = new HTMLEditorKit();
-        kit.getStyleSheet().addRule("span, p { margin: 0; padding: 0; font-size: 14px; } li { font-size: 14px; }");
+        kit.getStyleSheet().addRule("span, p { margin: 0; padding: 0; font-size: 12px; } li { font-size: 12px; }");
 
         // 그래프 정보를 출력할 JEditorPane
         editorPane = new JEditorPane();
@@ -42,7 +40,6 @@ class GInfoPanel extends JPanel {
         // 알고리즘 테스트 버튼
         JPanel buttonPanel = new JPanel();
         JButton testBtn = new JButton("Test");
-
         testBtn.addActionListener(e -> {
             // 버튼을 누르면 알고리즘 테스트를 위한 쓰레드 생성 및 시작
             SwingUtilities.invokeLater(() -> {
@@ -50,10 +47,66 @@ class GInfoPanel extends JPanel {
                 t.start();
             });
         });
-        
+
+
+        JButton dijkstraBtn = new JButton("Dijkstra Algorithm");
+        dijkstraBtn.addActionListener(e -> {
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DIJKSTRA_MODE);
+
+            var graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+
+            // names of all nodes
+            String[] nodeNames = new String[graph.getNodes().size()];
+            for (int i = 0; i < nodeNames.length; i++) {
+                nodeNames[i] = graph.getNodes().get(i).getName();
+            }
+
+            // get a start node to begin the algorithm through a dialog
+            String startNodeStr = (String) JOptionPane.showInputDialog(
+                    gVisualPanelWrapper,
+                    "시작 노드를 선택하세요.",
+                    "시작 노드 선택",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    nodeNames,
+                    nodeNames[0]
+            );
+
+            // find actual start node from nodes based on startNodeStr
+            GraphNode startNode = graph.getNodes()
+                    .stream()
+                    .filter(node -> node.getName().equals(startNodeStr)).findFirst().orElse(null);
+
+            // if startNode is null, return
+            if (startNode == null) return;
+
+            SwingUtilities.invokeLater(() -> {
+                Thread t = new Thread(new DijkstraAlgorithm(gVisualPanelWrapper, startNode), "Dijkstra Algorithm");
+                t.start();
+            });
+        });
+
+        JButton dijkstraStopBtn = new JButton("Stop Dijkstra");
+        dijkstraStopBtn.addActionListener(e -> {
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DEFAULT);
+            // stop dijkstra algorithm thread
+            for (Thread t : Thread.getAllStackTraces().keySet()) {
+                if (t.getName().equals("Dijkstra Algorithm")) {
+                    t.interrupt();
+                    break;
+                }
+            }
+            gVisualPanelWrapper.getgVisualPanel().getGraph().resetGraphNodes();
+            gVisualPanelWrapper.getgVisualPanel().repaint();
+            repaint();
+
+            showMessageDialog(null, "Dijkstra Algorithm을 중단했습니다.", "알고리즘 중단", JOptionPane.WARNING_MESSAGE);
+        });
+
         // 알고리즘 버튼을 임시로 추가
         buttonPanel.add(testBtn);
-        buttonPanel.add(new JButton("2"));
+        buttonPanel.add(dijkstraBtn);
+        buttonPanel.add(dijkstraStopBtn);
         buttonPanel.add(new JButton("3"));
         buttonPanel.add(new JButton("4"));
 
@@ -65,6 +118,17 @@ class GInfoPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         super.paintComponent(g2d);
 
+        if (gVisualPanelWrapper.getgVisualPanel().getMode() == GVisualPanel.Mode.DIJKSTRA_MODE) {
+            drawDijkstraInfo();
+        } else {
+            drawAdjacencyList();
+        }
+    }
+
+    private void drawAdjacencyList() {
+        Graph graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+        ArrayList<LinkedList<GraphEdge>> adjacencyList = graph.getAdjacencyList();
+
         if (graph.getNodes() == null) return;
 
         // print adjacency list to current JEditorPane
@@ -74,7 +138,7 @@ class GInfoPanel extends JPanel {
             LinkedList<GraphEdge> edges = adjacencyList.get(i);
             sb.append(String.format("<p>%s : ", graph.getNodes().get(i).getName()));
 
-            if (edges.size() == 0) {
+            if (edges.isEmpty()) {
                 sb.append("</p>\n");
                 continue;
             }
@@ -86,17 +150,35 @@ class GInfoPanel extends JPanel {
             sb.append("\n<span>null</span>\n</p>\n");
         }
 
-        if (adjacencyList.size() != 0) {
+        if (!adjacencyList.isEmpty()) {
             sb.append("<hr><ul><li>노드 개수: ").append(adjacencyList.size()).append("</li>");
             sb.append("<li>간선 개수: ").append(edgeCount / 2).append("</li></ul>");
         }
 
-        editorPane.setText("<html><body><h1>Adjacency List</h1><hr>\n" + sb);
-//        editorPane.setText(editorPane.getText() + "<hr><p>노드 개수: " + adjacencyList.size() + "</p></body></html>");
+        editorPane.setText("<h1>Adjacency List</h1><hr>\n" + sb);
+    }
+
+    private void drawDijkstraInfo() {
+        Graph graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+        ArrayList<GraphNode> nodes = graph.getNodes();
+
+        // 알고리즘 진행상황을 출력
+        StringBuilder sb = new StringBuilder();
+        for (GraphNode node : nodes) {
+            sb.append("<p>")
+                    .append(String.format("<span>%s</span> : ", node.getName()))
+                    .append(String.format("<span>distance: %.1f</span>, ", node.getDistance()))
+                    .append(String.format("<span>previous: %s</span>", node.getPreviousNode() == null ? "null" : node.getPreviousNode().getName()))
+                    .append("</p>");
+
+            editorPane.setText("<h1>Dijkstra Algorithm</h1><hr/>" + sb);
+        }
+    }
+
+    public JEditorPane getEditorPane() {
+        return editorPane;
     }
 
     private final GVisualPanelWrapper gVisualPanelWrapper;
-    private final Graph graph;
-    private final ArrayList<LinkedList<GraphEdge>> adjacencyList;
     private final JEditorPane editorPane;
 }

@@ -50,6 +50,28 @@ public class GraphNode implements java.io.Serializable {
     public void setStrokeColor(Color strokeColor) {
         this.strokeColor = strokeColor;
     }
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+    public GraphNode getPreviousNode() {
+        return previousNode;
+    }
+
+    public void setPreviousNode(GraphNode previousNode) {
+        this.previousNode = previousNode;
+    }
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -67,4 +89,7 @@ public class GraphNode implements java.io.Serializable {
 
 
     private Color strokeColor = Color.BLACK;
+    private double distance = Double.POSITIVE_INFINITY;
+    private boolean visited = false;
+    private GraphNode previousNode = null;
 }

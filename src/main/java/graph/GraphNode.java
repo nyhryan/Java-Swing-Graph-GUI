@@ -50,12 +50,12 @@ public class GraphNode implements java.io.Serializable {
     public void setStrokeColor(Color strokeColor) {
         this.strokeColor = strokeColor;
     }
-    public double getDistance() {
-        return distance;
+    public double getDistanceFromStart() {
+        return distanceFromStart;
     }
 
-    public void setDistance(double distance) {
-        this.distance = distance;
+    public void setDistanceFromStart(double distanceFromStart) {
+        this.distanceFromStart = distanceFromStart;
     }
 
     public boolean isVisited() {
@@ -83,7 +83,7 @@ public class GraphNode implements java.io.Serializable {
     private int y;
     private Color fillColor = Color.WHITE;
     private Color strokeColor = Color.BLACK;
-    private double distance = Double.POSITIVE_INFINITY;
+    private double distanceFromStart = Double.POSITIVE_INFINITY;
     private boolean visited = false;
     private GraphNode previousNode = null;
 }

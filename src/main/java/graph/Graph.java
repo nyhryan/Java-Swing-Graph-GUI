@@ -50,7 +50,7 @@ public class Graph implements Serializable {
     public void resetGraphNodes() {
         for (GraphNode node : nodes) {
             node.setVisited(false);
-            node.setDistance(Double.POSITIVE_INFINITY);
+            node.setDistanceFromStart(Double.POSITIVE_INFINITY);
             node.setFillColor(Color.WHITE);
         }
     }

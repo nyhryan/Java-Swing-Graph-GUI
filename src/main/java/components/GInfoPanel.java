@@ -54,24 +54,17 @@ public class GInfoPanel extends JPanel {
         dijkstraBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DIJKSTRA_MODE);
 
-            var graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+            // 시작 노드와 끝 노드를 선택한다.
+            GraphNode[] nodes = selectStartEndNodes();
+            if (nodes == null) return;
+            GraphNode startNode = nodes[0];
+            GraphNode endNode = nodes[1];
 
-            // names of all nodes
-            String[] nodeNames = new String[graph.getNodes().size()];
-            for (int i = 0; i < nodeNames.length; i++) {
-                nodeNames[i] = graph.getNodes().get(i).getName();
-            }
-
-            // get a start node to begin the algorithm through a dialog
-            String startNodeStr = (String) JOptionPane.showInputDialog(
-                    gVisualPanelWrapper,
-                    "시작 노드를 선택하세요.",
-                    "시작 노드 선택",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    nodeNames,
-                    nodeNames[0]
-            );
+            SwingUtilities.invokeLater(() -> {
+                Thread t = new Thread(new DijkstraAlgorithm(gVisualPanelWrapper, startNode, endNode), "Dijkstra Algorithm".toUpperCase());
+                t.start();
+            });
+        });
 
             // find actual start node from nodes based on startNodeStr
             GraphNode startNode = graph.getNodes()
@@ -87,19 +80,18 @@ public class GInfoPanel extends JPanel {
             });
         });
 
-        JButton dijkstraStopBtn = new JButton("Stop Dijkstra");
-        dijkstraStopBtn.addActionListener(e -> {
+        JButton stopBtn = new JButton("알고리즘 중단");
+        stopBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DEFAULT);
-            // stop dijkstra algorithm thread
             for (Thread t : Thread.getAllStackTraces().keySet()) {
-                if (t.getName().equals("Dijkstra Algorithm")) {
+                if (t.getName().contains("Algorithm")) {
                     t.interrupt();
+                    gVisualPanelWrapper.getgVisualPanel().resetGraph();
+                    showMessageDialog(null, "알고리즘을 중단합니다.", "알고리즘 중단", JOptionPane.WARNING_MESSAGE);
                     break;
                 }
             }
-            gVisualPanelWrapper.getgVisualPanel().getGraph().resetGraphNodes();
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            repaint();
+        });
 
             showMessageDialog(null, "Dijkstra Algorithm을 중단했습니다.", "알고리즘 중단", JOptionPane.WARNING_MESSAGE);
         });

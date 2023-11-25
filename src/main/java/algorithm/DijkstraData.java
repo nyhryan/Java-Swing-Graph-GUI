@@ -9,7 +9,7 @@ public class DijkstraData implements Comparable<DijkstraData> {
 
     @Override
     public int compareTo(DijkstraData o) {
-        return Double.compare(node.getDistance(), o.node.getDistance());
+        return Double.compare(node.getDistanceFromStart(), o.node.getDistanceFromStart());
     }
 
     public GraphNode getNode() {

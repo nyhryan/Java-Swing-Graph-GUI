@@ -96,10 +96,10 @@ public class GVisualPanel extends JPanel {
             int height = g2d.getFontMetrics().getHeight();
             g2d.drawString(nameToDraw, node.getX() - width / 2, node.getY() + height / 4);
 
-            // 노드의 거리와 선행 노드를 이름 아래에 하얀색 박스 안에 검은색 텍스트로 그린다.
-            if (node.getDistance() == Double.POSITIVE_INFINITY) continue;
+            // 다익스트라 모드에서 노드의 거리와 선행 노드를 이름 아래에 하얀색 박스 안에 검은색 텍스트로 그린다.
+            if (node.getDistanceFromStart() == Double.POSITIVE_INFINITY || node.getPreviousNode() == null) continue;
 
-            String distance = Double.toString(node.getDistance());
+            String distance = Double.toString(node.getDistanceFromStart());
             String previousNode = node.getPreviousNode() == null ? "" : node.getPreviousNode().getName();
             String textToDraw = String.format("선행: %s - 거리: %s", previousNode, distance);
 
@@ -113,9 +113,6 @@ public class GVisualPanel extends JPanel {
             g2d.drawRoundRect(node.getX() - width / 2, node.getY() + height / 4, width, height, 5, 5);
 
             g2d.drawString(textToDraw, node.getX() - width / 2, node.getY() + height / 4 * 5);
-
-
-
         }
     }
 

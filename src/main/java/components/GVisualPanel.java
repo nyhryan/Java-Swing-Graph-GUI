@@ -4,7 +4,6 @@ import graph.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 
 
@@ -158,17 +157,18 @@ public class GVisualPanel extends JPanel {
         this.animationDelay = animationDelay;
     }
 
+    private final Graph graph = new Graph();
 
-    // 그래프 객체
-    private Graph graph = new Graph();
     public static final int NODE_RADIUS = 40;
 
     public enum Mode {NODE_MODE, EDGE_MODE, MOVE, DIJKSTRA_MODE, FLOYD_MODE, DEFAULT}
 
     private Mode mode = Mode.DEFAULT;
+
     private final Font font = new Font("Sans Serif", Font.PLAIN, 16);
 
     private final GVisualPanelWrapper gVisualPanelWrapper;
+
     private int animationDelay = 500;
 }
 

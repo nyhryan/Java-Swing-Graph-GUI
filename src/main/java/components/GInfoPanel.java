@@ -5,10 +5,10 @@ import graph.*;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
+import static javax.swing.JOptionPane.showMessageDialog;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  * 그래프 정보를 표시하는 패널
@@ -25,6 +25,7 @@ public class GInfoPanel extends JPanel {
         // 그래프 정보를 출력할 창에 CSS를 적용한다.
         HTMLEditorKit kit = new HTMLEditorKit();
         kit.getStyleSheet().addRule("span, p { margin: 0; padding: 0; font-size: 12px; } li { font-size: 12px; }");
+        kit.getStyleSheet().addRule("table { table-layout: fixed; } table, th, td { border: 1px solid black; font-size: 16px; }");
 
         // 그래프 정보를 출력할 JEditorPane
         editorPane = new JEditorPane();
@@ -34,7 +35,7 @@ public class GInfoPanel extends JPanel {
 
         // 그래프 정보를 출력할 JEditorPane을 스크롤 패널에 추가한다.
         JScrollPane scrollPane = new JScrollPane(editorPane);
-        scrollPane.setPreferredSize(new Dimension(300, 300));
+        scrollPane.setPreferredSize(new Dimension(300, 600));
         add(scrollPane);
 
         // 알고리즘 버튼들과 애니메이션 속도 슬라이더 등을 모은 패널

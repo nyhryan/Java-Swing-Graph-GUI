@@ -15,11 +15,10 @@ public class GMainFrame extends JFrame {
         setLocationRelativeTo(null); // 화면 중앙에 프로그램을 배치
 
         GVisualPanelWrapper gVisualPanelWrapper = new GVisualPanelWrapper();
+        // 메뉴바를 추가한다.
         setJMenuBar(new GMenuBar(gVisualPanelWrapper));
 
-        // 현재 메인 프레임에 서브 패널들을 추가한다.
+        // gVisualPanelWrapper <-> 퀴즈패널은 각 패널 안에서 이동가능함.
         add(gVisualPanelWrapper);
     }
-
-   private final GQuizPanel gQuizPanel = new GQuizPanel();
 }

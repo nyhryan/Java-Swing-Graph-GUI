@@ -11,7 +11,7 @@ class GVisualPanelToolBar extends JToolBar {
         setFloatable(false);
         setMargin(new Insets(1, 1, 1, 1));
 
-        JLabel currentModeLabel = new JLabel("모드: 선택");
+        JLabel currentModeLabel = new JLabel("현재 모드: 선택");
         currentModeLabel.setFont(gVisualPanel.getFont());
 
         add(addToolBarButton("노드 추가/제거", "좌 더블클릭으로 노드 추가, 우클릭으로 노드 제거", e -> {

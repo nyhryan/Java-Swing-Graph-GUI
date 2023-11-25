@@ -6,6 +6,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class GMenuBar extends JMenuBar {
     public GMenuBar(GVisualPanelWrapper gVisualPanelWrapper) {
         JMenu fileMenu = new JMenu("File");
+
+        // 그래프 파일 열기, 저장, 종료 메뉴
         JMenuItem openMenuItem = new JMenuItem("Open Graph...");
         openMenuItem.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();

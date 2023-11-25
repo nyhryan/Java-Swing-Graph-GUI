@@ -85,7 +85,7 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
 
     private void waitAndRepaint() {
         try {
-            sleep(1000);
+            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationDelay());
             gVisualPanelWrapper.getgVisualPanel().repaint();
             gVisualPanelWrapper.getgInfoPanel().repaint();
         } catch (InterruptedException e) {

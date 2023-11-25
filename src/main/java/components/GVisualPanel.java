@@ -147,6 +147,15 @@ public class GVisualPanel extends JPanel {
         gVisualPanelWrapper.getgInfoPanel().repaint();
     }
 
+    public int getAnimationDelay() {
+        return animationDelay;
+    }
+
+    public void setAnimationDelay(int animationDelay) {
+        this.animationDelay = animationDelay;
+    }
+
+
     // 그래프 객체
     private Graph graph = new Graph();
     public static final int NODE_RADIUS = 40;
@@ -157,6 +166,7 @@ public class GVisualPanel extends JPanel {
     private final Font font = new Font("Sans Serif", Font.PLAIN, 16);
 
     private final GVisualPanelWrapper gVisualPanelWrapper;
+    private int animationDelay = 500;
 }
 
 class GVisualPanelMouseAdapter extends MouseAdapter {

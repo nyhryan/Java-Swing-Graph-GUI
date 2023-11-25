@@ -17,7 +17,7 @@ public class TestAlgorithm implements IGraphAlgorithm {
             // 1초 간격으로 순회하며 노드를 방문
             for (var node : graph.getNodes()) {
                 try {
-                    sleep(ANIMATION_DELAY);
+                    sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationDelay());
                     gVisualPanelWrapper.repaint();
                 } catch (InterruptedException e) {
                     e.printStackTrace();

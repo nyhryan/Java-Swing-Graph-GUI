@@ -91,29 +91,6 @@ public class GInfoPanel extends JPanel {
         editorPane.setText("<h1>Adjacency List</h1><hr>\n" + sb);
     }
 
-    private void showDijkstraInfo() {
-        Graph graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
-        ArrayList<GraphNode> nodes = graph.getNodes();
-
-        // 알고리즘 진행상황을 출력
-        StringBuilder sb = new StringBuilder();
-        sb.append("<table><thead><tr>")
-                .append("<th>노드</th>")
-                .append("<th>거리</th>")
-                .append("<th>선행 노드</th>")
-                .append("</tr></thead>")
-                .append("<tbody>");
-        for (GraphNode node : nodes) {
-            sb.append("<tr>")
-                    .append(String.format("<td>%s</td>", node.getName()))
-                    .append(String.format("<td>%.1f</td>", node.getDistanceFromStart()))
-                    .append(String.format("<td>%s</td>", node.getPreviousNode() == null ? "null" : node.getPreviousNode().getName()))
-                    .append("</tr>");
-        }
-        sb.append("</tbody></table>");
-        editorPane.setText("<h1>Dijkstra Algorithm</h1><hr/>" + sb);
-    }
-
     private GraphNode[] selectStartEndNodes() {
         var graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
 

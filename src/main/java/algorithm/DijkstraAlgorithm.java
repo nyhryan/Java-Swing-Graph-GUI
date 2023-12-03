@@ -17,11 +17,12 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
 
     public DijkstraAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode, GraphNode endNode) {
         this.gVisualPanelWrapper = gVisualPanelWrapper;
+        this.startNode = startNode;
+        this.endNode = endNode;
+
         graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
         adjacencyList = graph.getAdjacencyList();
         nodes = graph.getNodes();
-        this.startNode = startNode;
-        this.endNode = endNode;
     }
 
     @Override
@@ -35,6 +36,7 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
             startNode.setFillColor(Color.GREEN);
             startNode.setDistanceFromStart(0);
             startNode.setVisited(true);
+            showDijkstraInfo();
             waitAndRepaint();
 
             // create priority queue
@@ -47,6 +49,8 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
                 GraphNode minNode = pq.poll().getNode();
                 if (!minNode.equals(startNode))
                     minNode.setFillColor(Color.PINK);
+
+                showDijkstraInfo();
                 waitAndRepaint();
 
                 // visit all adjacent nodes
@@ -119,22 +123,58 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
                 if (!n.equals(endNode))
                     route.append(" → ");
             }
-            String msg = String.format("<html><ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul></html>",
+            String msg = String.format("<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul>",
                     startNode, endNode, distance, route);
 
             // 탐색 완료 메시지 다이얼로그 출력
-            showMessageDialog(null, msg, "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+            showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+
+            // infoPanel에도 출력
+            var editorPane = gVisualPanelWrapper.getgInfoPanel().getEditorPane();
+
+            // get content between body tag from text
+            String text = editorPane.getText();
+            int startIndex = text.indexOf("<body>");
+            int endIndex = text.lastIndexOf("</body>");
+            String content = text.substring(startIndex + 6, endIndex);
+
+            editorPane.setText(
+                    content + String.format("<h2>탐색결과</h2>%s</html>", msg));
+            gVisualPanelWrapper.getgInfoPanel().repaint();
         }
     }
 
     private void waitAndRepaint() {
         try {
-            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationDelay());
+            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationSpeed());
             gVisualPanelWrapper.getgVisualPanel().repaint();
             gVisualPanelWrapper.getgInfoPanel().repaint();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void showDijkstraInfo() {
+        Graph graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+        ArrayList<GraphNode> nodes = graph.getNodes();
+
+        // 알고리즘 진행상황을 출력
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table><thead><tr>")
+                .append("<th>노드</th>")
+                .append("<th>거리</th>")
+                .append("<th>선행 노드</th>")
+                .append("</tr></thead>")
+                .append("<tbody>");
+        for (GraphNode node : nodes) {
+            sb.append("<tr>")
+                    .append(String.format("<td>%s</td>", node.getName()))
+                    .append(String.format("<td>%.1f</td>", node.getDistanceFromStart()))
+                    .append(String.format("<td>%s</td>", node.getPreviousNode() == null ? "null" : node.getPreviousNode().getName()))
+                    .append("</tr>");
+        }
+        sb.append("</tbody></table>");
+        gVisualPanelWrapper.getgInfoPanel().getEditorPane().setText("<h1>Dijkstra Algorithm</h1><hr/>" + sb);
     }
 
     private final GVisualPanelWrapper gVisualPanelWrapper;

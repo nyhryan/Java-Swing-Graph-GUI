@@ -193,6 +193,15 @@ public class GInfoPanel extends JPanel {
             });
         });
 
+        JButton primBtn = new JButton("Prim");
+        primBtn.addActionListener(e -> {
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
+            SwingUtilities.invokeLater(() -> {
+                Thread t = new Thread(new PrimAlgorithm(gVisualPanelWrapper), "Prim Algorithm".toUpperCase());
+                t.start();
+            });
+        });
+
         JButton stopBtn = new JButton("알고리즘 중단");
         ImageIcon stopIcon = ImageIconLoader.getImageIcon("/stop.png");
         stopBtn.setIcon(stopIcon);
@@ -232,10 +241,8 @@ public class GInfoPanel extends JPanel {
         gbc.gridx++;
         buttonPanel.add(kruskalBtn, gbc);
 
-        gbc.gridy++;
-        gbc.gridx = 0;
-        buttonPanel.add(stopBtn, gbc);
-
+        gbc.gridx++;
+        buttonPanel.add(primBtn, gbc);
 
         // 애니메이션 속도를 입력할 Spinner 추가
         JLabel animSpeedLabel = new JLabel("애니메이션 속도 (ms)");

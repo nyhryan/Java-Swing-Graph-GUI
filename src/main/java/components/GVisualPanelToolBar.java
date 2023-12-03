@@ -14,37 +14,59 @@ class GVisualPanelToolBar extends JToolBar {
         JLabel currentModeLabel = new JLabel("현재 모드: 선택");
         currentModeLabel.setFont(gVisualPanel.getFont());
 
-        add(addToolBarButton("노드 추가/제거", "좌 더블클릭으로 노드 추가, 우클릭으로 노드 제거", e -> {
+        ImageIcon addNodeIcon = ImageIconLoader.getImageIcon("/node.png");
+        JButton addNodeButton = addToolBarButton("노드 추가/제거", "좌 더블클릭으로 노드 추가, 우클릭으로 노드 제거", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.NODE_MODE);
             currentModeLabel.setText("모드: 노드 추가/제거");
-        }));
-        add(addToolBarButton("간선 추가/제거", "한 노드를 클릭하고 다른 노드로 드래그해서 간선 추가. 가중치로 0을 입력하면 간선 제거",
+        });
+        addNodeButton.setIcon(addNodeIcon);
+        add(addNodeButton);
+
+        ImageIcon addEdgeIcon = ImageIconLoader.getImageIcon("/edge.png");
+        JButton addEdgeButton = addToolBarButton("간선 추가/제거", "한 노드를 클릭하고 다른 노드로 드래그해서 간선 추가. 가중치로 0을 입력하면 간선 제거",
                 e -> {
                     gVisualPanel.setMode(GVisualPanel.Mode.EDGE_MODE);
                     currentModeLabel.setText("모드: 간선 추가/제거");
-                }));
-        add(addToolBarButton("이동", "노드를 클릭해서 드래그해서 이동", e -> {
+                });
+        addEdgeButton.setIcon(addEdgeIcon);
+        add(addEdgeButton);
+
+        ImageIcon moveIcon = ImageIconLoader.getImageIcon("/move.png");
+        JButton moveBtn = addToolBarButton("이동", "노드를 클릭해서 드래그해서 이동", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.MOVE);
             currentModeLabel.setText("모드: 이동");
-        }));
+        });
+        moveBtn.setIcon(moveIcon);
+        add(moveBtn);
 
         // 현재 선택된 모드 라벨
         addSeparator();
         add(currentModeLabel);
 
         addSeparator();
-        add(addToolBarButton("랜덤 그래프", "랜덤 그래프를 뽑습니다.", e -> {
+        ImageIcon randomIcon = ImageIconLoader.getImageIcon("/random.png");
+        JButton randomBtn = addToolBarButton("랜덤 그래프 생성", "랜덤 그래프를 생성합니다.", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
             gVisualPanel.setRandomGraph();
-        }));
-        add(addToolBarButton("그래프 초기화", "그래프를 초기화합니다.", e -> {
+        });
+        randomBtn.setIcon(randomIcon);
+        add(randomBtn);
+
+        ImageIcon resetIcon = ImageIconLoader.getImageIcon("/reset.png");
+        JButton resetBtn = addToolBarButton("그래프 초기화", "그래프를 초기화합니다.", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
             gVisualPanel.resetGraph();
-        }));
-        add(addToolBarButton("화면 지우기", "화면을 지웁니다.", e -> {
+        });
+        resetBtn.setIcon(resetIcon);
+        add(resetBtn);
+
+        ImageIcon emptyIcon = ImageIconLoader.getImageIcon("/empty.png");
+        JButton emptyBtn = addToolBarButton("화면 지우기", "화면을 지웁니다.", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
             gVisualPanel.setEmptyGraph();
-        }));
+        });
+        emptyBtn.setIcon(emptyIcon);
+        add(emptyBtn);
 
         // 퀴즈 모드로 이동 버튼
         addSeparator();

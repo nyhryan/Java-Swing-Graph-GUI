@@ -194,6 +194,8 @@ public class GInfoPanel extends JPanel {
         });
 
         JButton stopBtn = new JButton("알고리즘 중단");
+        ImageIcon stopIcon = ImageIconLoader.getImageIcon("/stop.png");
+        stopBtn.setIcon(stopIcon);
         stopBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DEFAULT);
             for (Thread t : Thread.getAllStackTraces().keySet()) {

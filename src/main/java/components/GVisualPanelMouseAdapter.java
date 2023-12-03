@@ -125,6 +125,13 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
                     adjacencyList.get(nodes.indexOf(edgeEndNode))
                             .removeIf(edge -> edge.getTo().equals(edgeStartNode));
 
+                    // edges에서도 지우기
+                    if (nodes.indexOf(edgeStartNode) < nodes.indexOf(edgeEndNode)) {
+                        graph.getEdges().removeIf(edge -> edge.getFrom().equals(edgeStartNode) && edge.getTo().equals(edgeEndNode));
+                    } else {
+                        graph.getEdges().removeIf(edge -> edge.getFrom().equals(edgeEndNode) && edge.getTo().equals(edgeStartNode));
+                    }
+
                     e.getComponent().repaint();
                     gVisualPanelWrapper.getgInfoPanel().repaint();
                     return;

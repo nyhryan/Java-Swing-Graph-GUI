@@ -130,6 +130,7 @@ public class GVisualPanel extends JPanel {
     public void setRandomGraph() {
         Graph randomGraph = new RandomGraph();
         graph.setNodes(randomGraph.getNodes());
+        graph.setEdges(randomGraph.getEdges());
         graph.setAdjacencyList(randomGraph.getAdjacencyList());
         repaint();
         gVisualPanelWrapper.getgInfoPanel().repaint();

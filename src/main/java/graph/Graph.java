@@ -19,32 +19,45 @@ public class Graph implements Serializable {
     }
 
     public void addEdge(GraphNode startNode, GraphNode endNode, double weight) {
+        GraphEdge startToEndEdge = new GraphEdge(startNode, endNode, weight);
+        GraphEdge endToStartEdge = new GraphEdge(endNode, startNode, weight);
+
+        int startNodeIndex = nodes.indexOf(startNode);
+        int endNodeIndex = nodes.indexOf(endNode);
+
         boolean isWeightUpdated = false;
+
         // check if edge already exsits
-        for (var edge : adjacencyList.get(nodes.indexOf(startNode))) {
+        for (var edge : adjacencyList.get(startNodeIndex)) {
+            // 같은 간선을 발견했다면
             if (edge.getFrom().equals(startNode) && edge.getTo().equals(endNode)) {
-                // update if weight parameter is different, else return
-                if (edge.getWeight() != weight) {
-                    edge.setWeight(weight);
-                }
-                else return;
-            }
-        }
-        // check the opposite direction edge too
-        for (var edge : adjacencyList.get(nodes.indexOf(endNode))) {
-            if (edge.getFrom().equals(endNode) && edge.getTo().equals(startNode)) {
+                // 입력한 가중치가 다르다면 갱신
                 if (edge.getWeight() != weight) {
                     edge.setWeight(weight);
                     isWeightUpdated = true;
                 }
+                // 아니면 이미 있는 간선이므로 return
                 else return;
             }
         }
 
-        if (isWeightUpdated) return;
+        // 반대방향 간선에 대해서도 똑같이 함
+        for (var edge : adjacencyList.get(endNodeIndex)) {
+            if (edge.getFrom().equals(endNode) && edge.getTo().equals(startNode)) {
+                if (isWeightUpdated)
+                    edge.setWeight(weight);
+                return;
+            }
+        }
 
-        adjacencyList.get(nodes.indexOf(startNode)).add(new GraphEdge(startNode, endNode, weight));
-        adjacencyList.get(nodes.indexOf(endNode)).add(new GraphEdge(endNode, startNode, weight));
+        adjacencyList.get(startNodeIndex).add(startToEndEdge);
+        adjacencyList.get(endNodeIndex).add(endToStartEdge);
+
+        if (startNodeIndex < endNodeIndex) {
+            edges.add(startToEndEdge);
+        } else {
+            edges.add(endToStartEdge);
+        }
     }
 
     public void resetGraphProperties() {
@@ -99,6 +112,7 @@ public class Graph implements Serializable {
     public ArrayList<GraphNode> getNodes() {
         return nodes;
     }
+
     public void setNodes(ArrayList<GraphNode> nodes) {
         this.nodes = nodes;
     }
@@ -111,11 +125,21 @@ public class Graph implements Serializable {
         this.adjacencyList = adjacencyList;
     }
 
+    public ArrayList<GraphEdge> getEdges() {
+        return edges;
+    }
+
+    public void setEdges(ArrayList<GraphEdge> edges) {
+        this.edges = edges;
+    }
+
     @Serial
     private static final long serialVersionUID = 1L;
 
     // 그래프에 있는 모든 노드 ArrayList
     protected ArrayList<GraphNode> nodes = new ArrayList<>();
+
+    protected ArrayList<GraphEdge> edges = new ArrayList<>();
 
     // 노드와 자신의 인접노드들을 담는 인접리스트
     protected ArrayList<LinkedList<GraphEdge>> adjacencyList = new ArrayList<>();

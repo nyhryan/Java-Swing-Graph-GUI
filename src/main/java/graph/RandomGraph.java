@@ -32,9 +32,6 @@ public class RandomGraph extends Graph {
 
         float p = rd.nextFloat();
 
-        // 한 노드에 같은 노드로의 간선을 여러개 추가하지 않도록 이 맵에 추가한 간선을 저장
-        var addedEdges = new HashMap<GraphNode, GraphNode>();
-
         for (int i = 0; i < vertices; i++) {
             GraphNode iNode = nodes.get(i);
             for (int j = 0; j < vertices; j++) {
@@ -50,8 +47,6 @@ public class RandomGraph extends Graph {
                     weight = Math.round(weight);
 
                     addEdge(iNode, jNode, weight);
-                    addedEdges.put(iNode, jNode);
-                    addedEdges.put(jNode, iNode);
                 }
             }
         }

@@ -4,6 +4,7 @@ import algorithm.*;
 import graph.*;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.text.html.HTMLEditorKit;
 import static javax.swing.JOptionPane.showMessageDialog;
 import java.awt.*;
@@ -226,23 +227,21 @@ public class GInfoPanel extends JPanel {
         gbc.gridy = 0;
         gbc.insets = new Insets(4, 4, 4, 4);
 
-        buttonPanel.add(new JLabel("경로 탐색 알고리즘"), gbc);
+        JPanel routingPanel = new JPanel();
+        routingPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "경로 탐색 알고리즘", TitledBorder.LEFT, TitledBorder.TOP));
+        routingPanel.add(dijkstraBtn);
+        routingPanel.add(floydBtn);
+
+        buttonPanel.add(routingPanel, gbc);
 
         gbc.gridx++;
-        buttonPanel.add(dijkstraBtn, gbc);
-
-        gbc.gridx++;
-        buttonPanel.add(floydBtn, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        buttonPanel.add(new JLabel("MST 탐색 알고리즘"), gbc);
-
-        gbc.gridx++;
-        buttonPanel.add(kruskalBtn, gbc);
-
-        gbc.gridx++;
-        buttonPanel.add(primBtn, gbc);
+        JPanel MSTPanel = new JPanel();
+        MSTPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "MST 탐색 알고리즘", TitledBorder.LEFT, TitledBorder.TOP));
+        MSTPanel.add(kruskalBtn);
+        MSTPanel.add(primBtn);
+        buttonPanel.add(MSTPanel, gbc);
 
         // 애니메이션 속도를 입력할 Spinner 추가
         JLabel animSpeedLabel = new JLabel("애니메이션 속도 (ms)");
@@ -252,8 +251,8 @@ public class GInfoPanel extends JPanel {
             gVisualPanelWrapper.getgVisualPanel().setAnimationSpeed(value);
         });
 
-        gbc.gridy++;
         gbc.gridx = 0;
+        gbc.gridy++;
         buttonPanel.add(animSpeedLabel, gbc);
         gbc.gridx++;
         buttonPanel.add(animSpeed, gbc);

@@ -15,6 +15,11 @@ public class GraphEdge implements Comparable<GraphEdge>, java.io.Serializable {
         return Double.compare(this.weight, e.weight);
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s -> %s (%.2f)", from, to, weight);
+    }
+
     public GraphNode getFrom() {
         return from;
     }

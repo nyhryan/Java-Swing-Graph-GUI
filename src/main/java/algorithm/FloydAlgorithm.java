@@ -59,8 +59,9 @@ public class FloydAlgorithm implements IGraphAlgorithm {
             var editorPane = gVisualPanelWrapper.getgInfoPanel().getEditorPane();
 
             String disatnceMatrixString = null;
+            StringBuilder sb = new StringBuilder();
             for (int k = 0; k < nodes.size(); k++) {
-                StringBuilder sb = new StringBuilder();
+                sb.setLength(0);
                 sb.append("<h1>Floyd Algorithm</h1><hr/>")
                         .append("<h2>distance matrix</h2>")
                         .append("<table><thead><tr>")
@@ -100,7 +101,7 @@ public class FloydAlgorithm implements IGraphAlgorithm {
             }
 
             // append prev matrix
-            StringBuilder sb = new StringBuilder();
+            sb.setLength(0);
             sb.append("<h2>prev matrix</h2>")
                     .append("<table><thead><tr>")
                     .append("<th>노드</th>");

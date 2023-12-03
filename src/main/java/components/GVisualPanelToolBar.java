@@ -41,6 +41,7 @@ class GVisualPanelToolBar extends JToolBar {
         addSeparator();
         JButton quizModeBtn = addToolBarButton("Quiz Panel로 이동", "Quiz Panel로 이동", e -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(gVisualPanel);
+            frame.setJMenuBar(null);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(new GQuizPanel());
             frame.revalidate();

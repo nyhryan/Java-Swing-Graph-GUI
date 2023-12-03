@@ -153,7 +153,7 @@ public class GInfoPanel extends JPanel {
         return new GraphNode[]{startNode, endNode};
     }
     private JPanel addGInfoPanelComponents() {
-        JButton dijkstraBtn = new JButton("Dijkstra Algorithm");
+        JButton dijkstraBtn = new JButton("Dijkstra");
         dijkstraBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
 
@@ -169,7 +169,7 @@ public class GInfoPanel extends JPanel {
             });
         });
 
-        JButton floydBtn = new JButton("Floyd Algorithm");
+        JButton floydBtn = new JButton("Floyd");
         floydBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
             // 시작 노드와 끝 노드를 선택한다.
@@ -184,7 +184,7 @@ public class GInfoPanel extends JPanel {
             });
         });
 
-        JButton kruskalBtn = new JButton("Kruskal Algorithm");
+        JButton kruskalBtn = new JButton("Kruskal");
         kruskalBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
             SwingUtilities.invokeLater(() -> {
@@ -199,7 +199,7 @@ public class GInfoPanel extends JPanel {
         stopBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DEFAULT);
             for (Thread t : Thread.getAllStackTraces().keySet()) {
-                if (t.getName().contains("Algorithm")) {
+                if (t.getName().contains("Algorithm".toUpperCase())) {
                     t.interrupt();
                     gVisualPanelWrapper.getgVisualPanel().resetGraph();
                     showMessageDialog(null, "알고리즘을 중단합니다.", "알고리즘 중단", JOptionPane.WARNING_MESSAGE);
@@ -216,10 +216,18 @@ public class GInfoPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(4, 4, 4, 4);
+
+        buttonPanel.add(new JLabel("경로 탐색 알고리즘"), gbc);
+
+        gbc.gridx++;
         buttonPanel.add(dijkstraBtn, gbc);
 
         gbc.gridx++;
         buttonPanel.add(floydBtn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        buttonPanel.add(new JLabel("MST 탐색 알고리즘"), gbc);
 
         gbc.gridx++;
         buttonPanel.add(kruskalBtn, gbc);
@@ -238,9 +246,13 @@ public class GInfoPanel extends JPanel {
         });
 
         gbc.gridy++;
+        gbc.gridx = 0;
         buttonPanel.add(animSpeedLabel, gbc);
         gbc.gridx++;
         buttonPanel.add(animSpeed, gbc);
+
+        gbc.gridx++;
+        buttonPanel.add(stopBtn, gbc);
 
         return buttonPanel;
     }

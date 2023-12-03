@@ -3,8 +3,10 @@ package algorithm;
 import components.GVisualPanelWrapper;
 import graph.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import static java.lang.Thread.sleep;
@@ -40,7 +42,6 @@ public class FloydAlgorithm implements IGraphAlgorithm {
                     prev[i][j] = null;
                 }
             }
-
             for (var edges : graph.getAdjacencyList()) {
                 for (var edge : edges) {
                     int u = nodes.indexOf(edge.getFrom());
@@ -128,6 +129,8 @@ public class FloydAlgorithm implements IGraphAlgorithm {
 
             // 최단 경로 탐색
             GraphNode node = endNode;
+            ArrayList<GraphNode> path = new ArrayList<>();
+            path.add(node);
             while (node != null) {
                 node.setFillColor(Color.GREEN);
 
@@ -152,17 +155,40 @@ public class FloydAlgorithm implements IGraphAlgorithm {
                 }
 
                 node = prev[nodes.indexOf(startNode)][nodes.indexOf(node)];
+                path.add(node);
                 waitAndRepaint();
             }
 
+            Collections.reverse(path);
+            StringBuilder route = new StringBuilder();
+            for (GraphNode n : path) {
+                route.append(n.getName());
+                if (!n.equals(endNode))
+                    route.append(" → ");
+            }
+            String msg = String.format("<html><ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul></html>",
+                    startNode, endNode, distance[nodes.indexOf(startNode)][nodes.indexOf(endNode)], route);
+
             // 탐색 완료 메시지 다이얼로그 출력
-            showMessageDialog(null, "탐색이 완료되었습니다.");
+            showMessageDialog(null, msg, "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+
+            // get content between body tag from text
+            String text = editorPane.getText();
+            int startIndex = text.indexOf("<body>");
+            int endIndex = text.lastIndexOf("</body>");
+            String content = text.substring(startIndex + 6, endIndex);
+
+            editorPane.setText(
+                    content + String.format("<h2>탐색결과</h2><<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul>",
+                    startNode, endNode, distance[nodes.indexOf(startNode)][nodes.indexOf(endNode)], route)
+            );
+            gVisualPanelWrapper.getgInfoPanel().repaint();
         }
     }
 
     private void waitAndRepaint() {
         try {
-            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationDelay());
+            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationSpeed());
             gVisualPanelWrapper.getgVisualPanel().repaint();
             gVisualPanelWrapper.getgInfoPanel().repaint();
         } catch (InterruptedException e) {

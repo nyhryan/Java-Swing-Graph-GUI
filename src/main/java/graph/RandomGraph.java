@@ -13,7 +13,6 @@ public class RandomGraph extends Graph {
 
         // 노드의 개수를 1 ~ MAX_LIMIT 사이의 랜덤한 수로 설정
         int vertices = rd.nextInt(MAX_LIMIT) + 1;
-//        int vertices = MAX_LIMIT;
         for (int i = 0; i < vertices; i++) {
             GraphNode node = new GraphNode(Integer.toString(i));
 

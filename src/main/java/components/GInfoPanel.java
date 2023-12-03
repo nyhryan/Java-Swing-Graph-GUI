@@ -184,6 +184,15 @@ public class GInfoPanel extends JPanel {
             });
         });
 
+        JButton kruskalBtn = new JButton("Kruskal Algorithm");
+        kruskalBtn.addActionListener(e -> {
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
+            SwingUtilities.invokeLater(() -> {
+                Thread t = new Thread(new KruskalAlgorithm(gVisualPanelWrapper), "Kruskal Algorithm".toUpperCase());
+                t.start();
+            });
+        });
+
         JButton stopBtn = new JButton("알고리즘 중단");
         stopBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DEFAULT);

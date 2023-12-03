@@ -96,6 +96,7 @@ public class Graph implements Serializable {
 
             Graph graph = (Graph) ois.readObject();
             this.nodes = graph.nodes;
+            this.edges = graph.edges;
             this.adjacencyList = graph.adjacencyList;
 
             ois.close();
@@ -103,6 +104,7 @@ public class Graph implements Serializable {
 
             assert this.nodes != null;
             assert this.adjacencyList != null;
+            assert this.edges != null;
 
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);

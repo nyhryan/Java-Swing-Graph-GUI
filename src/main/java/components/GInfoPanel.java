@@ -50,15 +50,10 @@ public class GInfoPanel extends JPanel {
 
         var mode = gVisualPanelWrapper.getgVisualPanel().getMode();
 
-        // 다익스트라 알고리즘 진행상황을 출력
-        if (mode == GVisualPanel.Mode.DIJKSTRA_MODE) {
-            showDijkstraInfo();
-        }
-        // 인접 리스트 정보를 출력
-        else if (mode == GVisualPanel.Mode.NODE_MODE ||
-                mode == GVisualPanel.Mode.EDGE_MODE ||
-                mode == GVisualPanel.Mode.DEFAULT ||
-                mode == GVisualPanel.Mode.MOVE) {
+        if (mode == GVisualPanel.Mode.NODE_MODE ||
+            mode == GVisualPanel.Mode.EDGE_MODE ||
+            mode == GVisualPanel.Mode.DEFAULT ||
+            mode == GVisualPanel.Mode.MOVE) {
             showAdjacencyList();
         }
     }
@@ -183,7 +178,7 @@ public class GInfoPanel extends JPanel {
     private JPanel addGInfoPanelComponents() {
         JButton dijkstraBtn = new JButton("Dijkstra Algorithm");
         dijkstraBtn.addActionListener(e -> {
-            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DIJKSTRA_MODE);
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
 
             // 시작 노드와 끝 노드를 선택한다.
             GraphNode[] nodes = selectStartEndNodes();
@@ -199,7 +194,7 @@ public class GInfoPanel extends JPanel {
 
         JButton floydBtn = new JButton("Floyd Algorithm");
         floydBtn.addActionListener(e -> {
-            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.FLOYD_MODE);
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
             // 시작 노드와 끝 노드를 선택한다.
             GraphNode[] nodes = selectStartEndNodes();
             if (nodes == null) return;

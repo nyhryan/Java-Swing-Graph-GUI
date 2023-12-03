@@ -33,9 +33,18 @@ class GVisualPanelToolBar extends JToolBar {
         add(currentModeLabel);
 
         addSeparator();
-        add(addToolBarButton("랜덤 그래프", "랜덤 그래프를 뽑습니다.", e -> gVisualPanel.setRandomGraph()));
-        add(addToolBarButton("그래프 초기화", "그래프를 초기화합니다.", e -> gVisualPanel.resetGraph()));
-        add(addToolBarButton("화면 지우기", "화면을 지웁니다.", e -> gVisualPanel.setEmptyGraph()));
+        add(addToolBarButton("랜덤 그래프", "랜덤 그래프를 뽑습니다.", e -> {
+            gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
+            gVisualPanel.setRandomGraph();
+        }));
+        add(addToolBarButton("그래프 초기화", "그래프를 초기화합니다.", e -> {
+            gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
+            gVisualPanel.resetGraph();
+        }));
+        add(addToolBarButton("화면 지우기", "화면을 지웁니다.", e -> {
+            gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
+            gVisualPanel.setEmptyGraph();
+        }));
 
         // 퀴즈 모드로 이동 버튼
         addSeparator();

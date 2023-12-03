@@ -79,11 +79,15 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
                 waitAndRepaint();
             }
 
-            // 최단 경로 탐색
+            // 목적지부터 시작점까지 최단 경로 탐색
             GraphNode node = endNode;
+            ArrayList<GraphNode> path = new ArrayList<>();
+            path.add(node);
+            double distance = node.getDistanceFromStart();
             while (node != null) {
                 node.setFillColor(Color.GREEN);
 
+                // 양방향의 간선을 모두 파란색으로 변경
                 GraphEdge edge = null;
                 for (GraphEdge e : adjacencyList.get(nodes.indexOf(node))) {
                     if (e.getTo().equals(node.getPreviousNode())) {
@@ -102,11 +106,22 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
                 }
 
                 node = node.getPreviousNode();
+                path.add(node);
                 waitAndRepaint();
             }
 
+            Collections.reverse(path);
+            StringBuilder route = new StringBuilder();
+            for (GraphNode n : path) {
+                route.append(n.getName());
+                if (!n.equals(endNode))
+                    route.append(" → ");
+            }
+            String msg = String.format("<html><ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul></html>",
+                    startNode, endNode, distance, route);
+
             // 탐색 완료 메시지 다이얼로그 출력
-            showMessageDialog(null, "탐색이 완료되었습니다.");
+            showMessageDialog(null, msg, "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

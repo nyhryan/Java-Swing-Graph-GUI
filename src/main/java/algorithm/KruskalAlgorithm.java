@@ -108,7 +108,7 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
             int startIndex = text.indexOf("<body>");
             int endIndex = text.lastIndexOf("</body>");
             String content = text.substring(startIndex + 6, endIndex);
-            editorPane.setText(content +  msg);
+            editorPane.setText(content +  String.format("<h2>탐색결과</h2><hr/>%s", msg));
         }
     }
 

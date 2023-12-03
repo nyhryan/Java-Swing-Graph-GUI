@@ -169,11 +169,11 @@ public class FloydAlgorithm implements IGraphAlgorithm {
                 if (!n.equals(endNode))
                     route.append(" → ");
             }
-            String msg = String.format("<html><ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul></html>",
+            String msg = String.format("<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul>",
                     startNode, endNode, distance[nodes.indexOf(startNode)][nodes.indexOf(endNode)], route);
 
             // 탐색 완료 메시지 다이얼로그 출력
-            showMessageDialog(null, msg, "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+            showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
 
             // get content between body tag from text
             String text = editorPane.getText();
@@ -182,8 +182,7 @@ public class FloydAlgorithm implements IGraphAlgorithm {
             String content = text.substring(startIndex + 6, endIndex);
 
             editorPane.setText(
-                    content + String.format("<h2>탐색결과</h2><<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul>",
-                    startNode, endNode, distance[nodes.indexOf(startNode)][nodes.indexOf(endNode)], route)
+                    content + String.format("<h2>탐색결과</h2><hr/>%s",msg)
             );
             gVisualPanelWrapper.getgInfoPanel().repaint();
         }

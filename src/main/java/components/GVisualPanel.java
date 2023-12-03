@@ -14,7 +14,7 @@ public class GVisualPanel extends JPanel {
     public GVisualPanel(GVisualPanelWrapper gVisualPanelWrapper) {
         this.gVisualPanelWrapper = gVisualPanelWrapper;
 
-        setBackground(Color.GRAY);
+        setBackground(new Color(0xB0B0B0));
         setLayout(new BorderLayout());
     }
 

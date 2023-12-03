@@ -150,19 +150,19 @@ public class GVisualPanel extends JPanel {
         gVisualPanelWrapper.getgInfoPanel().repaint();
     }
 
-    public int getAnimationDelay() {
-        return animationDelay;
+    public int getAnimationSpeed() {
+        return animationSpeed;
     }
 
-    public void setAnimationDelay(int animationDelay) {
-        this.animationDelay = animationDelay;
+    public void setAnimationSpeed(int animationSpeed) {
+        this.animationSpeed = animationSpeed;
     }
 
     private final Graph graph = new Graph();
 
     public static final int NODE_RADIUS = 40;
 
-    public enum Mode {NODE_MODE, EDGE_MODE, MOVE, DIJKSTRA_MODE, FLOYD_MODE, DEFAULT}
+    public enum Mode {NODE_MODE, EDGE_MODE, MOVE, ALGORITHM_MODE, DEFAULT}
 
     private Mode mode = Mode.DEFAULT;
 
@@ -170,6 +170,6 @@ public class GVisualPanel extends JPanel {
 
     private final GVisualPanelWrapper gVisualPanelWrapper;
 
-    private int animationDelay = 500;
+    private int animationSpeed = 500;
 }
 

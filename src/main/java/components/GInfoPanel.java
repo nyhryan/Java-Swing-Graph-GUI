@@ -229,31 +229,31 @@ public class GInfoPanel extends JPanel {
         gbc.gridy = 0;
         gbc.insets = new Insets(4, 4, 4, 4);
         buttonPanel.add(dijkstraBtn, gbc);
+
         gbc.gridx++;
         buttonPanel.add(floydBtn, gbc);
+
         gbc.gridx++;
-        buttonPanel.add(stopBtn, gbc);
+        buttonPanel.add(kruskalBtn, gbc);
+
         gbc.gridy++;
         gbc.gridx = 0;
+        buttonPanel.add(stopBtn, gbc);
 
-        // 애니메이션 속도를 조절할 슬라이더를 패널에 추가한다.
-        JLabel animSpeed = new JLabel("애니메이션 속도");
-        JSlider slider = new JSlider(0, 1000, 500);
-        slider.setSnapToTicks(true);
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-        slider.setMajorTickSpacing(200);
-        slider.setMinorTickSpacing(100);
-        slider.addChangeListener(e -> {
-            JSlider source = (JSlider) e.getSource();
-            if (!source.getValueIsAdjusting()) {
-                gVisualPanelWrapper.getgVisualPanel().setAnimationDelay(source.getValue());
-            }
+
+        // 애니메이션 속도를 입력할 Spinner 추가
+        JLabel animSpeedLabel = new JLabel("애니메이션 속도 (ms)");
+        JSpinner animSpeed = new JSpinner(new SpinnerNumberModel(1000, 0, 10000, 100));
+        animSpeed.addChangeListener(e -> {
+            int value = (int) animSpeed.getValue();
+            gVisualPanelWrapper.getgVisualPanel().setAnimationSpeed(value);
         });
 
-        buttonPanel.add(animSpeed, gbc);
+        gbc.gridy++;
+        buttonPanel.add(animSpeedLabel, gbc);
         gbc.gridx++;
-        buttonPanel.add(slider, gbc);
+        buttonPanel.add(animSpeed, gbc);
+
         return buttonPanel;
     }
 

@@ -70,6 +70,7 @@ public class Graph implements Serializable {
         for (var edges: adjacencyList) {
             for (var edge : edges) {
                 edge.setColor(Color.BLACK);
+                edge.setStroke(new BasicStroke(1));
             }
         }
     }

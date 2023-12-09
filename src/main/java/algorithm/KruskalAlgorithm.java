@@ -92,6 +92,27 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
                 waitAndRepaint();
             }
 
+            sb.setLength(0);
+            sb.append("<h1>Kruskal Algorithm</h1><hr/>")
+                    .append("<table border=\"1\">")
+                    .append("<tr><td>간선</td>")
+                    .append("<td>가중치</td>")
+                    .append("<td>채택</td></tr>");
+
+            // 간선, 채택 표 그리기
+            for (GraphEdge edgeStr : edges) {
+                sb.append(String.format("<td>%s - %s</td><td>%.1f</td>", edgeStr.getFrom().getName(), edgeStr.getTo().getName(), edgeStr.getWeight()));
+
+                if (chosen.get(edgeStr))
+                    sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
+                else
+                    sb.append("<td>&#10007;</td>");
+
+                sb.append("</tr>");
+            }
+            editorPane.setText(sb.toString());
+            gVisualPanelWrapper.getgInfoPanel().repaint();
+
             double totalWeight = 0;
 
             for (GraphEdge edge : mst) {

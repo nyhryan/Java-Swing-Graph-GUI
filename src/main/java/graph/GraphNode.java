@@ -20,6 +20,15 @@ public class GraphNode implements java.io.Serializable {
         return name;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GraphNode) {
+            GraphNode node = (GraphNode) obj;
+            return node.name.equals(this.name);
+        }
+        return false;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

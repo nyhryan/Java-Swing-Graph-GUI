@@ -115,6 +115,26 @@ public class PrimAlgorithm implements IGraphAlgorithm {
                 }
             }
 
+            sb.setLength(0);
+            sb.append("<h1>Prim Algorithm</h1><hr/>")
+                    .append("<table border=\"1\">")
+                    .append("<tr><td>간선</td>")
+                    .append("<td>가중치</td>")
+                    .append("<td>채택</td></tr>");
+
+            // 간선, 채택 표 그리기
+            for (GraphEdge edge : graph.getEdges()) {
+                sb.append(String.format("<td>%s - %s</td><td>%.1f</td>", edge.getFrom().getName(), edge.getTo().getName(), edge.getWeight()));
+
+                if (visitedEdges.get(edge))
+                    sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
+                else
+                    sb.append("<td>&#10007;</td>");
+
+                sb.append("</tr>");
+            }
+            editorPane.setText(sb.toString());
+
             // color the edges that are not in the MST into gray
             for (var edge : graph.getEdges()) {
                 if (edge.getStrokeColor() != Color.RED) {
@@ -122,6 +142,7 @@ public class PrimAlgorithm implements IGraphAlgorithm {
                 }
             }
             gVisualPanelWrapper.getgVisualPanel().repaint();
+            gVisualPanelWrapper.getgInfoPanel().repaint();
 
             String msg = String.format("<ul><li>%s부터 시작한 최소 신장 트리의 가중치 합: %.1f</li></ul>", startNode, totalWeight);
             showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);

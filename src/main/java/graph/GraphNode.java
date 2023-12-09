@@ -81,6 +81,13 @@ public class GraphNode implements java.io.Serializable {
     public void setPreviousNode(GraphNode previousNode) {
         this.previousNode = previousNode;
     }
+    public Color getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+    }
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -92,6 +99,7 @@ public class GraphNode implements java.io.Serializable {
     private int y;
     private Color fillColor = Color.WHITE;
     private Color strokeColor = Color.BLACK;
+    private Color textColor = Color.BLACK;
     private double distanceFromStart = Double.POSITIVE_INFINITY;
     private boolean visited = false;
     private GraphNode previousNode = null;

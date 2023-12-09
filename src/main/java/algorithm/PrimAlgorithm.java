@@ -84,13 +84,7 @@ public class PrimAlgorithm implements IGraphAlgorithm {
 
                 if (minEdge != null) {
                     minEdge.getTo().setVisited(true);
-                    GraphEdge reverseEdge = null;
-                    for (GraphEdge edge : adjacencyList.get(nodes.indexOf(minEdge.getTo()))) {
-                        if (edge.getTo().equals(minEdge.getFrom())) {
-                            reverseEdge = edge;
-                            break;
-                        }
-                    }
+                    GraphEdge reverseEdge = graph.getEdge(minEdge.getTo(), minEdge.getFrom());
 
                     if (visitedEdges.containsKey(minEdge)) {
                         visitedEdges.put(minEdge, true);
@@ -101,16 +95,12 @@ public class PrimAlgorithm implements IGraphAlgorithm {
                     }
 
                     // MST의 간선을 색칠
-                    minEdge.setColor(Color.RED);
+                    minEdge.setStrokeColor(Color.RED);
                     minEdge.setStrokeWidth(5.0f);
                     // color the reverse edge into red too
-                    for (GraphEdge edge : adjacencyList.get(nodes.indexOf(minEdge.getTo()))) {
-                        if (edge.equals(minEdge)) {
-                            edge.setColor(Color.RED);
-                            edge.setStrokeWidth(5.0f);
-                            break;
-                        }
-                    }
+                    reverseEdge.setStrokeColor(Color.RED);
+                    reverseEdge.setStrokeWidth(5.0f);
+
                     gVisualPanelWrapper.getgInfoPanel().getEditorPane().setText(sb.toString());
                     waitAndRepaint();
 
@@ -127,8 +117,8 @@ public class PrimAlgorithm implements IGraphAlgorithm {
 
             // color the edges that are not in the MST into gray
             for (var edge : graph.getEdges()) {
-                if (edge.getColor() != Color.RED) {
-                    edge.setColor(Color.GRAY);
+                if (edge.getStrokeColor() != Color.RED) {
+                    edge.setStrokeColor(Color.GRAY);
                 }
             }
             gVisualPanelWrapper.getgVisualPanel().repaint();

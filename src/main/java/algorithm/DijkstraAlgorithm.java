@@ -97,7 +97,7 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
                 GraphEdge edge = null;
                 for (GraphEdge e : adjacencyList.get(nodes.indexOf(node))) {
                     if (e.getTo().equals(node.getPreviousNode())) {
-                        e.setColor(Color.BLUE);
+                        e.setStrokeColor(Color.BLUE);
                         e.setStrokeWidth(5.0f);
                         edge = e;
                         break;
@@ -107,7 +107,7 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
                 if (edge == null) break;
                 for (GraphEdge e : adjacencyList.get(nodes.indexOf(edge.getTo()))) {
                     if (e.getTo().equals(node)) {
-                        e.setColor(Color.BLUE);
+                        e.setStrokeColor(Color.BLUE);
                         e.setStrokeWidth(5.0f);
                         break;
                     }

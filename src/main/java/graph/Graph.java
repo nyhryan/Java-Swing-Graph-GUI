@@ -65,11 +65,14 @@ public class Graph implements Serializable {
             node.setVisited(false);
             node.setDistanceFromStart(Double.POSITIVE_INFINITY);
             node.setFillColor(Color.WHITE);
+            node.setStrokeColor(Color.BLACK);
+            node.setTextColor(Color.BLACK);
         }
 
         for (var edges: adjacencyList) {
             for (var edge : edges) {
-                edge.setColor(Color.BLACK);
+                edge.setStrokeColor(Color.BLACK);
+                edge.setTextColor(Color.WHITE);
                 edge.setStrokeWidth(1.0f);
             }
         }
@@ -134,6 +137,21 @@ public class Graph implements Serializable {
 
     public void setEdges(ArrayList<GraphEdge> edges) {
         this.edges = edges;
+    }
+
+    public GraphEdge getEdge(GraphNode startNode, GraphNode endNode) {
+        if (startNode == null || endNode == null) return null;
+        for (var edge : adjacencyList.get(nodes.indexOf(startNode))) {
+            if (edge.getTo().equals(endNode)) {
+                return edge;
+            }
+        }
+        for (var edge : adjacencyList.get(nodes.indexOf(endNode))) {
+            if (edge.getTo().equals(startNode)) {
+                return edge;
+            }
+        }
+        return null;
     }
 
     @Serial

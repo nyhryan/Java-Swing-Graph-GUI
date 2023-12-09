@@ -95,7 +95,7 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
             double totalWeight = 0;
 
             for (GraphEdge edge : mst) {
-                edge.setColor(Color.blue);
+                edge.setStrokeColor(Color.blue);
                 edge.setStrokeWidth(5.0f);
                 totalWeight += edge.getWeight();
                 waitAndRepaint();
@@ -103,7 +103,7 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
 
             for (GraphEdge edge : edges) {
                 if (!mst.contains(edge)) {
-                    edge.setColor(Color.GRAY);
+                    edge.setStrokeColor(Color.GRAY);
                     edge.setStrokeWidth(1.0f);
                 }
             }
@@ -165,7 +165,7 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
                         node.setFillColor(vRoot.getFillColor());
                 }
             }
-            e.setColor(vRoot.getFillColor());
+            e.setStrokeColor(vRoot.getFillColor());
             parent.put(uRoot, vRoot);
         }
     }

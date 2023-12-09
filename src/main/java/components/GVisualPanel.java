@@ -46,7 +46,7 @@ public class GVisualPanel extends JPanel {
                 int x2 = to.getX();
                 int y2 = to.getY();
 
-                g2d.setColor(edge.getColor());
+                g2d.setColor(edge.getStrokeColor());
                 g2d.setStroke(new BasicStroke(edge.getStrokeWidth()));
                 g2d.drawLine(x1, y1, x2, y2);
 
@@ -60,10 +60,10 @@ public class GVisualPanel extends JPanel {
                 int weightWidth = g2d.getFontMetrics().stringWidth(weight);
                 int weightHeight = g2d.getFontMetrics().getHeight();
 
-                g2d.setColor(edge.getColor());
+                g2d.setColor(edge.getStrokeColor());
                 g2d.setStroke(new BasicStroke(1));
                 g2d.fillRoundRect(weightX - weightWidth / 2, weightY - weightHeight / 2, weightWidth, weightHeight, 5, 5);
-                g2d.setColor(Color.WHITE);
+                g2d.setColor(edge.getTextColor());
                 g2d.drawString(weight, weightX - weightWidth / 2, weightY - weightHeight / 2 + weightHeight / 4 * 3);
 
                 // 인접 리스트 사본에서 현재 간선의 반대방향의 간선을 지운다.
@@ -83,7 +83,7 @@ public class GVisualPanel extends JPanel {
             // 노드 중앙에 이름을 그린다.
             String nameToDraw = node.getName();
             g2d.setFont(font);
-            g2d.setColor(Color.BLACK);
+            g2d.setColor(node.getTextColor());
 
             if (node.getName().length() == 3) {
                 g2d.setFont(new Font("Sans Serif", Font.PLAIN, 14));
@@ -108,10 +108,10 @@ public class GVisualPanel extends JPanel {
             width = g2d.getFontMetrics().stringWidth(textToDraw);
             height = g2d.getFontMetrics().getHeight();
 
-            g2d.setColor(Color.WHITE);
+            g2d.setColor(node.getFillColor());
             g2d.fillRoundRect(node.getX() - width / 2, node.getY() + height / 4, width, height, 5, 5);
 
-            g2d.setColor(Color.BLACK);
+            g2d.setColor(node.getStrokeColor());
             g2d.drawRoundRect(node.getX() - width / 2, node.getY() + height / 4, width, height, 5, 5);
 
             g2d.drawString(textToDraw, node.getX() - width / 2, node.getY() + height / 4 * 5);

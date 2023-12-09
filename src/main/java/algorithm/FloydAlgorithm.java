@@ -140,7 +140,7 @@ public class FloydAlgorithm implements IGraphAlgorithm {
                 if (prevNode != null) {
                     for (GraphEdge e : adjacencyList.get(nodes.indexOf(prevNode))) {
                         if (e.getTo().equals(node)) {
-                            e.setColor(Color.BLUE);
+                            e.setStrokeColor(Color.BLUE);
                             e.setStrokeWidth(5.0f);
                             edge = e;
                             break;
@@ -151,7 +151,7 @@ public class FloydAlgorithm implements IGraphAlgorithm {
                 if (edge == null) break;
                 for (GraphEdge e : adjacencyList.get(nodes.indexOf(edge.getTo()))) {
                     if (e.getTo().equals(prevNode)) {
-                        e.setColor(Color.BLUE);
+                        e.setStrokeColor(Color.BLUE);
                         e.setStrokeWidth(5.0f);
                         break;
                     }

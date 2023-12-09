@@ -27,7 +27,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
             // 노드 이름을 입력받는다.
             String nodeName;
-            nodeName = JOptionPane.showInputDialog("새 노드 이름을 입력하세요.");
+            nodeName = JOptionPane.showInputDialog("새 노드 이름을 입력하세요.", cursorNode == null ? Integer.toString(nodes.size()) : cursorNode.getName());
 
             // 노드 이름이 2글자 이상이어야 한다.
             if (nodeName == null || nodeName.isEmpty()) {
@@ -121,7 +121,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
             // 간선의 끝 노드가 정해졌으면 가중치를 입력 받고 간선을 추가.
             // 0을 입력해서 간선을 제거.
             if (edgeEndNode != null) {
-                double edgeWeight = Double.parseDouble(JOptionPane.showInputDialog("간선의 가중치를 입력하세요."));
+                double edgeWeight = Double.parseDouble(JOptionPane.showInputDialog("간선의 가중치를 입력하세요.", "1.0"));
 
                 if (edgeWeight < 0) {
                     JOptionPane.showMessageDialog(null, "간선의 가중치는 0보다 커야 합니다.");

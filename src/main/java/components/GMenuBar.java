@@ -26,6 +26,11 @@ public class GMenuBar extends JMenuBar {
 
         JMenuItem saveMenuItem = new JMenuItem("Save Graph...");
         saveMenuItem.addActionListener(e -> {
+            if (gVisualPanelWrapper.getgVisualPanel().getGraph().getNodes().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "그래프를 먼저 그려야합니다.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Save Graph");
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);

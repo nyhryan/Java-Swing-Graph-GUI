@@ -22,8 +22,7 @@ public class GraphNode implements java.io.Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof GraphNode) {
-            GraphNode node = (GraphNode) obj;
+        if (obj instanceof GraphNode node) {
             return node.name.equals(this.name);
         }
         return false;

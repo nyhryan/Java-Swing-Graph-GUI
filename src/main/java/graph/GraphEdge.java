@@ -22,8 +22,7 @@ public class GraphEdge implements Comparable<GraphEdge>, java.io.Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof GraphEdge) {
-            GraphEdge e = (GraphEdge) obj;
+        if (obj instanceof GraphEdge e) {
             if (e.from == this.from && e.to == this.to)
                 return true;
             else return e.from == this.to && e.to == this.from;

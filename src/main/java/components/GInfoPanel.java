@@ -120,14 +120,12 @@ public class GInfoPanel extends JPanel {
 
         if (result == JOptionPane.CANCEL_OPTION) return null;
 
-        GraphNode startNode = graph.getNodes()
+        return graph.getNodes()
                 .stream()
                 .filter(node -> node.getName()
                         .equals(startNodeCbx.getSelectedItem()))
                 .findFirst()
                 .orElse(null);
-
-        return startNode;
     }
 
     private GraphNode[] selectStartEndNodes() {

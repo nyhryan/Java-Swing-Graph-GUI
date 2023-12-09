@@ -44,12 +44,12 @@ public class GraphEdge implements Comparable<GraphEdge>, java.io.Serializable {
         this.color = color;
     }
 
-    public Stroke getStroke() {
-        return stroke;
+    public float getStrokeWidth() {
+        return strokeWidth;
     }
 
-    public void setStroke(Stroke stroke) {
-        this.stroke = stroke;
+    public void setStrokeWidth(float width) {
+        this.strokeWidth = width;
     }
 
     @Serial
@@ -59,7 +59,7 @@ public class GraphEdge implements Comparable<GraphEdge>, java.io.Serializable {
     private final GraphNode to;
 
     private double weight;
-    private Stroke stroke = new BasicStroke(1);
+    private float strokeWidth = 1.0f;
 
     private Color color = Color.BLACK;
 }

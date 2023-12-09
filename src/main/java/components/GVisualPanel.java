@@ -47,7 +47,7 @@ public class GVisualPanel extends JPanel {
                 int y2 = to.getY();
 
                 g2d.setColor(edge.getColor());
-                g2d.setStroke(edge.getStroke());
+                g2d.setStroke(new BasicStroke(edge.getStrokeWidth()));
                 g2d.drawLine(x1, y1, x2, y2);
 
                 // 가중치를 그린다.

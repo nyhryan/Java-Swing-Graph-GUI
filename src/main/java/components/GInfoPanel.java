@@ -92,6 +92,44 @@ public class GInfoPanel extends JPanel {
         editorPane.setText("<h1>Adjacency List</h1><hr>\n" + sb);
     }
 
+    private GraphNode selectStartNode() {
+        // 시작 노드 선택
+        var graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+        String[] nodeNames = new String[graph.getNodes().size()];
+        for (int i = 0; i < nodeNames.length; i++) {
+            nodeNames[i] = graph.getNodes().get(i).getName();
+        }
+        JComboBox<String> startNodeCbx = new JComboBox<>(new DefaultComboBoxModel<>(nodeNames));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.insets = new Insets(4, 4, 4, 4);
+        panel.add(new JLabel("시작 노드 선택"), gbc);
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.LINE_START;
+        panel.add(startNodeCbx, gbc);
+
+        var result = JOptionPane.showConfirmDialog(
+                gVisualPanelWrapper,
+                panel,
+                "시작 노드를 선택하세요.",
+                JOptionPane.OK_CANCEL_OPTION
+        );
+
+        if (result == JOptionPane.CANCEL_OPTION) return null;
+
+        GraphNode startNode = graph.getNodes()
+                .stream()
+                .filter(node -> node.getName()
+                        .equals(startNodeCbx.getSelectedItem()))
+                .findFirst()
+                .orElse(null);
+
+        return startNode;
+    }
+
     private GraphNode[] selectStartEndNodes() {
         var graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
 
@@ -122,12 +160,14 @@ public class GInfoPanel extends JPanel {
         panel.add(endNodeCbx, gbc);
 
         // get a start node and end node in a single showInputDialog
-        JOptionPane.showMessageDialog(
+        var result = JOptionPane.showConfirmDialog(
                 gVisualPanelWrapper,
                 panel,
                 "시작 노드와 끝 노드를 선택하세요.",
-                JOptionPane.QUESTION_MESSAGE
+                JOptionPane.OK_CANCEL_OPTION
         );
+
+        if (result == JOptionPane.CANCEL_OPTION) return null;
 
         // find actual start node from nodes based on startNodeStr
         GraphNode startNode = graph.getNodes()
@@ -154,6 +194,32 @@ public class GInfoPanel extends JPanel {
         return new GraphNode[]{startNode, endNode};
     }
     private JPanel panelWithAlgorithmButtons() {
+        JButton DFSBtn = new JButton("깊이 우선");
+        DFSBtn.addActionListener(e -> {
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
+
+            GraphNode startNode = selectStartNode();
+            if (startNode == null) return;
+
+            SwingUtilities.invokeLater(() -> {
+                Thread t = new Thread(new DFSAlgorithm(gVisualPanelWrapper, startNode), "DFS Algorithm".toUpperCase());
+                t.start();
+            });
+        });
+
+        JButton BFSBtn = new JButton("너비 우선");
+        BFSBtn.addActionListener(e -> {
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
+
+            GraphNode startNode = selectStartNode();
+            if (startNode == null) return;
+
+            SwingUtilities.invokeLater(() -> {
+                Thread t = new Thread(new BFSAlgorithm(gVisualPanelWrapper, startNode), "BFS Algorithm".toUpperCase());
+                t.start();
+            });
+        });
+
         JButton dijkstraBtn = new JButton("Dijkstra");
         dijkstraBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
@@ -198,38 +264,7 @@ public class GInfoPanel extends JPanel {
         primBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
 
-            // 시작 노드 선택
-            var graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
-            String[] nodeNames = new String[graph.getNodes().size()];
-            for (int i = 0; i < nodeNames.length; i++) {
-                nodeNames[i] = graph.getNodes().get(i).getName();
-            }
-            JComboBox<String> startNodeCbx = new JComboBox<>(new DefaultComboBoxModel<>(nodeNames));
-            JPanel panel = new JPanel(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.anchor = GridBagConstraints.LINE_END;
-            gbc.insets = new Insets(4, 4, 4, 4);
-            panel.add(new JLabel("시작 노드 선택"), gbc);
-            gbc.gridx++;
-            gbc.anchor = GridBagConstraints.LINE_START;
-            panel.add(startNodeCbx, gbc);
-
-            JOptionPane.showMessageDialog(
-                    gVisualPanelWrapper,
-                    panel,
-                    "시작 노드를 선택하세요.",
-                    JOptionPane.QUESTION_MESSAGE
-            );
-
-            GraphNode startNode = graph.getNodes()
-                    .stream()
-                    .filter(node -> node.getName()
-                            .equals(startNodeCbx.getSelectedItem()))
-                    .findFirst()
-                    .orElse(null);
-
+            GraphNode startNode = selectStartNode();
             if (startNode == null) return;
 
             SwingUtilities.invokeLater(() -> {
@@ -262,6 +297,15 @@ public class GInfoPanel extends JPanel {
         gbc.gridy = 0;
         gbc.insets = new Insets(4, 4, 4, 4);
 
+        JPanel traversalPanel = new JPanel();
+        traversalPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "순회 알고리즘", TitledBorder.LEFT, TitledBorder.TOP));
+        traversalPanel.add(DFSBtn);
+        traversalPanel.add(BFSBtn);
+
+        buttonPanel.add(traversalPanel, gbc);
+
+        gbc.gridx++;
         JPanel routingPanel = new JPanel();
         routingPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), "경로 탐색 알고리즘", TitledBorder.LEFT, TitledBorder.TOP));
@@ -279,18 +323,21 @@ public class GInfoPanel extends JPanel {
         buttonPanel.add(MSTPanel, gbc);
 
         // 애니메이션 속도를 입력할 Spinner 추가
-        JLabel animSpeedLabel = new JLabel("애니메이션 속도 (ms)");
+        JPanel animSpeedPanel = new JPanel();
+        animSpeedPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "애니메이션 속도", TitledBorder.LEFT, TitledBorder.TOP));
+        JLabel animSpeedLabel = new JLabel("밀리초(ms)");
+        animSpeedPanel.add(animSpeedLabel);
         JSpinner animSpeed = new JSpinner(new SpinnerNumberModel(1000, 0, 10000, 100));
         animSpeed.addChangeListener(e -> {
             int value = (int) animSpeed.getValue();
             gVisualPanelWrapper.getgVisualPanel().setAnimationSpeed(value);
         });
+        animSpeedPanel.add(animSpeed);
 
         gbc.gridx = 0;
         gbc.gridy++;
-        buttonPanel.add(animSpeedLabel, gbc);
-        gbc.gridx++;
-        buttonPanel.add(animSpeed, gbc);
+        buttonPanel.add(animSpeedPanel, gbc);
 
         gbc.gridx++;
         buttonPanel.add(stopBtn, gbc);

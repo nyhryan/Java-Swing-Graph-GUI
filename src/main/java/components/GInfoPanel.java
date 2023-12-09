@@ -197,8 +197,43 @@ public class GInfoPanel extends JPanel {
         JButton primBtn = new JButton("Prim");
         primBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
+
+            // 시작 노드 선택
+            var graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+            String[] nodeNames = new String[graph.getNodes().size()];
+            for (int i = 0; i < nodeNames.length; i++) {
+                nodeNames[i] = graph.getNodes().get(i).getName();
+            }
+            JComboBox<String> startNodeCbx = new JComboBox<>(new DefaultComboBoxModel<>(nodeNames));
+            JPanel panel = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.LINE_END;
+            gbc.insets = new Insets(4, 4, 4, 4);
+            panel.add(new JLabel("시작 노드 선택"), gbc);
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.LINE_START;
+            panel.add(startNodeCbx, gbc);
+
+            JOptionPane.showMessageDialog(
+                    gVisualPanelWrapper,
+                    panel,
+                    "시작 노드를 선택하세요.",
+                    JOptionPane.QUESTION_MESSAGE
+            );
+
+            GraphNode startNode = graph.getNodes()
+                    .stream()
+                    .filter(node -> node.getName()
+                            .equals(startNodeCbx.getSelectedItem()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (startNode == null) return;
+
             SwingUtilities.invokeLater(() -> {
-                Thread t = new Thread(new PrimAlgorithm(gVisualPanelWrapper), "Prim Algorithm".toUpperCase());
+                Thread t = new Thread(new PrimAlgorithm(gVisualPanelWrapper, startNode), "Prim Algorithm".toUpperCase());
                 t.start();
             });
         });

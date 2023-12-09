@@ -30,7 +30,6 @@ public class PrimAlgorithm implements IGraphAlgorithm {
 
             StringBuilder sb = new StringBuilder();
 
-
             for (GraphNode node : nodes) {
                 node.setVisited(false);
             }
@@ -152,6 +151,7 @@ public class PrimAlgorithm implements IGraphAlgorithm {
             int endIndex = text.lastIndexOf("</body>");
             String content = text.substring(startIndex + 6, endIndex);
             editorPane.setText(content + String.format("<h2>탐색결과</h2><hr/>%s", msg));
+            gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
         }
     }
 

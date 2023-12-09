@@ -108,6 +108,7 @@ public class DFSAlgorithm implements IGraphAlgorithm {
             gVisualPanelWrapper.getgInfoPanel().repaint();
 
             showMessageDialog(null, "깊이 우선 탐색을 완료했습니다.");
+            gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
         }
     }
 

@@ -185,6 +185,7 @@ public class FloydAlgorithm implements IGraphAlgorithm {
                     content + String.format("<h2>탐색결과</h2><hr/>%s",msg)
             );
             gVisualPanelWrapper.getgInfoPanel().repaint();
+            gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
         }
     }
 

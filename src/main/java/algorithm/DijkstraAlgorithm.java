@@ -143,6 +143,7 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
             editorPane.setText(
                     content + String.format("<h2>탐색결과</h2>%s</html>", msg));
             gVisualPanelWrapper.getgInfoPanel().repaint();
+            gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
         }
     }
 

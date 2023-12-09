@@ -51,6 +51,8 @@ public class GInfoPanel extends JPanel {
 
         var mode = gVisualPanelWrapper.getgVisualPanel().getMode();
 
+        if (gVisualPanelWrapper.getgVisualPanel().isAlgorithmRunning()) return;
+
         if (mode == GVisualPanel.Mode.NODE_MODE ||
             mode == GVisualPanel.Mode.EDGE_MODE ||
             mode == GVisualPanel.Mode.DEFAULT ||
@@ -201,6 +203,7 @@ public class GInfoPanel extends JPanel {
 
             SwingUtilities.invokeLater(() -> {
                 Thread t = new Thread(new DFSAlgorithm(gVisualPanelWrapper, startNode), "DFS Algorithm".toUpperCase());
+                gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
@@ -214,6 +217,7 @@ public class GInfoPanel extends JPanel {
 
             SwingUtilities.invokeLater(() -> {
                 Thread t = new Thread(new BFSAlgorithm(gVisualPanelWrapper, startNode), "BFS Algorithm".toUpperCase());
+                gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
@@ -230,6 +234,7 @@ public class GInfoPanel extends JPanel {
 
             SwingUtilities.invokeLater(() -> {
                 Thread t = new Thread(new DijkstraAlgorithm(gVisualPanelWrapper, startNode, endNode), "Dijkstra Algorithm".toUpperCase());
+                gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
@@ -245,6 +250,7 @@ public class GInfoPanel extends JPanel {
 
             SwingUtilities.invokeLater(() -> {
                 Thread t = new Thread(new FloydAlgorithm(gVisualPanelWrapper, startNode, endNode), "Floyd Algorithm".toUpperCase());
+                gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
@@ -254,6 +260,7 @@ public class GInfoPanel extends JPanel {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
             SwingUtilities.invokeLater(() -> {
                 Thread t = new Thread(new KruskalAlgorithm(gVisualPanelWrapper), "Kruskal Algorithm".toUpperCase());
+                gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
@@ -267,8 +274,15 @@ public class GInfoPanel extends JPanel {
 
             SwingUtilities.invokeLater(() -> {
                 Thread t = new Thread(new PrimAlgorithm(gVisualPanelWrapper, startNode), "Prim Algorithm".toUpperCase());
+                gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
+        });
+
+        JButton nextStepBtn = new JButton("다음 단계");
+        // show current algorithm step by step by pressing this button
+        nextStepBtn.addActionListener(e -> {
+
         });
 
         JButton stopBtn = new JButton("알고리즘 중단");

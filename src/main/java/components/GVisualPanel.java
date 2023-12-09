@@ -161,6 +161,13 @@ public class GVisualPanel extends JPanel {
     public void setAnimationSpeed(int animationSpeed) {
         this.animationSpeed = animationSpeed;
     }
+    public boolean isAlgorithmRunning() {
+        return isAlgorithmRunning;
+    }
+
+    public void setAlgorithmRunning(boolean algorithmRunning) {
+        isAlgorithmRunning = algorithmRunning;
+    }
 
     private final Graph graph = new Graph();
 
@@ -169,6 +176,10 @@ public class GVisualPanel extends JPanel {
     public enum Mode {NODE_MODE, EDGE_MODE, MOVE, ALGORITHM_MODE, DEFAULT}
 
     private Mode mode = Mode.DEFAULT;
+
+
+
+    private boolean isAlgorithmRunning = false;
 
     private final Font font = new Font("Sans Serif", Font.PLAIN, 16);
 

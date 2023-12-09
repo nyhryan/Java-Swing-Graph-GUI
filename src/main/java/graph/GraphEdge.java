@@ -20,6 +20,17 @@ public class GraphEdge implements Comparable<GraphEdge>, java.io.Serializable {
         return String.format("%s -> %s (%.2f)", from, to, weight);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GraphEdge) {
+            GraphEdge e = (GraphEdge) obj;
+            if (e.from == this.from && e.to == this.to)
+                return true;
+            else return e.from == this.to && e.to == this.from;
+        }
+        return false;
+    }
+
     public GraphNode getFrom() {
         return from;
     }

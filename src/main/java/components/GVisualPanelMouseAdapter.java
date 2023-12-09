@@ -23,6 +23,8 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
 
         // 노드 추가 모드 + 왼쪽 더블클릭 한 경우에만 리스너 수행
         if (currentMode == GVisualPanel.Mode.NODE_MODE && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+            GraphNode cursorNode = selectNodeFromCursorPos(e);
+
             // 노드 이름을 입력받는다.
             String nodeName;
             nodeName = JOptionPane.showInputDialog("새 노드 이름을 입력하세요.");
@@ -39,6 +41,13 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
                     JOptionPane.showMessageDialog(null, "이미 존재하는 노드 이름입니다.");
                     return;
                 }
+            }
+
+            if (cursorNode != null) {
+                cursorNode.setName(nodeName);
+                e.getComponent().repaint();
+                gVisualPanelWrapper.getgInfoPanel().repaint();
+                return;
             }
 
             GraphNode newNode = new GraphNode(nodeName);

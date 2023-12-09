@@ -20,6 +20,10 @@ public class GraphNode implements java.io.Serializable {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
@@ -82,7 +86,7 @@ public class GraphNode implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     // 노드 이름
-    private final String name;
+    private String name;
     // 노드의 화면상 좌표
     private int x;
     private int y;

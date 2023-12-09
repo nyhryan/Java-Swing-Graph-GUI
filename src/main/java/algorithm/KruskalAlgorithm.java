@@ -63,7 +63,7 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
                     else
                         sb.append("<tr>");
 
-                    sb.append(String.format("<td>%s→%s</td><td>%.1f</td>", edgeStr.getFrom().getName(), edgeStr.getTo().getName(), edgeStr.getWeight()));
+                    sb.append(String.format("<td>%s - %s</td><td>%.1f</td>", edgeStr.getFrom().getName(), edgeStr.getTo().getName(), edgeStr.getWeight()));
 
                     if (chosen.get(edgeStr))
                         sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
@@ -101,6 +101,14 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
                 waitAndRepaint();
             }
 
+            for (GraphEdge edge : edges) {
+                if (!mst.contains(edge)) {
+                    edge.setColor(Color.GRAY);
+                    edge.setStrokeWidth(1.0f);
+                }
+            }
+            waitAndRepaint();
+
             String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</li></ul>", totalWeight);
             showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
 
@@ -108,7 +116,7 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
             int startIndex = text.indexOf("<body>");
             int endIndex = text.lastIndexOf("</body>");
             String content = text.substring(startIndex + 6, endIndex);
-            editorPane.setText(content +  String.format("<h2>탐색결과</h2><hr/>%s", msg));
+            editorPane.setText(content + String.format("<h2>탐색결과</h2><hr/>%s", msg));
         }
     }
 

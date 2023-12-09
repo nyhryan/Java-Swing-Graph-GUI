@@ -40,7 +40,7 @@ public class GInfoPanel extends JPanel {
         add(scrollPane);
 
         // 알고리즘 버튼들과 애니메이션 속도 슬라이더 등을 모은 패널
-        JPanel buttonPanel = addGInfoPanelComponents();
+        JPanel buttonPanel = panelWithAlgorithmButtons();
         add(buttonPanel);
     }
 
@@ -153,7 +153,7 @@ public class GInfoPanel extends JPanel {
 
         return new GraphNode[]{startNode, endNode};
     }
-    private JPanel addGInfoPanelComponents() {
+    private JPanel panelWithAlgorithmButtons() {
         JButton dijkstraBtn = new JButton("Dijkstra");
         dijkstraBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);

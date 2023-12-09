@@ -142,6 +142,7 @@ public class GVisualPanel extends JPanel {
     public void setEmptyGraph() {
         Graph emptyGraph = new Graph();
         graph.setNodes(emptyGraph.getNodes());
+        graph.setEdges(emptyGraph.getEdges());
         graph.setAdjacencyList(emptyGraph.getAdjacencyList());
         repaint();
         gVisualPanelWrapper.getgInfoPanel().repaint();

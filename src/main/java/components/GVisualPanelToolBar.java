@@ -14,7 +14,7 @@ class GVisualPanelToolBar extends JToolBar {
         JLabel currentModeLabel = new JLabel("현재 모드: 선택");
         currentModeLabel.setFont(gVisualPanel.getFont());
 
-        ImageIcon addNodeIcon = ImageIconLoader.getImageIcon("/node.png");
+        ImageIcon addNodeIcon = ImageIconLoader.getImageIcon("/node.png", 16);
         JButton addNodeButton = addToolBarButton("노드 추가/제거", "좌 더블클릭으로 노드 추가, 우클릭으로 노드 제거", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.NODE_MODE);
             currentModeLabel.setText("모드: 노드 추가/제거");
@@ -22,7 +22,7 @@ class GVisualPanelToolBar extends JToolBar {
         addNodeButton.setIcon(addNodeIcon);
         add(addNodeButton);
 
-        ImageIcon addEdgeIcon = ImageIconLoader.getImageIcon("/edge.png");
+        ImageIcon addEdgeIcon = ImageIconLoader.getImageIcon("/edge.png", 16);
         JButton addEdgeButton = addToolBarButton("간선 추가/제거", "한 노드를 클릭하고 다른 노드로 드래그해서 간선 추가. 가중치로 0을 입력하면 간선 제거",
                 e -> {
                     gVisualPanel.setMode(GVisualPanel.Mode.EDGE_MODE);
@@ -31,7 +31,7 @@ class GVisualPanelToolBar extends JToolBar {
         addEdgeButton.setIcon(addEdgeIcon);
         add(addEdgeButton);
 
-        ImageIcon moveIcon = ImageIconLoader.getImageIcon("/move.png");
+        ImageIcon moveIcon = ImageIconLoader.getImageIcon("/move.png", 16);
         JButton moveBtn = addToolBarButton("이동", "노드를 클릭해서 드래그해서 이동", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.MOVE);
             currentModeLabel.setText("모드: 이동");
@@ -44,7 +44,7 @@ class GVisualPanelToolBar extends JToolBar {
         add(currentModeLabel);
 
         addSeparator();
-        ImageIcon randomIcon = ImageIconLoader.getImageIcon("/random.png");
+        ImageIcon randomIcon = ImageIconLoader.getImageIcon("/random.png", 16);
         JButton randomBtn = addToolBarButton("랜덤 그래프 생성", "랜덤 그래프를 생성합니다.", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
             gVisualPanel.setRandomGraph();
@@ -52,7 +52,7 @@ class GVisualPanelToolBar extends JToolBar {
         randomBtn.setIcon(randomIcon);
         add(randomBtn);
 
-        ImageIcon resetIcon = ImageIconLoader.getImageIcon("/reset.png");
+        ImageIcon resetIcon = ImageIconLoader.getImageIcon("/reset.png", 16);
         JButton resetBtn = addToolBarButton("그래프 초기화", "그래프를 초기화합니다.", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
             gVisualPanel.resetGraph();
@@ -60,7 +60,7 @@ class GVisualPanelToolBar extends JToolBar {
         resetBtn.setIcon(resetIcon);
         add(resetBtn);
 
-        ImageIcon emptyIcon = ImageIconLoader.getImageIcon("/empty.png");
+        ImageIcon emptyIcon = ImageIconLoader.getImageIcon("/empty.png", 16);
         JButton emptyBtn = addToolBarButton("화면 지우기", "화면을 지웁니다.", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
             gVisualPanel.setEmptyGraph();

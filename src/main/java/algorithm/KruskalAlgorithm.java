@@ -1,6 +1,7 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
+import components.RandomColor;
 import graph.*;
 
 import javax.swing.*;
@@ -9,137 +10,96 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class KruskalAlgorithm extends GraphAlgorithm {
-    public KruskalAlgorithm(GVisualPanelWrapper gVisualPanelWrapper) {
-        super(gVisualPanelWrapper, "Kruskal Algorithm".toUpperCase());
-        graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+    public KruskalAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, IAlgorithmListener listener) {
+        super(gVisualPanelWrapper, "Kruskal Algorithm".toUpperCase(), listener);
         nodes = graph.getNodes();
+
+        sortedEdges = graph.getEdges();
+        sortedEdges.sort(GraphEdge::compareTo);
+
+        for (GraphEdge edge : sortedEdges) {
+            chosen.put(edge, false);
+        }
+
+        for (GraphNode node : nodes) {
+            parent.put(node, node);
+        }
+
+        mst = new ArrayList<>(nodes.size() - 1);
     }
 
     @Override
     public void run() {
-        synchronized (graph) {
-            // 초기화(색상, 거리, 방문 기록)
-            graph.resetGraphProperties();
-            gVisualPanelWrapper.repaint();
+        listener.onAlgorithmStarted();
 
-            // Sort edges by weight
-            ArrayList<GraphEdge> edges = graph.getEdges();
-            edges.sort(GraphEdge::compareTo);
-
-            HashMap<GraphEdge, Boolean> chosen = new HashMap<>();
-            for (GraphEdge edge : edges) {
-                chosen.put(edge, false);
-            }
-
-            // Initialize the parent array
-            LinkedHashMap<GraphNode, GraphNode> parent = new LinkedHashMap<>();
-            for (GraphNode node : nodes) {
-                parent.put(node, node);
-            }
-
-            // Initialize the result array
-            ArrayList<GraphEdge> mst = new ArrayList<>(nodes.size() - 1);
-
-            var editorPane = gVisualPanelWrapper.getgInfoPanel().getEditorPane();
-            StringBuilder sb = new StringBuilder();
-
-            // Loop through all edges
-            for (GraphEdge edge : edges) {
-                sb.setLength(0);
-                sb.append("<h1>Kruskal Algorithm</h1><hr/>")
-                        .append("<table border=\"1\">")
-                        .append("<tr><td>간선</td>")
-                        .append("<td>가중치</td>")
-                        .append("<td>채택</td></tr>");
-
-                // 간선, 채택 표 그리기
-                for (GraphEdge edgeStr : edges) {
-                    if (edgeStr.equals(edge))
-                        sb.append("<tr style=\"background-color:yellow;\">");
-                    else
-                        sb.append("<tr>");
-
-                    sb.append(String.format("<td>%s - %s</td><td>%.1f</td>", edgeStr.getFrom().getName(), edgeStr.getTo().getName(), edgeStr.getWeight()));
-
-                    if (chosen.get(edgeStr))
-                        sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
-                    else
-                        sb.append("<td>&#10007;</td>");
-
-                    sb.append("</tr>");
-                }
-                editorPane.setText(sb.toString());
-
-                GraphNode u = edge.getFrom();
-                GraphNode v = edge.getTo();
-
-                // Find the root of the tree that u belongs to
-                GraphNode uRoot = find(parent, u);
-
-                // Find the root of the tree that v belongs to
-                GraphNode vRoot = find(parent, v);
-
-                // If they belong to different trees, merge them
-                if (uRoot != vRoot) {
-                    union(parent, uRoot, vRoot, edge);
-                    mst.add(edge);
-                    chosen.put(edge, true);
-                }
-                waitAndRepaint();
-            }
-
-            sb.setLength(0);
-            sb.append("<h1>Kruskal Algorithm</h1><hr/>")
-                    .append("<table border=\"1\">")
-                    .append("<tr><td>간선</td>")
-                    .append("<td>가중치</td>")
-                    .append("<td>채택</td></tr>");
-
-            // 간선, 채택 표 그리기
-            for (GraphEdge edgeStr : edges) {
-                sb.append(String.format("<td>%s - %s</td><td>%.1f</td>", edgeStr.getFrom().getName(), edgeStr.getTo().getName(), edgeStr.getWeight()));
-
-                if (chosen.get(edgeStr))
-                    sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
-                else
-                    sb.append("<td>&#10007;</td>");
-
-                sb.append("</tr>");
-            }
-            editorPane.setText(sb.toString());
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-
-            double totalWeight = 0;
-
-            for (GraphEdge edge : mst) {
-                edge.setStrokeColor(Color.blue);
-                edge.setStrokeWidth(5.0f);
-                totalWeight += edge.getWeight();
-                waitAndRepaint();
-            }
-
-            for (GraphEdge edge : edges) {
-                if (!mst.contains(edge)) {
-                    edge.setStrokeColor(Color.GRAY);
-                    edge.setStrokeWidth(1.0f);
-                }
-            }
-            waitAndRepaint();
-
-            String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</li></ul>", totalWeight);
-            showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
-
-            String text = editorPane.getText();
-            int startIndex = text.indexOf("<body>");
-            int endIndex = text.lastIndexOf("</body>");
-            String content = text.substring(startIndex + 6, endIndex);
-            editorPane.setText(content + String.format("<h2>탐색결과</h2><hr/>%s", msg));
-            gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
+        while (!isCompleted) {
+            kruskal();
+            semaphore.release();
         }
+        double totalWeight = 0.0;
+
+        // MST 그리기
+        for (var edge : sortedEdges) {
+            if (chosen.get(edge)) {
+                edge.setStrokeColor(Color.GREEN);
+                edge.setTextColor(Color.BLACK);
+                edge.setStrokeWidth(5.0f);
+            }
+            else {
+                edge.setStrokeColor(Color.GRAY);
+                edge.setStrokeWidth(0.1f);
+            }
+
+            var reversedEdge = graph.getEdge(edge.getTo(), edge.getFrom());
+            reversedEdge.setStrokeColor(edge.getStrokeColor());
+            reversedEdge.setTextColor(edge.getTextColor());
+            reversedEdge.setStrokeWidth(edge.getStrokeWidth());
+
+            totalWeight += edge.getWeight();
+            waitAndRepaint();
+        }
+
+        String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</li></ul>", totalWeight);
+        showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+
+        String text = gVisualPanelWrapper.getgInfoPanel().getEditorPane().getText();
+        int startIndex = text.indexOf("<body>");
+        int endIndex = text.lastIndexOf("</body>");
+        String content = text.substring(startIndex + 6, endIndex);
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(content + String.format("<h2>탐색결과</h2><hr/>%s", msg));
+
+        listener.onAlgorithmFinished();
+    }
+
+    private void kruskal() {
+        for (GraphEdge edge : sortedEdges) {
+            GraphNode u = edge.getFrom();
+            GraphNode v = edge.getTo();
+
+            GraphNode uRoot = find(parent, u);
+            GraphNode vRoot = find(parent, v);
+
+            if (uRoot != vRoot) {
+                chosen.put(edge, true);
+                mst.add(edge);
+
+                union(parent, u, v, edge);
+            }
+
+            gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                    String.format("<h1>Kruskal Algorithm</h1><hr/>%s", drawSortedEdges(sortedEdges.indexOf(edge))));
+
+            waitAndRepaint();
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        isCompleted = true;
     }
 
     private GraphNode find(LinkedHashMap<GraphNode, GraphNode> parent, GraphNode i) {
@@ -155,33 +115,98 @@ public class KruskalAlgorithm extends GraphAlgorithm {
 
         if (!uRoot.equals(vRoot)) {
             if (uRoot.getFillColor().equals(Color.WHITE) && vRoot.getFillColor().equals(Color.WHITE)) {
-                // get random RGB value
-                int r = (int) (Math.random() * 256);
-                int g = (int) (Math.random() * 256);
-                int b = (int) (Math.random() * 256);
-                Color color = new Color(r, g, b);
-                uRoot.setFillColor(color);
-                vRoot.setFillColor(color);
-            } else {
-                if (uRoot.getFillColor().equals(Color.WHITE))
-                    uRoot.setFillColor(vRoot.getFillColor());
-                else
-                    vRoot.setFillColor(uRoot.getFillColor());
+                Color randColor = RandomColor.getRandomColor();
+                Color randTextColor = RandomColor.getCorrectTextColor(randColor);
+                uRoot.setFillColor(randColor);
+                uRoot.setTextColor(randTextColor);
 
-                // make all node's color same that is in the same tree
-                for (GraphNode node : nodes) {
-                    var root = find(parent, node);
-                    if (root.equals(uRoot))
-                        node.setFillColor(uRoot.getFillColor());
-                    else if (root.equals(vRoot))
-                        node.setFillColor(vRoot.getFillColor());
+                vRoot.setFillColor(randColor);
+                vRoot.setTextColor(randTextColor);
+
+            } else if (uRoot.getFillColor().equals(Color.WHITE)) {
+                uRoot.setFillColor(vRoot.getFillColor());
+                uRoot.setTextColor(vRoot.getTextColor());
+            } else if (vRoot.getFillColor().equals(Color.WHITE)) {
+                vRoot.setFillColor(uRoot.getFillColor());
+                vRoot.setTextColor(uRoot.getTextColor());
+            }
+
+            parent.put(uRoot, vRoot);
+
+            // make all node's color same that is in the same tree
+            for (GraphNode node : nodes) {
+                var root = find(parent, node);
+                if (root.equals(uRoot)) {
+                    node.setFillColor(uRoot.getFillColor());
+                    node.setTextColor(uRoot.getTextColor());
+                } else if (root.equals(vRoot)) {
+                    node.setFillColor(vRoot.getFillColor());
+                    node.setTextColor(vRoot.getTextColor());
                 }
             }
-            e.setStrokeColor(vRoot.getFillColor());
-            parent.put(uRoot, vRoot);
+
+            // make all edge's color same that is in the same tree
+            for (GraphEdge edge : graph.getEdges()) {
+                boolean isChosenEdge = false;
+                for (var _e : chosen.keySet()) {
+                    if (chosen.get(_e) && _e.equals(edge)) {
+                        isChosenEdge = true;
+                        break;
+                    }
+                }
+                if (!isChosenEdge) {
+                    continue;
+                }
+
+                var _u = edge.getFrom();
+                var _v = edge.getTo();
+                var uRoot2 = find(parent, _u);
+                var vRoot2 = find(parent, _v);
+                if (uRoot2.equals(vRoot2)) {
+                    edge.setStrokeColor(uRoot2.getFillColor());
+                    edge.setTextColor(uRoot2.getTextColor());
+                    edge.setStrokeWidth(3.0f);
+
+                    var reversedEdge = graph.getEdge(_v, _u);
+                    reversedEdge.setStrokeColor(uRoot2.getFillColor());
+                    reversedEdge.setTextColor(uRoot2.getTextColor());
+                    reversedEdge.setStrokeWidth(3.0f);
+                }
+            }
         }
     }
 
-    private final Graph graph;
+    private String drawSortedEdges(int i) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table border=\"1\">")
+                .append("<tr><td>간선</td>")
+                .append("<td>가중치</td>")
+                .append("<td>채택</td>")
+                .append("<td>현재</td></tr>");
+
+        for (GraphEdge edge : sortedEdges) {
+            sb.append("<tr>");
+            sb.append(String.format("<td>%s - %s</td><td>%.1f</td>", edge.getFrom().getName(), edge.getTo().getName(), edge.getWeight()));
+
+            if (chosen.get(edge))
+                sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
+            else
+                sb.append("<td>&#10007;</td>");
+
+            if (sortedEdges.indexOf(edge) == i)
+                sb.append("<td style=\"background-color:#FFFFFF\">&#9754;</td>");
+            else
+                sb.append("<td style=\"background-color:#FFFFFF\"> </td>");
+
+            sb.append("</tr>");
+        }
+        sb.append("</table>");
+        return sb.toString();
+    }
+
     private final ArrayList<GraphNode> nodes;
+    private final ArrayList<GraphEdge> sortedEdges;
+    private final ArrayList<GraphEdge> mst;
+    private final HashMap<GraphEdge, Boolean> chosen = new HashMap<>();
+    private final LinkedHashMap<GraphNode, GraphNode> parent = new LinkedHashMap<>();
 }

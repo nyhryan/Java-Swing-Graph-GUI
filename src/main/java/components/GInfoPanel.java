@@ -38,11 +38,12 @@ public class GInfoPanel extends JPanel {
 
         // 그래프 정보를 출력할 JEditorPane을 스크롤 패널에 추가한다.
         JScrollPane scrollPane = new JScrollPane(editorPane);
-        scrollPane.setPreferredSize(new Dimension(300, 600));
+        scrollPane.setPreferredSize(new Dimension(300, 900));
         add(scrollPane);
 
         // 알고리즘 버튼들과 애니메이션 속도 슬라이더 등을 모은 패널
         JPanel buttonPanel = panelWithAlgorithmButtons();
+        buttonPanel.setSize(new Dimension(300, 300));
         add(buttonPanel);
     }
 
@@ -144,6 +145,7 @@ public class GInfoPanel extends JPanel {
         // 시작 노드, 끝 노드를 선택할 수 있는 콤보 박스를 생성하고, 패널에 추가한다.
         JComboBox<String> startNodeCbx = new JComboBox<>(new DefaultComboBoxModel<>(nodeNames));
         JComboBox<String> endNodeCbx = new JComboBox<>(new DefaultComboBoxModel<>(nodeNames));
+        endNodeCbx.setSelectedItem(nodeNames[1]);
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -198,6 +200,52 @@ public class GInfoPanel extends JPanel {
 
     private JPanel panelWithAlgorithmButtons() {
         JButton DFSBtn = new JButton("깊이 우선");
+        JButton BFSBtn = new JButton("너비 우선");
+        JButton dijkstraBtn = new JButton("Dijkstra");
+        JButton floydBtn = new JButton("Floyd");
+        JButton kruskalBtn = new JButton("Kruskal");
+        JButton primBtn = new JButton("Prim");
+
+        JButton nextStepBtn = new JButton("다음 단계");
+        ImageIcon nextStepIcon = ImageIconLoader.getImageIcon("/next.png", 24);
+        nextStepBtn.setIcon(nextStepIcon);
+
+        JButton resumeBtn = new JButton("알고리즘 재개");
+        ImageIcon resumeIcon = ImageIconLoader.getImageIcon("/resume.png", 24);
+        resumeBtn.setIcon(resumeIcon);
+
+        JButton stopBtn = new JButton("알고리즘 중단");
+        ImageIcon stopIcon = ImageIconLoader.getImageIcon("/stop.png", 24);
+        stopBtn.setIcon(stopIcon);
+
+        JButton[] algorithmBtns = {DFSBtn, BFSBtn, dijkstraBtn, floydBtn, kruskalBtn, primBtn};
+        JButton[] controlBtns = {nextStepBtn, resumeBtn, stopBtn};
+        for (JButton btn : controlBtns) {
+            btn.setEnabled(false);
+        }
+
+        IAlgorithmListener listenter = new IAlgorithmListener() {
+            @Override
+            public void onAlgorithmStarted() {
+                for (JButton btn : algorithmBtns) {
+                    btn.setEnabled(false);
+                }
+                for (JButton btn : controlBtns) {
+                    btn.setEnabled(true);
+                }
+            }
+            @Override
+            public void onAlgorithmFinished() {
+                gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
+                for (JButton btn : algorithmBtns) {
+                    btn.setEnabled(true);
+                }
+                for (JButton btn : controlBtns) {
+                    btn.setEnabled(false);
+                }
+            }
+        };
+
         DFSBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
 
@@ -205,28 +253,31 @@ public class GInfoPanel extends JPanel {
             if (startNode == null) return;
 
             SwingUtilities.invokeLater(() -> {
-                var dfs = new DFSAlgorithm(gVisualPanelWrapper, startNode);
+                var dfs = new DFSAlgorithm(gVisualPanelWrapper, startNode, listenter);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 dfs.startAlgorithm();
                 dfs.start();
             });
         });
 
-        JButton BFSBtn = new JButton("너비 우선");
         BFSBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
+
+            for (JButton btn : algorithmBtns) {
+                btn.setEnabled(false);
+            }
 
             GraphNode startNode = selectStartNode();
             if (startNode == null) return;
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new BFSAlgorithm(gVisualPanelWrapper, startNode);
+                var bfs = new BFSAlgorithm(gVisualPanelWrapper, startNode, listenter);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
-                t.start();
+                bfs.startAlgorithm();
+                bfs.start();
             });
         });
 
-        JButton dijkstraBtn = new JButton("Dijkstra");
         dijkstraBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
 
@@ -237,13 +288,13 @@ public class GInfoPanel extends JPanel {
             GraphNode endNode = nodes[1];
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new DijkstraAlgorithm(gVisualPanelWrapper, startNode, endNode);
+
+                Thread t = new DijkstraAlgorithm(gVisualPanelWrapper, startNode, endNode, listenter);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
 
-        JButton floydBtn = new JButton("Floyd");
         floydBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
             // 시작 노드와 끝 노드를 선택한다.
@@ -253,23 +304,21 @@ public class GInfoPanel extends JPanel {
             GraphNode endNode = nodes[1];
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new FloydAlgorithm(gVisualPanelWrapper, startNode, endNode);
+                FloydAlgorithm t = new FloydAlgorithm(gVisualPanelWrapper, startNode, endNode, listenter);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
 
-        JButton kruskalBtn = new JButton("Kruskal");
         kruskalBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
             SwingUtilities.invokeLater(() -> {
-                Thread t = new KruskalAlgorithm(gVisualPanelWrapper);
+                KruskalAlgorithm t = new KruskalAlgorithm(gVisualPanelWrapper, listenter);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
 
-        JButton primBtn = new JButton("Prim");
         primBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
 
@@ -277,86 +326,47 @@ public class GInfoPanel extends JPanel {
             if (startNode == null) return;
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new PrimAlgorithm(gVisualPanelWrapper, startNode);
+                PrimAlgorithm t = new PrimAlgorithm(gVisualPanelWrapper, startNode, listenter);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
 
-        JButton nextStepBtn = new JButton("다음 단계");
         // proceed current algorithm to next step
         nextStepBtn.addActionListener(e -> {
             for (Thread t : Thread.getAllStackTraces().keySet()) {
                 if (t.getName().contains("Algorithm".toUpperCase())) {
-                    switch (t.getName()) {
-                        case "DFS ALGORITHM" :
-                            ((DFSAlgorithm) t).singleStep();
-                            break;
-//                        case "BFSAlgorithm":
-//                            ((BFSAlgorithm) t).performNextStep();
-//                            break;
-//                        case "DijkstraAlgorithm":
-//                            ((DijkstraAlgorithm) t).performNextStep();
-//                            break;
-//                        case "FloydAlgorithm":
-//                            ((FloydAlgorithm) t).performNextStep();
-//                            break;
-//                        case "KruskalAlgorithm":
-//                            ((KruskalAlgorithm) t).performNextStep();
-//                            break;
-//                        case "PrimAlgorithm":
-//                            ((PrimAlgorithm) t).performNextStep();
-//                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + t.getName());
-                    }
+                    var ga = (GraphAlgorithm) t;
+                    ga.singleStep();
                 }
             }
         });
 
-        JButton resumeBtn = new JButton("알고리즘 재개");
         resumeBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
             for (Thread t : Thread.getAllStackTraces().keySet()) {
                 if (t.getName().contains("Algorithm".toUpperCase())) {
-                    switch (t.getName()) {
-                        case "DFS ALGORITHM":
-                            ((DFSAlgorithm) t).resumeAlgorithm();
-                            break;
-//                        case "BFSAlgorithm":
-//                            ((BFSAlgorithm) t).performNextStep();
-//                            break;
-//                        case "DijkstraAlgorithm":
-//                            ((DijkstraAlgorithm) t).performNextStep();
-//                            break;
-//                        case "FloydAlgorithm":
-//                            ((FloydAlgorithm) t).performNextStep();
-//                            break;
-//                        case "KruskalAlgorithm":
-//                            ((KruskalAlgorithm) t).performNextStep();
-//                            break;
-//                        case "PrimAlgorithm":
-//                            ((PrimAlgorithm) t).performNextStep();
-//                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + t.getName());
-                    }
+                    var ga = (GraphAlgorithm) t;
+                    ga.resumeAlgorithm();
                 }
             }
         });
 
-        JButton stopBtn = new JButton("알고리즘 중단");
-        ImageIcon stopIcon = ImageIconLoader.getImageIcon("/stop.png");
-        stopBtn.setIcon(stopIcon);
         stopBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DEFAULT);
             for (Thread t : Thread.getAllStackTraces().keySet()) {
                 if (t.getName().contains("Algorithm".toUpperCase())) {
                     t.interrupt();
                     gVisualPanelWrapper.getgVisualPanel().resetGraph();
-                    showMessageDialog(null, "알고리즘을 중단합니다.", "알고리즘 중단", JOptionPane.WARNING_MESSAGE);
-                    break;
                 }
+            }
+            showMessageDialog(null, "알고리즘을 중단합니다.", "알고리즘 중단", JOptionPane.WARNING_MESSAGE);
+            gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
+            for (JButton btn : algorithmBtns) {
+                btn.setEnabled(true);
+            }
+            for (JButton btn : controlBtns) {
+                btn.setEnabled(false);
             }
         });
 
@@ -369,38 +379,34 @@ public class GInfoPanel extends JPanel {
         gbc.gridy = 0;
         gbc.insets = new Insets(4, 4, 4, 4);
 
-        JPanel traversalPanel = new JPanel();
-        traversalPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "순회 알고리즘", TitledBorder.LEFT, TitledBorder.TOP));
-        traversalPanel.add(DFSBtn);
-        traversalPanel.add(BFSBtn);
+        ImageIcon traversalIcon = ImageIconLoader.getImageIcon("/traversal.png", 32);
+        ImageIcon shortestPathIcon = ImageIconLoader.getImageIcon("/path.png", 32);
+        ImageIcon mstIcon = ImageIconLoader.getImageIcon("/mst.png", 32);
 
-        buttonPanel.add(traversalPanel, gbc);
-
-        gbc.gridx++;
-        JPanel routingPanel = new JPanel();
-        routingPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "경로 탐색 알고리즘", TitledBorder.LEFT, TitledBorder.TOP));
-        routingPanel.add(dijkstraBtn);
-        routingPanel.add(floydBtn);
-
-        buttonPanel.add(routingPanel, gbc);
-
-        gbc.gridx++;
-        JPanel MSTPanel = new JPanel();
-        MSTPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "MST 탐색 알고리즘", TitledBorder.LEFT, TitledBorder.TOP));
-        MSTPanel.add(kruskalBtn);
-        MSTPanel.add(primBtn);
-        buttonPanel.add(MSTPanel, gbc);
+        JPanel algorithmButtonsPanel = new JPanel();
+        algorithmButtonsPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "알고리즘", TitledBorder.LEFT, TitledBorder.TOP, new Font("SansSerif", Font.BOLD, 14)));
+        algorithmButtonsPanel.setLayout(new GridLayout(3, 3, 4, 4));
+        algorithmButtonsPanel.add(new JLabel("그래프 순회", traversalIcon, JLabel.CENTER));
+        algorithmButtonsPanel.add(DFSBtn);
+        algorithmButtonsPanel.add(BFSBtn);
+        algorithmButtonsPanel.add(new JLabel("최단 경로 탐색", shortestPathIcon, JLabel.CENTER));
+        algorithmButtonsPanel.add(dijkstraBtn);
+        algorithmButtonsPanel.add(floydBtn);
+        algorithmButtonsPanel.add(new JLabel("MST 생성", mstIcon, JLabel.CENTER));
+        algorithmButtonsPanel.add(kruskalBtn);
+        algorithmButtonsPanel.add(primBtn);
+        buttonPanel.add(algorithmButtonsPanel, gbc);
 
         // 애니메이션 속도를 입력할 Spinner 추가
         JPanel animSpeedPanel = new JPanel();
         animSpeedPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), "애니메이션 속도", TitledBorder.LEFT, TitledBorder.TOP));
+
         JLabel animSpeedLabel = new JLabel("밀리초(ms)");
         animSpeedPanel.add(animSpeedLabel);
-        JSpinner animSpeed = new JSpinner(new SpinnerNumberModel(1000, 0, 10000, 100));
+
+        JSpinner animSpeed = new JSpinner(new SpinnerNumberModel(1000, 1, 10000, 100));
         animSpeed.addChangeListener(e -> {
             int value = (int) animSpeed.getValue();
             gVisualPanelWrapper.getgVisualPanel().setAnimationSpeed(value);
@@ -411,12 +417,15 @@ public class GInfoPanel extends JPanel {
         gbc.gridy++;
         buttonPanel.add(animSpeedPanel, gbc);
 
+        JPanel controlPanel = new JPanel();
+        controlPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "알고리즘 제어", TitledBorder.LEFT, TitledBorder.TOP));
+        controlPanel.add(nextStepBtn);
+        controlPanel.add(resumeBtn);
+        controlPanel.add(stopBtn);
+
         gbc.gridy++;
-        buttonPanel.add(nextStepBtn, gbc);
-        gbc.gridx++;
-        buttonPanel.add(resumeBtn, gbc);
-        gbc.gridx++;
-        buttonPanel.add(stopBtn, gbc);
+        buttonPanel.add(controlPanel, gbc);
 
         return buttonPanel;
     }

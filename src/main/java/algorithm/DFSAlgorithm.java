@@ -1,28 +1,17 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
-import graph.Graph;
 import graph.GraphNode;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.LinkedHashSet;
 import java.util.Stack;
-import java.util.concurrent.Semaphore;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class DFSAlgorithm extends GraphAlgorithm {
-    public DFSAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode) {
-        super(gVisualPanelWrapper, "DFS Algorithm".toUpperCase());
+    public DFSAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode, IAlgorithmListener listener) {
+        super(gVisualPanelWrapper, "DFS Algorithm".toUpperCase(), listener);
         this.startNode = startNode;
-        this.graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
-
-        graph.resetGraphProperties();
-        SwingUtilities.invokeLater(() -> {
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        });
 
         startNode.setVisited(true);
         stack.push(startNode);
@@ -32,18 +21,20 @@ public class DFSAlgorithm extends GraphAlgorithm {
 
     @Override
     public void run() {
+        listener.onAlgorithmStarted();
+
         while (!isCompleted) {
             try {
                 semaphore.acquire();
                 dfs();
                 semaphore.release();
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
                 throw new RuntimeException("Thread interrupted", e);
             }
         }
 
         showMessageDialog(null, "Algorithm completed");
+        listener.onAlgorithmFinished();
     }
 
     private void dfs() {
@@ -56,15 +47,17 @@ public class DFSAlgorithm extends GraphAlgorithm {
         }
 
         GraphNode node = stack.pop();
-        node.setFillColor(Color.RED);
+        node.setFillColor(COLOR_1);
+        node.setTextColor(COLOR_1_TEXT);
         waitAndRepaint();
 
-        for (var n : graph.getAdjacencyList().get(graph.getNodes().indexOf(node))) {
-            var adjacentNode = n.getTo();
+        for (var edge : graph.getAdjacencyList().get(graph.getNodes().indexOf(node))) {
+            var adjacentNode = edge.getTo();
 
             if (!adjacentNode.isVisited()) {
                 adjacentNode.setVisited(true);
-                adjacentNode.setFillColor(Color.GREEN);
+                adjacentNode.setFillColor(COLOR_2);
+                adjacentNode.setTextColor(COLOR_2_TEXT);
                 stack.push(adjacentNode);
                 vistedNodes.add(adjacentNode);
 
@@ -80,7 +73,8 @@ public class DFSAlgorithm extends GraphAlgorithm {
             }
         }
 
-        node.setFillColor(Color.GREEN);
+        node.setFillColor(COLOR_2);
+        node.setTextColor(COLOR_2_TEXT);
         gVisualPanelWrapper.getgVisualPanel().repaint();
 
         if (vistedNodes.size() == graph.getNodes().size()) {
@@ -88,7 +82,6 @@ public class DFSAlgorithm extends GraphAlgorithm {
             isCompleted = true;
         }
     }
-
 
     public static String vistedNodesString(LinkedHashSet<GraphNode> visitedNodes) {
         StringBuilder sb = new StringBuilder();
@@ -116,8 +109,6 @@ public class DFSAlgorithm extends GraphAlgorithm {
     }
 
     private final GraphNode startNode;
-    private final Graph graph;
     private final Stack<GraphNode> stack = new Stack<>();
     private final LinkedHashSet<GraphNode> vistedNodes = new LinkedHashSet<>();
-    private boolean isCompleted = false;
 }

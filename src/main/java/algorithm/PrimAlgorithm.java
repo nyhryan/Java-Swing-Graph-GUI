@@ -12,149 +12,131 @@ import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class PrimAlgorithm extends GraphAlgorithm {
-    public PrimAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode) {
-        super(gVisualPanelWrapper, "Kruskal Algorithm".toUpperCase());
+    public PrimAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode, IAlgorithmListener listener) {
+        super(gVisualPanelWrapper, "Kruskal Algorithm".toUpperCase(), listener);
         this.startNode = startNode;
-        graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
         nodes = graph.getNodes();
+
+        for (var node : nodes) {
+            node.setVisited(false);
+        }
+
+        for (var edge : graph.getEdges()) {
+            visitedEdges.put(edge, false);
+        }
+
+        mst = new ArrayList<>(nodes.size() - 1);
+
+        startNode.setVisited(true);
+        startNode.setFillColor(Color.GREEN);
+        gVisualPanelWrapper.getgVisualPanel().repaint();
+        mst.add(startNode);
     }
 
     @Override
     public void run() {
-        synchronized (graph) {
-            var adjacencyList = graph.getAdjacencyList();
-            var editorPane = gVisualPanelWrapper.getgInfoPanel().getEditorPane();
+        listener.onAlgorithmStarted();
 
-            graph.resetGraphProperties();
-            gVisualPanelWrapper.repaint();
-
-            StringBuilder sb = new StringBuilder();
-
-            for (GraphNode node : nodes) {
-                node.setVisited(false);
+        while (!isCompleted) {
+            try {
+                semaphore.acquire();
+                prim();
+                semaphore.release();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
+        }
 
-            var visitedEdges = new HashMap<GraphEdge, Boolean>();
-            for (var edge : graph.getEdges()) {
-                visitedEdges.put(edge, false);
+        double totalWeight = 0.0;
+        for (var edge : graph.getEdges()) {
+            if (edge.getStrokeColor() == COLOR_1) {
+                totalWeight += edge.getWeight();
+                edge.setStrokeColor(Color.GREEN);
+                edge.setTextColor(Color.BLACK);
+            } else {
+                edge.setStrokeColor(Color.GRAY);
             }
-
-            startNode.setVisited(true);
-            startNode.setFillColor(Color.RED);
             waitAndRepaint();
-            int visitedNodes = 1;
+        }
+        String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</li></ul>", totalWeight);
+        showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
 
-            double totalWeight = 0.0;
+        String text = gVisualPanelWrapper.getgInfoPanel().getEditorPane().getText();
+        int startIndex = text.indexOf("<body>");
+        int endIndex = text.lastIndexOf("</body>");
+        String content = text.substring(startIndex + 6, endIndex);
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(content + String.format("<h2>탐색결과</h2><hr/>%s", msg));
 
-            while (visitedNodes < nodes.size()) {
-                sb.setLength(0);
-                sb.append("<h1>Prim Algorithm</h1><hr/>")
-                        .append("<table border=\"1\">")
-                        .append("<tr><td>간선</td>")
-                        .append("<td>가중치</td>")
-                        .append("<td>채택</td></tr>");
+        listener.onAlgorithmFinished();
+    }
 
-                // 간선, 채택 표 그리기
-                for (GraphEdge edge : graph.getEdges()) {
-                    sb.append(String.format("<td>%s - %s</td><td>%.1f</td>", edge.getFrom().getName(), edge.getTo().getName(), edge.getWeight()));
+    private void prim() {
+        if (mst.size() == nodes.size()) {
+            isCompleted = true;
+            return;
+        }
 
-                    if (visitedEdges.get(edge))
-                        sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
-                    else
-                        sb.append("<td>&#10007;</td>");
+        GraphEdge minEdge = null;
+        double minWeight = Double.POSITIVE_INFINITY;
 
-                    sb.append("</tr>");
-                }
-                editorPane.setText(sb.toString());
-
-                GraphEdge minEdge = null;
-                double minWeight = Double.POSITIVE_INFINITY;
-
-                for (GraphNode node : nodes) {
-                    if (node.isVisited()) {
-                        for (GraphEdge edge : adjacencyList.get(nodes.indexOf(node))) {
-                            if (!edge.getTo().isVisited() && edge.getWeight() < minWeight) {
-                                minEdge = edge;
-                                minWeight = edge.getWeight();
-                            }
-                        }
-                    }
-                }
-
-                if (minEdge != null) {
-                    minEdge.getTo().setVisited(true);
-                    GraphEdge reverseEdge = graph.getEdge(minEdge.getTo(), minEdge.getFrom());
-
-                    if (visitedEdges.containsKey(minEdge)) {
-                        visitedEdges.put(minEdge, true);
-                    } else if (visitedEdges.containsKey(reverseEdge)) {
-                        visitedEdges.put(reverseEdge, true);
-                    } else {
-                        throw new RuntimeException("Edge not found!");
-                    }
-
-                    // MST의 간선을 색칠
-                    minEdge.setStrokeColor(Color.RED);
-                    minEdge.setStrokeWidth(5.0f);
-                    // color the reverse edge into red too
-                    reverseEdge.setStrokeColor(Color.RED);
-                    reverseEdge.setStrokeWidth(5.0f);
-
-                    gVisualPanelWrapper.getgInfoPanel().getEditorPane().setText(sb.toString());
-                    waitAndRepaint();
-
-                    // MST의 노드를 색칠
-                    minEdge.getTo().setFillColor(Color.RED);
-                    waitAndRepaint();
-
-                    visitedNodes++;
-                    totalWeight += minEdge.getWeight();
-                } else {
-                    break;
+        for (var node : mst) {
+            for (var edge : graph.getAdjacencyList().get(nodes.indexOf(node))) {
+                if (!mst.contains(edge.getTo()) && edge.getWeight() < minWeight) {
+                    minEdge = edge;
+                    minWeight = edge.getWeight();
                 }
             }
+        }
 
-            sb.setLength(0);
-            sb.append("<h1>Prim Algorithm</h1><hr/>")
-                    .append("<table border=\"1\">")
-                    .append("<tr><td>간선</td>")
-                    .append("<td>가중치</td>")
-                    .append("<td>채택</td></tr>");
+        if (minEdge != null) {
+            minEdge.getTo().setVisited(true);
+            mst.add(minEdge.getTo());
+            minEdge.getTo().setFillColor(COLOR_1);
+            minEdge.getTo().setTextColor(COLOR_1_TEXT);
 
-            // 간선, 채택 표 그리기
-            for (GraphEdge edge : graph.getEdges()) {
-                sb.append(String.format("<td>%s - %s</td><td>%.1f</td>", edge.getFrom().getName(), edge.getTo().getName(), edge.getWeight()));
+            minEdge.setStrokeWidth(3.0f);
+            minEdge.setStrokeColor(COLOR_1);
+            minEdge.setTextColor(COLOR_1_TEXT);
+            var reversedEdge = graph.getEdge(minEdge.getTo(), minEdge.getFrom());
+            reversedEdge.setStrokeWidth(3.0f);
+            reversedEdge.setStrokeColor(COLOR_1);
+            reversedEdge.setTextColor(COLOR_1_TEXT);
+        }
 
-                if (visitedEdges.get(edge))
-                    sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
-                else
-                    sb.append("<td>&#10007;</td>");
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>Prim Algorithm</h1><hr/><ul><li>현재 노드: %s</li>%s</ul>", startNode, drawMstNodes()));
 
-                sb.append("</tr>");
-            }
-            editorPane.setText(sb.toString());
-
-            // color the edges that are not in the MST into gray
-            for (var edge : graph.getEdges()) {
-                if (edge.getStrokeColor() != Color.RED) {
-                    edge.setStrokeColor(Color.GRAY);
-                }
-            }
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-
-            String msg = String.format("<ul><li>%s부터 시작한 최소 신장 트리의 가중치 합: %.1f</li></ul>", startNode, totalWeight);
-            showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
-
-            String text = editorPane.getText();
-            int startIndex = text.indexOf("<body>");
-            int endIndex = text.lastIndexOf("</body>");
-            String content = text.substring(startIndex + 6, endIndex);
-            editorPane.setText(content + String.format("<h2>탐색결과</h2><hr/>%s", msg));
-            gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
+        waitAndRepaint();
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    private String drawMstNodes() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table border=\"1\">")
+                .append("<tr><td>노드</td>")
+                .append("<td>채택</td></tr>");
+
+        for (var node : nodes) {
+            sb.append(String.format("<tr><td>%s</td>", node));
+
+            if (mst.contains(node)) {
+                sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
+            } else {
+                sb.append("<td>&#10007;</td>");
+            }
+
+            sb.append("</tr>");
+        }
+
+        return sb.toString();
+    }
+
     private final GraphNode startNode;
-    private final Graph graph;
     private final ArrayList<GraphNode> nodes;
+    private final HashMap<GraphEdge, Boolean> visitedEdges = new HashMap<>();
+    private final ArrayList<GraphNode> mst;
 }

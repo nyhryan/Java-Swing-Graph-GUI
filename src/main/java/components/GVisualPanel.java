@@ -108,10 +108,10 @@ public class GVisualPanel extends JPanel {
             width = g2d.getFontMetrics().stringWidth(textToDraw);
             height = g2d.getFontMetrics().getHeight();
 
-            g2d.setColor(node.getFillColor());
+            g2d.setColor(Color.WHITE);
             g2d.fillRoundRect(node.getX() - width / 2, node.getY() + height / 4, width, height, 5, 5);
 
-            g2d.setColor(node.getStrokeColor());
+            g2d.setColor(Color.BLACK);
             g2d.drawRoundRect(node.getX() - width / 2, node.getY() + height / 4, width, height, 5, 5);
 
             g2d.drawString(textToDraw, node.getX() - width / 2, node.getY() + height / 4 * 5);

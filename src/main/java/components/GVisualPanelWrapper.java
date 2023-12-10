@@ -23,8 +23,8 @@ public class GVisualPanelWrapper extends JPanel {
 
         // 스플릿 패널에 그래프와 그래프 정보를 그리는 패널을 추가한다.
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, gInfoPanel);
-        splitPane.setDividerLocation(0.5);
-        splitPane.setResizeWeight(0.7);
+        splitPane.setDividerLocation(0.9);
+        splitPane.setResizeWeight(0.9);
         splitPane.setOneTouchExpandable(true);
 
         // splitPane의 divider가 움직이면 발생하는 이벤트 리스너 추가
@@ -39,7 +39,6 @@ public class GVisualPanelWrapper extends JPanel {
         // 화면을 더블클릭한 위치에 새로운 노드 추가
         gVisualPanel.addMouseListener(new GVisualPanelMouseAdapter(this));
         gVisualPanel.addMouseMotionListener(new GVisualPanelMouseAdapter(this));
-
     }
 
     public GVisualPanel getgVisualPanel() {

@@ -1,11 +1,14 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
-import graph.*;
+import graph.GraphNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -75,7 +78,7 @@ public class DijkstraAlgorithm extends GraphAlgorithm {
         );
         gVisualPanelWrapper.getgInfoPanel().repaint();
 
-        showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
         listener.onAlgorithmFinished();
     }
 
@@ -99,7 +102,6 @@ public class DijkstraAlgorithm extends GraphAlgorithm {
         GraphNode minNode = pq.poll().getNode();
         minNode.setFillColor(COLOR_1);
         minNode.setTextColor(COLOR_1_TEXT);
-        System.out.printf("Polled : %s\n", minNode);
         pollingLog.append(String.format("<ul><li>현재 노드: %s, 인접노드: ", minNode));
         waitAndRepaint();
 
@@ -107,7 +109,6 @@ public class DijkstraAlgorithm extends GraphAlgorithm {
             var adjacentNode = edge.getTo();
             adjacentNode.setFillColor(COLOR_2);
             adjacentNode.setTextColor(COLOR_2_TEXT);
-            System.out.printf("\t- Adjacent : %s\n", adjacentNode);
             pollingLog.append(String.format("%s →", adjacentNode));
 
             if (!adjacentNode.isVisited()) {

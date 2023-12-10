@@ -1,17 +1,18 @@
 package components;
 
 import algorithm.*;
-import graph.*;
+import graph.Graph;
+import graph.GraphEdge;
+import graph.GraphNode;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.html.HTMLEditorKit;
-
-import static javax.swing.JOptionPane.showMessageDialog;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  * 그래프 정보를 표시하는 패널

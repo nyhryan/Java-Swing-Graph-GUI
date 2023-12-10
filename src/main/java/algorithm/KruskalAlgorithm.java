@@ -2,7 +2,8 @@ package algorithm;
 
 import components.GVisualPanelWrapper;
 import components.RandomColor;
-import graph.*;
+import graph.GraphEdge;
+import graph.GraphNode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,14 +55,14 @@ public class KruskalAlgorithm extends GraphAlgorithm {
             waitAndRepaint();
         }
 
-        String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</li></ul>", totalWeight);
-        showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
 
+        String msg = String.format("최소 신장 트리의 가중치 합: %.1f", totalWeight);
         String text = gVisualPanelWrapper.getgInfoPanel().getEditorPane().getText();
         int startIndex = text.indexOf("<body>");
         int endIndex = text.lastIndexOf("</body>");
         String content = text.substring(startIndex + 6, endIndex);
-        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(content + String.format("<h2>탐색결과</h2><hr/>%s", msg));
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(content + String.format("<hr/><h2>탐색결과 : %s</h2>", msg));
 
         listener.onAlgorithmFinished();
     }
@@ -156,12 +157,12 @@ public class KruskalAlgorithm extends GraphAlgorithm {
                 if (uRoot2.equals(vRoot2)) {
                     edge.setStrokeColor(uRoot2.getFillColor());
                     edge.setTextColor(uRoot2.getTextColor());
-                    edge.setStrokeWidth(3.0f);
+                    edge.setStrokeWidth(5.0f);
 
                     var reversedEdge = graph.getEdge(_v, _u);
                     reversedEdge.setStrokeColor(uRoot2.getFillColor());
                     reversedEdge.setTextColor(uRoot2.getTextColor());
-                    reversedEdge.setStrokeWidth(3.0f);
+                    reversedEdge.setStrokeWidth(5.0f);
                 }
             }
         }

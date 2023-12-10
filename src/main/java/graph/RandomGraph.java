@@ -1,6 +1,5 @@
 package graph;
 
-import java.util.HashMap;
 import java.util.Random;
 
 public class RandomGraph extends Graph {

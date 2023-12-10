@@ -1,7 +1,7 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
-import graph.*;
+import graph.GraphNode;
 
 import javax.swing.*;
 import java.awt.*;

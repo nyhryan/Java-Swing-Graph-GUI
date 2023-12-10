@@ -1,7 +1,8 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
-import graph.*;
+import graph.GraphEdge;
+import graph.GraphNode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,21 +48,21 @@ public class PrimAlgorithm extends GraphAlgorithm {
                 totalWeight += edge.getWeight();
                 edge.setStrokeColor(Color.GREEN);
                 edge.setTextColor(Color.BLACK);
-                edge.setStrokeWidth(3.0f);
+                edge.setStrokeWidth(5.0f);
             } else {
                 edge.setStrokeColor(Color.GRAY);
                 edge.setStrokeWidth(0.1f);
             }
             waitAndRepaint();
         }
-        String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</li></ul>", totalWeight);
-        showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+        String msg = String.format("최소 신장 트리의 가중치 합: %.1f", totalWeight);
+        showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
 
         String text = gVisualPanelWrapper.getgInfoPanel().getEditorPane().getText();
         int startIndex = text.indexOf("<body>");
         int endIndex = text.lastIndexOf("</body>");
         String content = text.substring(startIndex + 6, endIndex);
-        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(content + String.format("<h2>탐색결과</h2><hr/>%s", msg));
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(content + String.format("<hr/><h2>탐색결과 : %s</h2>", msg));
 
         listener.onAlgorithmFinished();
     }
@@ -90,9 +91,10 @@ public class PrimAlgorithm extends GraphAlgorithm {
             minEdge.getTo().setFillColor(COLOR_1);
             minEdge.getTo().setTextColor(COLOR_1_TEXT);
 
-            minEdge.setStrokeWidth(3.0f);
+            minEdge.setStrokeWidth(5.0f);
             minEdge.setStrokeColor(COLOR_1);
             minEdge.setTextColor(COLOR_1_TEXT);
+
             var reversedEdge = graph.getEdge(minEdge.getTo(), minEdge.getFrom());
             reversedEdge.setStrokeWidth(3.0f);
             reversedEdge.setStrokeColor(COLOR_1);

@@ -1,8 +1,10 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
-import graph.*;
+import graph.Graph;
+import graph.GraphNode;
 
+import javax.swing.*;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -31,7 +33,7 @@ public class BFSAlgorithm extends GraphAlgorithm {
                 throw new RuntimeException(e);
             }
         }
-        showMessageDialog(null, "Algorithm completed");
+        showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
         listener.onAlgorithmFinished();
     }
 
@@ -77,7 +79,6 @@ public class BFSAlgorithm extends GraphAlgorithm {
         gVisualPanelWrapper.getgVisualPanel().repaint();
 
         if (vistedNodes.size() == graph.getNodes().size()) {
-            System.out.println("모든 노드를 방문했습니다.");
             isCompleted = true;
         }
     }

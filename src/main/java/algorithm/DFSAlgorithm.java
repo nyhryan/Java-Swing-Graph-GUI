@@ -1,137 +1,105 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
-import graph.*;
+import graph.Graph;
+import graph.GraphNode;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedHashSet;
 import java.util.Stack;
+import java.util.concurrent.Semaphore;
 
-import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class DFSAlgorithm implements IGraphAlgorithm {
+public class DFSAlgorithm extends GraphAlgorithm {
     public DFSAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode) {
-        this.gVisualPanelWrapper = gVisualPanelWrapper;
+        super(gVisualPanelWrapper, "DFS Algorithm".toUpperCase());
         this.startNode = startNode;
         this.graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
+
+        graph.resetGraphProperties();
+        SwingUtilities.invokeLater(() -> {
+            gVisualPanelWrapper.getgVisualPanel().repaint();
+            gVisualPanelWrapper.getgInfoPanel().repaint();
+        });
+
+        startNode.setVisited(true);
+        stack.push(startNode);
+        vistedNodes.add(startNode);
     }
+
 
     @Override
     public void run() {
-        synchronized (graph) {
-            // 초기화(색상, 거리, 방문 기록)
-            graph.resetGraphProperties();
-            gVisualPanelWrapper.repaint();
+        while (!isCompleted) {
+            try {
+                semaphore.acquire();
+                dfs();
+                semaphore.release();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Thread interrupted", e);
+            }
+        }
 
-            // start algorithm from startNode
-            startNode.setFillColor(Color.GREEN);
-            startNode.setVisited(true);
+        showMessageDialog(null, "Algorithm completed");
+    }
 
-            var nodes = graph.getNodes();
-            var adjacencyList = graph.getAdjacencyList();
-            var editorPane = gVisualPanelWrapper.getgInfoPanel().getEditorPane();
-            StringBuilder sb = new StringBuilder();
-            sb.append("<h1>DFS Algorithm</h1><hr/>");
-            editorPane.setText(sb.toString());
-            waitAndRepaint();
+    private void dfs() {
+        if (stack.empty()) {
+            isCompleted = true;
+            return;
+        }
+        if (isCompleted) {
+            return;
+        }
 
+        GraphNode node = stack.pop();
+        node.setFillColor(Color.RED);
+        waitAndRepaint();
 
-            LinkedHashSet<GraphNode> vistedNodes = new LinkedHashSet<>();
+        for (var n : graph.getAdjacencyList().get(graph.getNodes().indexOf(node))) {
+            var adjacentNode = n.getTo();
 
-            Stack<GraphNode> nodeStack = new Stack<>();
-            nodeStack.push(startNode);
+            if (!adjacentNode.isVisited()) {
+                adjacentNode.setVisited(true);
+                adjacentNode.setFillColor(Color.GREEN);
+                stack.push(adjacentNode);
+                vistedNodes.add(adjacentNode);
 
-            int round = 1;
-            while (!nodeStack.empty()) {
-                sb.setLength(0);
-                sb.append(String.format("<h1>DFS Algorithm -  라운드: %d</h1><hr/>", round++));
+                gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                        String.format("<h1>깊이 우선 탐색</h1><hr/><ul><li>현재 노드: %s</li>%s</ul><hr/>%s", node, vistedNodesString(vistedNodes), drawStack(stack)));
+                waitAndRepaint();
 
-                sb.append(vistedNodesString(vistedNodes));
-                sb.append("</h1>");
-                sb.append(String.format("<h2>현재 노드: %s</h2>", nodeStack.peek()));
-
-                GraphNode node = nodeStack.pop();
-                node.setFillColor(Color.RED);
-                vistedNodes.add(node);
-
-                if (!node.isVisited()) {
-                    node.setVisited(true);
-                }
-
-                editorPane.setText(sb + drawStack(nodeStack));
-                gVisualPanelWrapper.getgInfoPanel().repaint();
-                gVisualPanelWrapper.getgVisualPanel().repaint();
-
-                for (var edge : adjacencyList.get(nodes.indexOf(node))) {
-                    var adjacentNode = edge.getTo();
-
-                    if (!adjacentNode.isVisited()) {
-                        adjacentNode.setVisited(true);
-                        nodeStack.push(adjacentNode);
-
-                        vistedNodes.add(adjacentNode);
-                        adjacentNode.setFillColor(Color.GREEN);
-                    }
-
-                    editorPane.setText(sb + drawStack(nodeStack));
-                    waitAndRepaint();
-                }
-
-                // 노드, 간선 색깔 초기화
-                for (var n : nodes) {
-                    if (!n.isVisited()) {
-                        n.setFillColor(Color.WHITE);
-                        n.setTextColor(Color.BLACK);
-                    } else {
-                        n.setFillColor(Color.darkGray);
-                        n.setTextColor(Color.WHITE);
-                    }
-                }
-                for (var e : graph.getEdges()) {
-                    e.setStrokeColor(Color.BLACK);
-                    e.setTextColor(Color.WHITE);
-                }
-
-                gVisualPanelWrapper.getgVisualPanel().repaint();
-
-                // 모든 노드를 방문했으면 그냥 끝내버린다.
-                if (vistedNodes.size() == nodes.size()) {
-                    break;
+                try {
+                    semaphore.acquire();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
             }
+        }
 
-            sb.setLength(0);
-            sb.append("<h1>DFS Algorithm</h1><hr/>");
-            sb.append(vistedNodesString(vistedNodes));
-            editorPane.setText(sb.toString());
-            gVisualPanelWrapper.getgInfoPanel().repaint();
+        node.setFillColor(Color.GREEN);
+        gVisualPanelWrapper.getgVisualPanel().repaint();
 
-            showMessageDialog(null, "깊이 우선 탐색을 완료했습니다.");
-            gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
+        if (vistedNodes.size() == graph.getNodes().size()) {
+            System.out.println("모든 노드를 방문했습니다.");
+            isCompleted = true;
         }
     }
 
-    private void waitAndRepaint() {
-        try {
-            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationSpeed());
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public static String vistedNodesString(LinkedHashSet<GraphNode> visitedNodes) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<h1>방문한 노드: ");
+        sb.append("<li>방문한 노드: ");
         for (var n : visitedNodes) {
             sb.append(String.format("%s", n));
             if (n != visitedNodes.toArray()[visitedNodes.size() - 1]) {
                 sb.append(" → ");
             }
         }
-        sb.append("</h1><hr/>");
+        sb.append("</li>");
         return sb.toString();
     }
 
@@ -139,7 +107,7 @@ public class DFSAlgorithm implements IGraphAlgorithm {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("<h2>스택 크기: %d</h2>", stack.size()));
         sb.append("<table border=\"1\">")
-            .append("<tr><td>TOP</td></tr>");
+                .append("<tr><td>TOP</td></tr>");
 
         for (int i = stack.size() - 1; i > -1; i--) {
             sb.append(String.format("<tr><td>%s</td></tr>", stack.get(i)));
@@ -147,7 +115,9 @@ public class DFSAlgorithm implements IGraphAlgorithm {
         return sb.toString();
     }
 
-    private final GVisualPanelWrapper gVisualPanelWrapper;
     private final GraphNode startNode;
     private final Graph graph;
+    private final Stack<GraphNode> stack = new Stack<>();
+    private final LinkedHashSet<GraphNode> vistedNodes = new LinkedHashSet<>();
+    private boolean isCompleted = false;
 }

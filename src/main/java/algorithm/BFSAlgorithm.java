@@ -11,13 +11,12 @@ import java.util.Queue;
 import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class BFSAlgorithm implements IGraphAlgorithm {
+public class BFSAlgorithm extends GraphAlgorithm {
     public BFSAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode) {
-        this.gVisualPanelWrapper = gVisualPanelWrapper;
+        super(gVisualPanelWrapper, "BFS Algorithm".toUpperCase());
         this.startNode = startNode;
         this.graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
     }
-
     @Override
     public void run() {
         synchronized (graph) {
@@ -125,17 +124,6 @@ public class BFSAlgorithm implements IGraphAlgorithm {
         return sb.toString();
     }
 
-    private void waitAndRepaint() {
-        try {
-            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationSpeed());
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private final GVisualPanelWrapper gVisualPanelWrapper;
     private final GraphNode startNode;
     private final Graph graph;
 }

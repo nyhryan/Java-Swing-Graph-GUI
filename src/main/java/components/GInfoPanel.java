@@ -6,7 +6,9 @@ import graph.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.html.HTMLEditorKit;
+
 import static javax.swing.JOptionPane.showMessageDialog;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -193,6 +195,7 @@ public class GInfoPanel extends JPanel {
 
         return new GraphNode[]{startNode, endNode};
     }
+
     private JPanel panelWithAlgorithmButtons() {
         JButton DFSBtn = new JButton("깊이 우선");
         DFSBtn.addActionListener(e -> {
@@ -202,9 +205,10 @@ public class GInfoPanel extends JPanel {
             if (startNode == null) return;
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new Thread(new DFSAlgorithm(gVisualPanelWrapper, startNode), "DFS Algorithm".toUpperCase());
+                var dfs = new DFSAlgorithm(gVisualPanelWrapper, startNode);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
-                t.start();
+                dfs.startAlgorithm();
+                dfs.start();
             });
         });
 
@@ -216,7 +220,7 @@ public class GInfoPanel extends JPanel {
             if (startNode == null) return;
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new Thread(new BFSAlgorithm(gVisualPanelWrapper, startNode), "BFS Algorithm".toUpperCase());
+                Thread t = new BFSAlgorithm(gVisualPanelWrapper, startNode);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
@@ -233,7 +237,7 @@ public class GInfoPanel extends JPanel {
             GraphNode endNode = nodes[1];
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new Thread(new DijkstraAlgorithm(gVisualPanelWrapper, startNode, endNode), "Dijkstra Algorithm".toUpperCase());
+                Thread t = new DijkstraAlgorithm(gVisualPanelWrapper, startNode, endNode);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
@@ -249,7 +253,7 @@ public class GInfoPanel extends JPanel {
             GraphNode endNode = nodes[1];
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new Thread(new FloydAlgorithm(gVisualPanelWrapper, startNode, endNode), "Floyd Algorithm".toUpperCase());
+                Thread t = new FloydAlgorithm(gVisualPanelWrapper, startNode, endNode);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
@@ -259,7 +263,7 @@ public class GInfoPanel extends JPanel {
         kruskalBtn.addActionListener(e -> {
             gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
             SwingUtilities.invokeLater(() -> {
-                Thread t = new Thread(new KruskalAlgorithm(gVisualPanelWrapper), "Kruskal Algorithm".toUpperCase());
+                Thread t = new KruskalAlgorithm(gVisualPanelWrapper);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
@@ -273,16 +277,72 @@ public class GInfoPanel extends JPanel {
             if (startNode == null) return;
 
             SwingUtilities.invokeLater(() -> {
-                Thread t = new Thread(new PrimAlgorithm(gVisualPanelWrapper, startNode), "Prim Algorithm".toUpperCase());
+                Thread t = new PrimAlgorithm(gVisualPanelWrapper, startNode);
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
                 t.start();
             });
         });
 
         JButton nextStepBtn = new JButton("다음 단계");
-        // show current algorithm step by step by pressing this button
+        // proceed current algorithm to next step
         nextStepBtn.addActionListener(e -> {
+            for (Thread t : Thread.getAllStackTraces().keySet()) {
+                if (t.getName().contains("Algorithm".toUpperCase())) {
+                    switch (t.getName()) {
+                        case "DFS ALGORITHM" :
+                            ((DFSAlgorithm) t).singleStep();
+                            break;
+//                        case "BFSAlgorithm":
+//                            ((BFSAlgorithm) t).performNextStep();
+//                            break;
+//                        case "DijkstraAlgorithm":
+//                            ((DijkstraAlgorithm) t).performNextStep();
+//                            break;
+//                        case "FloydAlgorithm":
+//                            ((FloydAlgorithm) t).performNextStep();
+//                            break;
+//                        case "KruskalAlgorithm":
+//                            ((KruskalAlgorithm) t).performNextStep();
+//                            break;
+//                        case "PrimAlgorithm":
+//                            ((PrimAlgorithm) t).performNextStep();
+//                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + t.getName());
+                    }
+                }
+            }
+        });
 
+        JButton resumeBtn = new JButton("알고리즘 재개");
+        resumeBtn.addActionListener(e -> {
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
+            for (Thread t : Thread.getAllStackTraces().keySet()) {
+                if (t.getName().contains("Algorithm".toUpperCase())) {
+                    switch (t.getName()) {
+                        case "DFS ALGORITHM":
+                            ((DFSAlgorithm) t).resumeAlgorithm();
+                            break;
+//                        case "BFSAlgorithm":
+//                            ((BFSAlgorithm) t).performNextStep();
+//                            break;
+//                        case "DijkstraAlgorithm":
+//                            ((DijkstraAlgorithm) t).performNextStep();
+//                            break;
+//                        case "FloydAlgorithm":
+//                            ((FloydAlgorithm) t).performNextStep();
+//                            break;
+//                        case "KruskalAlgorithm":
+//                            ((KruskalAlgorithm) t).performNextStep();
+//                            break;
+//                        case "PrimAlgorithm":
+//                            ((PrimAlgorithm) t).performNextStep();
+//                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + t.getName());
+                    }
+                }
+            }
         });
 
         JButton stopBtn = new JButton("알고리즘 중단");
@@ -351,6 +411,10 @@ public class GInfoPanel extends JPanel {
         gbc.gridy++;
         buttonPanel.add(animSpeedPanel, gbc);
 
+        gbc.gridy++;
+        buttonPanel.add(nextStepBtn, gbc);
+        gbc.gridx++;
+        buttonPanel.add(resumeBtn, gbc);
         gbc.gridx++;
         buttonPanel.add(stopBtn, gbc);
 
@@ -359,6 +423,10 @@ public class GInfoPanel extends JPanel {
 
     public JEditorPane getEditorPane() {
         return editorPane;
+    }
+
+    public void setEditorPaneText(String text) {
+        editorPane.setText(text);
     }
 
     private final GVisualPanelWrapper gVisualPanelWrapper;

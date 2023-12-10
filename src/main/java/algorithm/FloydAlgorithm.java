@@ -12,14 +12,14 @@ import java.util.LinkedList;
 import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class FloydAlgorithm implements IGraphAlgorithm {
+public class FloydAlgorithm extends GraphAlgorithm {
     public FloydAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode, GraphNode endNode) {
-        this.gVisualPanelWrapper = gVisualPanelWrapper;
+        super(gVisualPanelWrapper, "Floyd Algorithm".toUpperCase());
+        this.startNode = startNode;
+        this.endNode = endNode;
         graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
         adjacencyList = graph.getAdjacencyList();
         nodes = graph.getNodes();
-        this.startNode = startNode;
-        this.endNode = endNode;
     }
 
     @Override
@@ -189,18 +189,6 @@ public class FloydAlgorithm implements IGraphAlgorithm {
         }
     }
 
-    private void waitAndRepaint() {
-        try {
-            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationSpeed());
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    private final GVisualPanelWrapper gVisualPanelWrapper;
     private final Graph graph;
     private final ArrayList<LinkedList<GraphEdge>> adjacencyList;
     private final ArrayList<GraphNode> nodes;

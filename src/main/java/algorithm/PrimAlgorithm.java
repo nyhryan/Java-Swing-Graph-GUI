@@ -11,9 +11,9 @@ import java.util.HashMap;
 import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class PrimAlgorithm implements IGraphAlgorithm {
+public class PrimAlgorithm extends GraphAlgorithm {
     public PrimAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode) {
-        this.gVisualPanelWrapper = gVisualPanelWrapper;
+        super(gVisualPanelWrapper, "Kruskal Algorithm".toUpperCase());
         this.startNode = startNode;
         graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
         nodes = graph.getNodes();
@@ -154,19 +154,7 @@ public class PrimAlgorithm implements IGraphAlgorithm {
             gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
         }
     }
-
-    private void waitAndRepaint() {
-        try {
-            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationSpeed());
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private final GraphNode startNode;
-    private final GVisualPanelWrapper gVisualPanelWrapper;
     private final Graph graph;
     private final ArrayList<GraphNode> nodes;
 }

@@ -2,6 +2,7 @@ package components;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.Semaphore;
 
 public class GVisualPanelWrapper extends JPanel {
     public GVisualPanelWrapper() {
@@ -52,4 +53,6 @@ public class GVisualPanelWrapper extends JPanel {
     // 그래프를 그리는 패널
     private final GVisualPanel gVisualPanel;
     private final GInfoPanel gInfoPanel;
+
+    public final Semaphore semaphore = new Semaphore(0);
 }

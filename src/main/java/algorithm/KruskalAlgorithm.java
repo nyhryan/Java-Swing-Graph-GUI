@@ -12,9 +12,9 @@ import java.util.LinkedHashMap;
 import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class KruskalAlgorithm implements IGraphAlgorithm {
+public class KruskalAlgorithm extends GraphAlgorithm {
     public KruskalAlgorithm(GVisualPanelWrapper gVisualPanelWrapper) {
-        this.gVisualPanelWrapper = gVisualPanelWrapper;
+        super(gVisualPanelWrapper, "Kruskal Algorithm".toUpperCase());
         graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
         nodes = graph.getNodes();
     }
@@ -142,16 +142,6 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
         }
     }
 
-    private void waitAndRepaint() {
-        try {
-            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationSpeed());
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private GraphNode find(LinkedHashMap<GraphNode, GraphNode> parent, GraphNode i) {
         if (parent.get(i).equals(i)) {
             return i;
@@ -192,7 +182,6 @@ public class KruskalAlgorithm implements IGraphAlgorithm {
         }
     }
 
-    private final GVisualPanelWrapper gVisualPanelWrapper;
     private final Graph graph;
     private final ArrayList<GraphNode> nodes;
 }

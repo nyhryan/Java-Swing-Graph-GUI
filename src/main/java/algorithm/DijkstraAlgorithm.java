@@ -13,10 +13,10 @@ import java.util.PriorityQueue;
 import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class DijkstraAlgorithm implements IGraphAlgorithm {
+public class DijkstraAlgorithm extends GraphAlgorithm {
 
     public DijkstraAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode, GraphNode endNode) {
-        this.gVisualPanelWrapper = gVisualPanelWrapper;
+        super(gVisualPanelWrapper, "Dijkstra Algorithm".toUpperCase());
         this.startNode = startNode;
         this.endNode = endNode;
 
@@ -146,17 +146,6 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
             gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
         }
     }
-
-    private void waitAndRepaint() {
-        try {
-            sleep(gVisualPanelWrapper.getgVisualPanel().getAnimationSpeed());
-            gVisualPanelWrapper.getgVisualPanel().repaint();
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private void showDijkstraInfo() {
         Graph graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
         ArrayList<GraphNode> nodes = graph.getNodes();
@@ -180,7 +169,6 @@ public class DijkstraAlgorithm implements IGraphAlgorithm {
         gVisualPanelWrapper.getgInfoPanel().getEditorPane().setText("<h1>Dijkstra Algorithm</h1><hr/>" + sb);
     }
 
-    private final GVisualPanelWrapper gVisualPanelWrapper;
     private final Graph graph;
     private final ArrayList<LinkedList<GraphEdge>> adjacencyList;
     private final ArrayList<GraphNode> nodes;

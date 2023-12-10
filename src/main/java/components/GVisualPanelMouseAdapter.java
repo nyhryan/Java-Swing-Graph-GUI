@@ -21,6 +21,8 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
         var adjacencyList = graph.getAdjacencyList();
         var nodes = graph.getNodes();
 
+        if (panel.isAlgorithmRunning()) return;
+
         // 노드 추가 모드 + 왼쪽 더블클릭 한 경우에만 리스너 수행
         if (currentMode == GVisualPanel.Mode.NODE_MODE && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             GraphNode cursorNode = selectNodeFromCursorPos(e);
@@ -84,6 +86,8 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
         GVisualPanel panel = (GVisualPanel) e.getComponent();
         GVisualPanel.Mode currentMode = panel.getMode();
 
+        if (panel.isAlgorithmRunning()) return;
+
         if (currentMode == GVisualPanel.Mode.EDGE_MODE && e.getButton() == MouseEvent.BUTTON1) {
             edgeStartNode = selectNodeFromCursorPos(e);
         }
@@ -113,6 +117,8 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
         GVisualPanel.Mode currentMode = panel.getMode();
         var adjacencyList = graph.getAdjacencyList();
         var nodes = graph.getNodes();
+
+        if (panel.isAlgorithmRunning()) return;
 
         if (currentMode == GVisualPanel.Mode.EDGE_MODE) {
             // 클릭을 뗀 곳에 노드가 있다면 해당 노드를 가져오기

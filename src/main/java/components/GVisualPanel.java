@@ -4,8 +4,6 @@ import graph.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
-
 
 /**
  * 그래프(노드, 간선)를 그리는 패널
@@ -31,45 +29,35 @@ public class GVisualPanel extends JPanel {
         );
         g2d.setRenderingHints(rh);
 
-        // 그리는데 사용할 인접 리스트의 사본
-        ArrayList<LinkedList<GraphEdge>> adjacencyListCopy = new ArrayList<>(graph.getAdjacencyList());
-        adjacencyListCopy.replaceAll(LinkedList::new);
-
         // 간선을 먼저 그린다.
-        for (var nodes : adjacencyListCopy) {
-            for (var edge : nodes) {
-                GraphNode from = edge.getFrom();
-                GraphNode to = edge.getTo();
+        for (var edge : graph.getEdges()) {
+            GraphNode from = edge.getFrom();
+            GraphNode to = edge.getTo();
 
-                int x1 = from.getX();
-                int y1 = from.getY();
-                int x2 = to.getX();
-                int y2 = to.getY();
+            int x1 = from.getX();
+            int y1 = from.getY();
+            int x2 = to.getX();
+            int y2 = to.getY();
 
-                g2d.setColor(edge.getStrokeColor());
-                g2d.setStroke(new BasicStroke(edge.getStrokeWidth()));
-                g2d.drawLine(x1, y1, x2, y2);
+            g2d.setColor(edge.getStrokeColor());
+            g2d.setStroke(new BasicStroke(edge.getStrokeWidth()));
+            g2d.drawLine(x1, y1, x2, y2);
 
-                // 가중치를 그린다.
-                int weightX = (x1 + x2) / 2;
-                int weightY = (y1 + y2) / 2;
-                String weight = Double.toString(edge.getWeight());
+            // 가중치를 그린다.
+            int weightX = (x1 + x2) / 2;
+            int weightY = (y1 + y2) / 2;
+            String weight = Double.toString(edge.getWeight());
 
-                //간선 중앙에 가중치를 그린다.
-                g2d.setFont(font);
-                int weightWidth = g2d.getFontMetrics().stringWidth(weight);
-                int weightHeight = g2d.getFontMetrics().getHeight();
+            //간선 중앙에 가중치를 그린다.
+            g2d.setFont(font);
+            int weightWidth = g2d.getFontMetrics().stringWidth(weight);
+            int weightHeight = g2d.getFontMetrics().getHeight();
 
-                g2d.setColor(edge.getStrokeColor());
-                g2d.setStroke(new BasicStroke(1));
-                g2d.fillRoundRect(weightX - weightWidth / 2, weightY - weightHeight / 2, weightWidth, weightHeight, 5, 5);
-                g2d.setColor(edge.getTextColor());
-                g2d.drawString(weight, weightX - weightWidth / 2, weightY - weightHeight / 2 + weightHeight / 4 * 3);
-
-                // 인접 리스트 사본에서 현재 간선의 반대방향의 간선을 지운다.
-                adjacencyListCopy.get(graph.getNodes().indexOf(to)).removeIf(e -> e.getTo().equals(from));
-
-            }
+            g2d.setColor(edge.getStrokeColor());
+            g2d.setStroke(new BasicStroke(1));
+            g2d.fillRoundRect(weightX - weightWidth / 2, weightY - weightHeight / 2, weightWidth, weightHeight, 5, 5);
+            g2d.setColor(edge.getTextColor());
+            g2d.drawString(weight, weightX - weightWidth / 2, weightY - weightHeight / 2 + weightHeight / 4 * 3);
         }
 
         // 노드를 그린다.
@@ -161,6 +149,7 @@ public class GVisualPanel extends JPanel {
     public void setAnimationSpeed(int animationSpeed) {
         this.animationSpeed = animationSpeed;
     }
+
     public boolean isAlgorithmRunning() {
         return isAlgorithmRunning;
     }
@@ -171,12 +160,11 @@ public class GVisualPanel extends JPanel {
 
     private final Graph graph = new Graph();
 
-    public static final int NODE_RADIUS = 40;
+    public static final int NODE_RADIUS = 30;
 
     public enum Mode {NODE_MODE, EDGE_MODE, MOVE, ALGORITHM_MODE, DEFAULT}
 
     private Mode mode = Mode.DEFAULT;
-
 
 
     private boolean isAlgorithmRunning = false;

@@ -27,8 +27,6 @@ public class KruskalAlgorithm extends GraphAlgorithm {
         for (GraphNode node : nodes) {
             parent.put(node, node);
         }
-
-        mst = new ArrayList<>(nodes.size() - 1);
     }
 
     @Override
@@ -47,18 +45,12 @@ public class KruskalAlgorithm extends GraphAlgorithm {
                 edge.setStrokeColor(Color.GREEN);
                 edge.setTextColor(Color.BLACK);
                 edge.setStrokeWidth(5.0f);
+                totalWeight += edge.getWeight();
             }
             else {
                 edge.setStrokeColor(Color.GRAY);
                 edge.setStrokeWidth(0.1f);
             }
-
-            var reversedEdge = graph.getEdge(edge.getTo(), edge.getFrom());
-            reversedEdge.setStrokeColor(edge.getStrokeColor());
-            reversedEdge.setTextColor(edge.getTextColor());
-            reversedEdge.setStrokeWidth(edge.getStrokeWidth());
-
-            totalWeight += edge.getWeight();
             waitAndRepaint();
         }
 
@@ -84,9 +76,8 @@ public class KruskalAlgorithm extends GraphAlgorithm {
 
             if (uRoot != vRoot) {
                 chosen.put(edge, true);
-                mst.add(edge);
 
-                union(parent, u, v, edge);
+                union(parent, u, v);
             }
 
             gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
@@ -109,7 +100,7 @@ public class KruskalAlgorithm extends GraphAlgorithm {
         return find(parent, parent.get(i));
     }
 
-    private void union(LinkedHashMap<GraphNode, GraphNode> parent, GraphNode u, GraphNode v, GraphEdge e) {
+    private void union(LinkedHashMap<GraphNode, GraphNode> parent, GraphNode u, GraphNode v) {
         GraphNode uRoot = find(parent, u);
         GraphNode vRoot = find(parent, v);
 
@@ -206,7 +197,6 @@ public class KruskalAlgorithm extends GraphAlgorithm {
 
     private final ArrayList<GraphNode> nodes;
     private final ArrayList<GraphEdge> sortedEdges;
-    private final ArrayList<GraphEdge> mst;
     private final HashMap<GraphEdge, Boolean> chosen = new HashMap<>();
     private final LinkedHashMap<GraphNode, GraphNode> parent = new LinkedHashMap<>();
 }

@@ -6,9 +6,7 @@ import graph.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class PrimAlgorithm extends GraphAlgorithm {
@@ -19,10 +17,6 @@ public class PrimAlgorithm extends GraphAlgorithm {
 
         for (var node : nodes) {
             node.setVisited(false);
-        }
-
-        for (var edge : graph.getEdges()) {
-            visitedEdges.put(edge, false);
         }
 
         mst = new ArrayList<>(nodes.size() - 1);
@@ -53,8 +47,10 @@ public class PrimAlgorithm extends GraphAlgorithm {
                 totalWeight += edge.getWeight();
                 edge.setStrokeColor(Color.GREEN);
                 edge.setTextColor(Color.BLACK);
+                edge.setStrokeWidth(3.0f);
             } else {
                 edge.setStrokeColor(Color.GRAY);
+                edge.setStrokeWidth(0.1f);
             }
             waitAndRepaint();
         }
@@ -137,6 +133,5 @@ public class PrimAlgorithm extends GraphAlgorithm {
 
     private final GraphNode startNode;
     private final ArrayList<GraphNode> nodes;
-    private final HashMap<GraphEdge, Boolean> visitedEdges = new HashMap<>();
     private final ArrayList<GraphNode> mst;
 }

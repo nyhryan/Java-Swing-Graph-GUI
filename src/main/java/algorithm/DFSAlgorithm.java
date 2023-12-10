@@ -11,7 +11,6 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class DFSAlgorithm extends GraphAlgorithm {
     public DFSAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode, IAlgorithmListener listener) {
         super(gVisualPanelWrapper, "DFS Algorithm".toUpperCase(), listener);
-        this.startNode = startNode;
 
         startNode.setVisited(true);
         stack.push(startNode);
@@ -108,7 +107,6 @@ public class DFSAlgorithm extends GraphAlgorithm {
         return sb.toString();
     }
 
-    private final GraphNode startNode;
     private final Stack<GraphNode> stack = new Stack<>();
     private final LinkedHashSet<GraphNode> vistedNodes = new LinkedHashSet<>();
 }

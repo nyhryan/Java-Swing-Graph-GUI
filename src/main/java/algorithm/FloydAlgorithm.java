@@ -8,7 +8,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class FloydAlgorithm extends GraphAlgorithm {
@@ -67,10 +66,6 @@ public class FloydAlgorithm extends GraphAlgorithm {
             edge.setStrokeColor(Color.GREEN);
             edge.setTextColor(Color.BLACK);
             edge.setStrokeWidth(5.0f);
-            var reversedEdge = graph.getEdge(path.get(i + 1), path.get(i));
-            reversedEdge.setStrokeColor(Color.GREEN);
-            reversedEdge.setTextColor(Color.BLACK);
-            reversedEdge.setStrokeWidth(5.0f);
 
             waitAndRepaint();
         }
@@ -100,9 +95,7 @@ public class FloydAlgorithm extends GraphAlgorithm {
                 content + String.format("<hr/><h2>탐색결과</h2>%s</html>", msg)
         );
 
-        SwingUtilities.invokeLater(() -> {
-            gVisualPanelWrapper.getgInfoPanel().repaint();
-        });
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
 
         showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
         listener.onAlgorithmFinished();

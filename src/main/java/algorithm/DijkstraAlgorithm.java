@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-import static java.lang.Thread.sleep;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class DijkstraAlgorithm extends GraphAlgorithm {
@@ -52,10 +51,6 @@ public class DijkstraAlgorithm extends GraphAlgorithm {
             edge.setStrokeColor(Color.GREEN);
             edge.setTextColor(Color.BLACK);
             edge.setStrokeWidth(5.0f);
-            var reversedEdge = graph.getEdge(path.get(i + 1), path.get(i));
-            reversedEdge.setStrokeColor(Color.GREEN);
-            reversedEdge.setTextColor(Color.BLACK);
-            reversedEdge.setStrokeWidth(5.0f);
 
             waitAndRepaint();
         }

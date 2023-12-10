@@ -9,7 +9,7 @@ public class RandomColor {
 
     public static java.awt.Color getCorrectTextColor(java.awt.Color randomColor) {
         // get correct text color for given background color
-        int d = 0;
+        int d;
         // Counting the perceptive luminance - human eye favors green color...
         double luminance = (0.299 * randomColor.getRed() + 0.587 * randomColor.getGreen() + 0.114 * randomColor.getBlue()) / 255;
         if (luminance > 0.5)

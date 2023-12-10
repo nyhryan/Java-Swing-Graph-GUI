@@ -12,7 +12,6 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class BFSAlgorithm extends GraphAlgorithm {
     public BFSAlgorithm(GVisualPanelWrapper gVisualPanelWrapper, GraphNode startNode, IAlgorithmListener listener) {
         super(gVisualPanelWrapper, "BFS Algorithm".toUpperCase(), listener);
-        this.startNode = startNode;
         this.graph = gVisualPanelWrapper.getgVisualPanel().getGraph();
 
         startNode.setVisited(true);
@@ -98,7 +97,6 @@ public class BFSAlgorithm extends GraphAlgorithm {
         return sb.toString();
     }
 
-    private final GraphNode startNode;
     private final Graph graph;
 
     private final LinkedHashSet<GraphNode> vistedNodes = new LinkedHashSet<>();

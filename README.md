@@ -1,6 +1,6 @@
 # Java-Swing-Graph-GUI
 
-[![](https://i.imgur.com/TrTbf69m.jpg)](https://i.imgur.com/TrTbf69.png)
+<img src="https://i.imgur.com/TrTbf69.png" width=66% alt="program image">
 
 ## Used stuffs
 - FlatLaf (https://www.formdev.com/flatlaf/

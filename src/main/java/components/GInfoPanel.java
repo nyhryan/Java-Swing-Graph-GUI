@@ -27,8 +27,9 @@ public class GInfoPanel extends JPanel {
 
         // 그래프 정보를 출력할 창에 CSS를 적용한다.
         HTMLEditorKit kit = new HTMLEditorKit();
+        UIManager.put("EditorPane.foreground", Color.BLACK);
         kit.getStyleSheet().addRule("span, p { margin: 0; padding: 0; font-size: 12px; } li { font-size: 12px; }");
-        kit.getStyleSheet().addRule("table { table-layout: fixed; } table, th, td { border: 1px solid black; font-size: 16px; }");
+        kit.getStyleSheet().addRule("table { table-layout: fixed; } table, th, td { border: 1px solid black; font-size: 14px; }");
 
         // 그래프 정보를 출력할 JEditorPane
         editorPane = new JEditorPane();
@@ -385,7 +386,7 @@ public class GInfoPanel extends JPanel {
 
         JPanel algorithmButtonsPanel = new JPanel();
         algorithmButtonsPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "알고리즘", TitledBorder.LEFT, TitledBorder.TOP, new Font("SansSerif", Font.BOLD, 14)));
+                BorderFactory.createEtchedBorder(), "알고리즘", TitledBorder.LEFT, TitledBorder.TOP));
         algorithmButtonsPanel.setLayout(new GridLayout(3, 3, 4, 4));
         algorithmButtonsPanel.add(new JLabel("그래프 순회", traversalIcon, JLabel.CENTER));
         algorithmButtonsPanel.add(DFSBtn);

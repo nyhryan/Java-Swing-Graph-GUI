@@ -1,9 +1,12 @@
 package components;
 
-import graph.*;
+import graph.Graph;
+import graph.GraphNode;
+import graph.RandomGraph;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * 그래프(노드, 간선)를 그리는 패널
@@ -11,6 +14,13 @@ import java.awt.*;
 public class GVisualPanel extends JPanel {
     public GVisualPanel(GVisualPanelWrapper gVisualPanelWrapper) {
         this.gVisualPanelWrapper = gVisualPanelWrapper;
+        var is = GVisualPanel.class.getResourceAsStream("/NotoSansKR-Regular.ttf");
+        assert is != null;
+        try {
+            font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(14f);
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
 
         setBackground(new Color(0xB0B0B0));
         setLayout(new BorderLayout());
@@ -166,10 +176,9 @@ public class GVisualPanel extends JPanel {
 
     private Mode mode = Mode.DEFAULT;
 
-
     private boolean isAlgorithmRunning = false;
 
-    private final Font font = new Font("Sans Serif", Font.PLAIN, 16);
+    private final Font font;
 
     private final GVisualPanelWrapper gVisualPanelWrapper;
 

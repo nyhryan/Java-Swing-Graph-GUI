@@ -1,7 +1,11 @@
 package components;
 
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.lang.reflect.Method;
 
 public class GMenuBar extends JMenuBar {
     public GMenuBar(GVisualPanelWrapper gVisualPanelWrapper) {
@@ -55,5 +59,27 @@ public class GMenuBar extends JMenuBar {
         fileMenu.add(exitMenuItem);
 
         add(fileMenu);
+
+        JMenu customizeMenu = new JMenu("Customize");
+        JMenuItem themesMenuItem = new JMenu("Themes");
+        var themes = FlatAllIJThemes.INFOS;
+        for (var theme : themes) {
+            JMenuItem themeMenuItem = new JMenuItem(theme.getName());
+            themeMenuItem.addActionListener(e -> {
+                try {
+                    Object themeObj = Class.forName(theme.getClassName()).getDeclaredConstructor().newInstance();
+                    Method installMethod = themeObj.getClass().getMethod("install");
+                    installMethod.invoke(themeObj);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                FlatLaf.updateUI();
+            });
+            themesMenuItem.add(themeMenuItem);
+        }
+
+
+        customizeMenu.add(themesMenuItem);
+        add(customizeMenu);
     }
 }

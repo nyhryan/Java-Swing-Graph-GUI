@@ -14,6 +14,9 @@ public class GMainFrame extends JFrame {
         setSize(new Dimension(1280, 960));
         setLocationRelativeTo(null); // 화면 중앙에 프로그램을 배치
 
+        var appIcon = ImageIconLoader.getImageIcon("/icon.png", 16);
+        setIconImage(appIcon.getImage());
+
         GVisualPanelWrapper gVisualPanelWrapper = new GVisualPanelWrapper();
         // 메뉴바를 추가한다.
         setJMenuBar(new GMenuBar(gVisualPanelWrapper));

@@ -67,7 +67,7 @@ class GVisualPanelToolBar extends JToolBar {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(gVisualPanel);
             frame.setJMenuBar(null);
             frame.getContentPane().removeAll();
-            frame.getContentPane().add(new GQuizPanel());
+            frame.getContentPane().add(new GQuizPanel(gVisualPanelWrapper));
             frame.revalidate();
             frame.repaint();
         });

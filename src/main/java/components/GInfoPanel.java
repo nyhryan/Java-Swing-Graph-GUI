@@ -28,12 +28,12 @@ public class GInfoPanel extends JPanel {
         if (is != null) {
             try {
                 Font D2Coding = Font.createFont(Font.TRUETYPE_FONT, is);
-                UIManager.put("EditorPane.font", D2Coding.deriveFont(12f));
+                UIManager.put("EditorPane.font", D2Coding.deriveFont(14f));
             } catch (FontFormatException | IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        kit.getStyleSheet().addRule("span, p { margin: 0; padding: 0; font-size: 12px; } li { font-size: 12px; }");
+        kit.getStyleSheet().addRule("span, p { margin: 0; padding: 0; font-size: 14px; } li { font-size: 14px; }");
         kit.getStyleSheet().addRule("table { table-layout: fixed; } table, th, td { border: 1px solid black; font-size: 14px; }");
 
         // 그래프 정보를 출력할 JEditorPane

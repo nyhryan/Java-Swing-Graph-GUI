@@ -1,10 +1,11 @@
 package components;
 
 import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
+import com.formdev.flatlaf.intellijthemes.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.lang.reflect.Method;
 
 public class GMenuBar extends JMenuBar {
@@ -68,10 +69,30 @@ public class GMenuBar extends JMenuBar {
             themeMenuItem.addActionListener(e -> {
                 try {
                     Object themeObj = Class.forName(theme.getClassName()).getDeclaredConstructor().newInstance();
-                    Method installMethod = themeObj.getClass().getMethod("install");
+                    Method installMethod = themeObj.getClass().getMethod("setup");
                     installMethod.invoke(themeObj);
+                    Color c = theme.isDark() ? new Color(0x222222) : new Color(0xF8F8F8);
+                    gVisualPanelWrapper.getgVisualPanel().setBackground(c);
+
+                    var edges = gVisualPanelWrapper.getgVisualPanel().getGraph().getEdges();
+                    if (theme.isDark()) {
+                        for (var edge : edges) {
+                            if (edge.getStrokeColor() == Color.BLACK) {
+                                edge.setStrokeColor(Color.WHITE);
+                                edge.setTextColor(Color.BLACK);
+                            }
+                        }
+                    } else {
+                        for (var edge : edges) {
+                            if (edge.getStrokeColor() == Color.WHITE) {
+                                edge.setStrokeColor(Color.BLACK);
+                                edge.setTextColor(Color.WHITE);
+                            }
+                        }
+                    }
+                    gVisualPanelWrapper.getgVisualPanel().repaint();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    throw new RuntimeException(ex);
                 }
                 FlatLaf.updateUI();
             });

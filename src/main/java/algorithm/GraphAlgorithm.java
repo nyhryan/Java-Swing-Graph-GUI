@@ -8,6 +8,7 @@ import graph.Graph;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 public abstract class GraphAlgorithm extends Thread {
@@ -30,8 +31,38 @@ public abstract class GraphAlgorithm extends Thread {
     @Override
     public abstract void run();
 
-    public void startAlgorithm() {
-        semaphore.release();
+    protected void drawPath(ArrayList<GraphNode> path) {
+        for (int i = 0; i <= path.size() - 1; i++) {
+            path.get(i).setFillColor(Color.GREEN);
+            if (i < path.size() - 1) {
+                GraphEdge edge;
+                if (graph.getNodes().indexOf(path.get(i)) > graph.getNodes().indexOf(path.get(i + 1))) {
+                    edge = graph.getEdge(path.get(i + 1), path.get(i));
+                } else {
+                    edge = graph.getEdge(path.get(i), path.get(i + 1));
+                }
+
+                if (edge == null) {
+                    break;
+                }
+
+                edge.setStrokeColor(Color.GREEN);
+                edge.setTextColor(Color.BLACK);
+                edge.setStrokeWidth(5.0f);
+            }
+
+            waitAndRepaint(100);
+        }
+    }
+
+    protected void appendMessageToEditorPane(String msg) {
+        String currentEditorPaneText = gVisualPanelWrapper.getgInfoPanel().getEditorPane().getText();
+        int startIndex = currentEditorPaneText.indexOf("<body>");
+        int endIndex = currentEditorPaneText.lastIndexOf("</body>");
+        String content = currentEditorPaneText.substring(startIndex + 6, endIndex);
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                content + String.format("<hr/><h2>탐색결과</h2>%s</html>", msg)
+        );
     }
 
     public void singleStep() {
@@ -55,6 +86,18 @@ public abstract class GraphAlgorithm extends Thread {
         }
     }
 
+    protected void waitAndRepaint(int ms) {
+        try {
+            sleep(ms);
+            SwingUtilities.invokeLater(() -> {
+                gVisualPanelWrapper.getgVisualPanel().repaint();
+                gVisualPanelWrapper.getgInfoPanel().repaint();
+            });
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected final IAlgorithmListener listener;
     protected final GVisualPanelWrapper gVisualPanelWrapper;
     protected final Semaphore semaphore;
@@ -65,6 +108,4 @@ public abstract class GraphAlgorithm extends Thread {
     protected final Color COLOR_1_TEXT = RandomColor.getCorrectTextColor(COLOR_1);
     protected final Color COLOR_2 = RandomColor.getRandomColor();
     protected final Color COLOR_2_TEXT = RandomColor.getCorrectTextColor(COLOR_2);
-    protected final Color COLOR_3 = RandomColor.getRandomColor();
-    protected final Color COLOR_3_TEXT = RandomColor.getCorrectTextColor(COLOR_3);
 }

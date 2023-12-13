@@ -37,6 +37,15 @@ public class FloydAlgorithm extends GraphAlgorithm {
             distance[v][v] = 0;
             prev[v][v] = node;
         }
+
+        k = 0;
+        size = nodes.size();
+
+        String distMatrixString = distMatrixToString(-1, -1, -1, false);
+        String prevMatrixString = prevMatrixToString(-1, -1, -1, false);
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>Floyd Algorithm</h1><hr/>%s<hr/>%s", distMatrixString, prevMatrixString));
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
     }
 
     @Override
@@ -45,40 +54,33 @@ public class FloydAlgorithm extends GraphAlgorithm {
 
         while (!isCompleted) {
             prim();
-            semaphore.release();
         }
 
         // 경로 재구축
         GraphNode node = endNode;
         ArrayList<GraphNode> path = new ArrayList<>();
+        StringBuilder route = new StringBuilder();
+
         while (!node.equals(startNode)) {
             path.add(node);
             node = prev[graph.getNodes().indexOf(startNode)][graph.getNodes().indexOf(node)];
+
+            if (node == null) {
+            showMessageDialog(null, "경로가 존재하지 않습니다.", "경고", JOptionPane.WARNING_MESSAGE);
+            listener.onAlgorithmFinished();
+            return;
+            }
         }
         path.add(startNode);
         Collections.reverse(path);
 
-        // 경로 표시
-        for (int i = 0; i < path.size() - 1; i++) {
-            path.get(i).setFillColor(Color.GREEN);
+        drawPath(path);
 
-            var edge = graph.getEdge(path.get(i), path.get(i + 1));
-            edge.setStrokeColor(Color.GREEN);
-            edge.setTextColor(Color.BLACK);
-            edge.setStrokeWidth(5.0f);
-
-            waitAndRepaint();
-        }
-        path.get(path.size() - 1).setFillColor(Color.GREEN);
-        waitAndRepaint();
-
-        StringBuilder route = new StringBuilder();
         for (GraphNode n : path) {
             route.append(n.getName());
             if (!n.equals(endNode))
                 route.append(" → ");
         }
-
         String msg = String.format("<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul>",
                 startNode, endNode, distance[graph.getNodes().indexOf(startNode)][graph.getNodes().indexOf(endNode)], route);
 
@@ -87,67 +89,62 @@ public class FloydAlgorithm extends GraphAlgorithm {
         gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
                 String.format("<h1>Floyd Algorithm</h1><hr/>%s<hr/>%s", distMatrixString, prevMatrixString));
 
-        String currentEditorPaneText = gVisualPanelWrapper.getgInfoPanel().getEditorPane().getText();
-        int startIndex = currentEditorPaneText.indexOf("<body>");
-        int endIndex = currentEditorPaneText.lastIndexOf("</body>");
-        String content = currentEditorPaneText.substring(startIndex + 6, endIndex);
-        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
-                content + String.format("<hr/><h2>탐색결과</h2>%s</html>", msg)
-        );
-
+        appendMessageToEditorPane(msg);
         SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
 
-        showMessageDialog(null, String.format("<html>%s</html>", msg), "알고리즘 종료", JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialog(null, "최단거리 탐색 성공!", "알림", JOptionPane.INFORMATION_MESSAGE);
         listener.onAlgorithmFinished();
     }
 
 
     private void prim() {
-        int size = graph.getNodes().size();
-        for (int k = 0; k < size; k++) {
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    GraphNode kNode = graph.getNodes().get(k);
-                    GraphNode iNode = graph.getNodes().get(i);
-                    GraphNode jNode = graph.getNodes().get(j);
+        if (k >= size) {
+            isCompleted = true;
+            return;
+        }
 
-                    if (k != i && i != j && j != k) {
-                        kNode.setFillColor(Color.YELLOW);
-                        kNode.setTextColor(Color.BLACK);
-                        iNode.setFillColor(COLOR_1);
-                        iNode.setTextColor(COLOR_1_TEXT);
-                        jNode.setFillColor(COLOR_2);
-                        jNode.setTextColor(COLOR_2_TEXT);
-                    }
-                    boolean isUpdated = false;
-                    if (distance[i][j] > distance[i][k] + distance[k][j]) {
-                        distance[i][j] = distance[i][k] + distance[k][j];
-                        prev[i][j] = prev[k][j];
-                        isUpdated = true;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                GraphNode kNode = graph.getNodes().get(k);
+                GraphNode iNode = graph.getNodes().get(i);
+                GraphNode jNode = graph.getNodes().get(j);
 
-                    }
-
-                    String distMatrixString = distMatrixToString(k, i, j, isUpdated);
-                    String prevMatrixString = prevMatrixToString(k, i, j, isUpdated);
-                    gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
-                            String.format("<h1>Floyd Algorithm</h1><hr/>%s<hr/>%s", distMatrixString, prevMatrixString));
-                    waitAndRepaint();
-
-                    try {
-                        semaphore.acquire();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    for (var node : graph.getNodes()) {
-                        node.setFillColor(Color.WHITE);
-                        node.setTextColor(Color.BLACK);
-                    }
-                    gVisualPanelWrapper.getgVisualPanel().repaint();
+                if (k != i && i != j && j != k) {
+                    kNode.setFillColor(Color.YELLOW);
+                    kNode.setTextColor(Color.BLACK);
+                    iNode.setFillColor(COLOR_1);
+                    iNode.setTextColor(COLOR_1_TEXT);
+                    jNode.setFillColor(COLOR_2);
+                    jNode.setTextColor(COLOR_2_TEXT);
                 }
+
+                boolean isUpdated = false;
+                if (distance[i][j] > distance[i][k] + distance[k][j]) {
+                    distance[i][j] = distance[i][k] + distance[k][j];
+                    prev[i][j] = prev[k][j];
+                    isUpdated = true;
+                }
+
+                String distMatrixString = distMatrixToString(k, i, j, isUpdated);
+                String prevMatrixString = prevMatrixToString(k, i, j, isUpdated);
+                gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                        String.format("<h1>Floyd Algorithm</h1><hr/>%s<hr/>%s", distMatrixString, prevMatrixString));
+                waitAndRepaint();
+
+                try {
+                    semaphore.acquire();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                for (var node : graph.getNodes()) {
+                    node.setFillColor(Color.WHITE);
+                    node.setTextColor(Color.BLACK);
+                }
+                SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgVisualPanel().repaint());
             }
         }
-        isCompleted = true;
+        k++;
     }
 
     private String distMatrixToString(int _k, int _i, int _j, boolean isUpdated) {
@@ -160,7 +157,7 @@ public class FloydAlgorithm extends GraphAlgorithm {
             if (i == _k)
                 sb.append(String.format("<th style=\"background-color:yellow;\">K = %s</th>", graph.getNodes().get(i).getName()));
             else
-                sb.append(String.format("<th>%s</th>", graph.getNodes().get(i).getName()));
+                sb.append(String.format("<th>&nbsp;&nbsp;&nbsp;&nbsp;%s</th>", graph.getNodes().get(i).getName()));
         }
         sb.append("</tr></thead>")
                 .append("<tbody>");
@@ -197,7 +194,7 @@ public class FloydAlgorithm extends GraphAlgorithm {
             if (i == _k)
                 sb.append(String.format("<th style=\"background-color:yellow;\">K = %s</th>", graph.getNodes().get(i).getName()));
             else
-                sb.append(String.format("<th>%s</th>", graph.getNodes().get(i).getName()));
+                sb.append(String.format("<th>&nbsp;&nbsp;&nbsp;&nbsp;%s</th>", graph.getNodes().get(i).getName()));
         }
         sb.append("</tr></thead>")
                 .append("<tbody>");
@@ -228,4 +225,6 @@ public class FloydAlgorithm extends GraphAlgorithm {
 
     private final double[][] distance = new double[graph.getNodes().size()][graph.getNodes().size()];
     private final GraphNode[][] prev = new GraphNode[graph.getNodes().size()][graph.getNodes().size()];
+    private int k;
+    private int size;
 }

@@ -4,11 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -66,13 +62,13 @@ public class GQuizPanel extends JPanel {
 
         // 퀴즈 데이터를 생성합니다.
         List<QuizData> quizList = Arrays.asList(
-                new QuizData("Quiz/Q1.png", "정답1", "문제1: 이것은 첫 번째 문제입니다.", "선택지1-1", "선택지1-2", "선택지1-3", "선택지1-4"),
-                new QuizData("Quiz/Q2.png", "정답2", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
-                new QuizData("Quiz/Q3.png", "정답3", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
-                new QuizData("Quiz/Q4.png", "정답4", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
-                new QuizData("Quiz/Q5.png", "정답5", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
-                new QuizData("Quiz/Q6.png", "정답6", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
-                new QuizData("Quiz/Q7.png", "정답7", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4")
+                new QuizData("/Quiz/Q1.png", "정답1", "문제1: 이것은 첫 번째 문제입니다.", "선택지1-1", "선택지1-2", "선택지1-3", "선택지1-4"),
+                new QuizData("/Quiz/Q2.png", "정답2", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
+                new QuizData("/Quiz/Q3.png", "정답3", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
+                new QuizData("/Quiz/Q4.png", "정답4", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
+                new QuizData("/Quiz/Q5.png", "정답5", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
+                new QuizData("/Quiz/Q6.png", "정답6", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4"),
+                new QuizData("/Quiz/Q7.png", "정답7", "문제2: 이것은 두 번째 문제입니다.", "선택지2-1", "선택지2-2", "선택지2-3", "선택지2-4")
                 // ... 나머지 퀴즈들
         );
         Collections.shuffle(quizList);
@@ -86,7 +82,7 @@ public class GQuizPanel extends JPanel {
     private JPanel createQuizPanel(QuizData quiz) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        ImageIcon imageIcon = new ImageIcon(quiz.getImagePath());
+        ImageIcon imageIcon = new ImageIcon(getClass().getResource(quiz.getImagePath()));
         JLabel imageLabel = new JLabel(imageIcon);
         panel.add(imageLabel, BorderLayout.NORTH);
 
@@ -134,15 +130,20 @@ public class GQuizPanel extends JPanel {
 
                 ImageIcon resultImage;
                 String resultMessage;
-                File soundFile;
+//                File soundFile;
+                // JAR 파일로 묶으면 ...jar!/Quiz/goodsound.wav 이런 식으로 경로가 나옴
+                // 따라서 getAudioInputStream()에 경로를 URL로 직접 전달함.
+                String soundFilePath;
                 if (score > 5) {
-                    resultImage = new ImageIcon("/Quiz/good_image.png");
+                    resultImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("/Quiz/good_image.png")));
                     resultMessage = "축하합니다! 잘하셨어요!";
-                    soundFile = new File("Quiz/goodsound.wav");
+//                    soundFile = new File(Objects.requireNonNull(getClass().getResource("/Quiz/goodsound.wav")).getFile());
+                    soundFilePath = "/Quiz/goodsound.wav";
                 } else {
-                    resultImage = new ImageIcon("Quiz/bad_image.png");
+                    resultImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("/Quiz/bad_image.png")));
                     resultMessage = "조금 더 연습해봅시다!";
-                    soundFile = new File("Quiz/badsound.wav");
+//                    soundFile = new File(Objects.requireNonNull(getClass().getResource("/Quiz/badsound.wav")).getFile());
+                    soundFilePath = "/Quiz/badsound.wav";
                 }
 
                 JLabel resultLabel = new JLabel(resultMessage, resultImage, JLabel.CENTER);
@@ -153,7 +154,7 @@ public class GQuizPanel extends JPanel {
 
                 // 사운드 자동 재생
                 try {
-                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Objects.requireNonNull(getClass().getResource(soundFilePath)));
                     Clip clip = AudioSystem.getClip();
                     clip.open(audioInputStream);
                     clip.start();

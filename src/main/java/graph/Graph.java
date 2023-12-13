@@ -30,7 +30,7 @@ public class Graph implements Serializable {
         // check if edge already exsits
         for (var edge : adjacencyList.get(startNodeIndex)) {
             // 같은 간선을 발견했다면
-            if (edge.getFrom().equals(startNode) && edge.getTo().equals(endNode)) {
+            if (edge.equals(startToEndEdge)) {
                 // 입력한 가중치가 다르다면 갱신
                 if (edge.getWeight() != weight) {
                     edge.setWeight(weight);
@@ -43,7 +43,7 @@ public class Graph implements Serializable {
 
         // 반대방향 간선에 대해서도 똑같이 함
         for (var edge : adjacencyList.get(endNodeIndex)) {
-            if (edge.getFrom().equals(endNode) && edge.getTo().equals(startNode)) {
+            if (edge.equals(endToStartEdge)) {
                 if (isWeightUpdated)
                     edge.setWeight(weight);
                 return;

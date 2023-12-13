@@ -50,6 +50,9 @@ public class DFSAlgorithm extends GraphAlgorithm {
         GraphNode node = stack.pop();
         node.setFillColor(COLOR_1);
         node.setTextColor(COLOR_1_TEXT);
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>깊이 우선 탐색</h1><hr/><ul><li>현재 노드: %s</li>%s</ul><hr/>%s", node, vistedNodesString(vistedNodes), drawStack()));
+
         waitAndRepaint();
 
         for (var edge : graph.getAdjacencyList().get(graph.getNodes().indexOf(node))) {

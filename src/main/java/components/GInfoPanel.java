@@ -26,13 +26,12 @@ public class GInfoPanel extends JPanel {
         InputStream is = GInfoPanel.class.getResourceAsStream("/D2Coding-Ver1.3.2-20180524.ttf");
 
         if (is != null) {
-            Font D2Coding = null;
             try {
-                D2Coding = Font.createFont(Font.TRUETYPE_FONT, is);
+                Font D2Coding = Font.createFont(Font.TRUETYPE_FONT, is);
+                UIManager.put("EditorPane.font", D2Coding.deriveFont(12f));
             } catch (FontFormatException | IOException e) {
                 throw new RuntimeException(e);
             }
-            UIManager.put("EditorPane.font", D2Coding.deriveFont(12f));
         }
         kit.getStyleSheet().addRule("span, p { margin: 0; padding: 0; font-size: 12px; } li { font-size: 12px; }");
         kit.getStyleSheet().addRule("table { table-layout: fixed; } table, th, td { border: 1px solid black; font-size: 14px; }");
@@ -68,7 +67,7 @@ public class GInfoPanel extends JPanel {
             gVisualPanelWrapper.getgVisualPanel().setRandomNodeCount((Integer) _spinner.getValue());
         });
 
-        JSpinner weightSpinner = new JSpinner(new SpinnerNumberModel(9.0, 1.0, 10.0, 1.0));
+        JSpinner weightSpinner = new JSpinner(new SpinnerNumberModel(9.0, 1.0, 100.0, 1.0));
         gVisualPanelWrapper.getgVisualPanel().setRandomWeightMax((Double) weightSpinner.getValue());
         weightSpinner.addChangeListener(e -> {
             JSpinner _spinner = (JSpinner) e.getSource();
@@ -113,7 +112,7 @@ public class GInfoPanel extends JPanel {
         JButton[] algorithmControlBtns = algorithmBtns.getControlBtns();
         JPanel controlBtnsPanel = new JPanel();
         controlBtnsPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "알고리즘 제어 / 애니메이션 속도", TitledBorder.LEFT, TitledBorder.TOP));
+                BorderFactory.createEtchedBorder(), "애니메이션 속도 / 알고리즘 제어", TitledBorder.LEFT, TitledBorder.TOP));
 
         controlBtnsPanel.add(animSpeedLabel);
         controlBtnsPanel.add(animSpeed);

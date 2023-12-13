@@ -53,6 +53,10 @@ public class BFSAlgorithm extends GraphAlgorithm {
         GraphNode node = queue.poll();
         node.setFillColor(COLOR_1);
         node.setTextColor(COLOR_1_TEXT);
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>너비 우선 탐색</h1><hr/><ul><li>현재 노드: %s</li>%s</ul><hr/>%s",
+                        node, DFSAlgorithm.vistedNodesString(vistedNodes), drawQueue(false, null)));
+
         waitAndRepaint();
 
         boolean isOffered = false;

@@ -18,4 +18,8 @@ public class RandomColor {
             d = 255; // dark colors - white font
         return new java.awt.Color(d, d, d);
     }
+
+    public static String getHexColor(java.awt.Color color) {
+        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+    }
 }

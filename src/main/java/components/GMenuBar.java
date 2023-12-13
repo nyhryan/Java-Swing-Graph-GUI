@@ -15,6 +15,12 @@ public class GMenuBar extends JMenuBar {
         // 그래프 파일 열기, 저장, 종료 메뉴
         JMenuItem openMenuItem = new JMenuItem("Open Graph...");
         openMenuItem.addActionListener(e -> {
+            if (gVisualPanelWrapper.getgVisualPanel().isAlgorithmRunning()) {
+                JOptionPane.showMessageDialog(null, "알고리즘 실행 중에는 불러올 수 없습니다.", "Error", JOptionPane.ERROR_MESSAGE);
+
+                return;
+            }
+
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Open Graph");
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -31,6 +37,11 @@ public class GMenuBar extends JMenuBar {
 
         JMenuItem saveMenuItem = new JMenuItem("Save Graph...");
         saveMenuItem.addActionListener(e -> {
+            if (gVisualPanelWrapper.getgVisualPanel().isAlgorithmRunning()) {
+                JOptionPane.showMessageDialog(null, "알고리즘 실행 중에는 저장할 수 없습니다.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             if (gVisualPanelWrapper.getgVisualPanel().getGraph().getNodes().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "그래프를 먼저 그려야합니다.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -61,12 +72,19 @@ public class GMenuBar extends JMenuBar {
 
         add(fileMenu);
 
-        JMenu customizeMenu = new JMenu("Customize");
+        JMenu customizeMenu = new JMenu("Edit");
+        add(customizeMenu);
+
         JMenuItem themesMenuItem = new JMenu("Themes");
         var themes = FlatAllIJThemes.INFOS;
         for (var theme : themes) {
             JMenuItem themeMenuItem = new JMenuItem(theme.getName());
             themeMenuItem.addActionListener(e -> {
+                if (gVisualPanelWrapper.getgVisualPanel().isAlgorithmRunning()) {
+                    JOptionPane.showMessageDialog(null, "알고리즘 실행 중에는 테마를 변경할 수 없습니다.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 try {
                     Object themeObj = Class.forName(theme.getClassName()).getDeclaredConstructor().newInstance();
                     Method installMethod = themeObj.getClass().getMethod("setup");
@@ -77,30 +95,26 @@ public class GMenuBar extends JMenuBar {
                     var edges = gVisualPanelWrapper.getgVisualPanel().getGraph().getEdges();
                     if (theme.isDark()) {
                         for (var edge : edges) {
-                            if (edge.getStrokeColor() == Color.BLACK) {
-                                edge.setStrokeColor(Color.WHITE);
-                                edge.setTextColor(Color.BLACK);
-                            }
+                            edge.setStrokeColor(Color.WHITE);
+                            edge.setTextColor(Color.BLACK);
+
                         }
                     } else {
                         for (var edge : edges) {
-                            if (edge.getStrokeColor() == Color.WHITE) {
-                                edge.setStrokeColor(Color.BLACK);
-                                edge.setTextColor(Color.WHITE);
-                            }
+                            edge.setStrokeColor(Color.BLACK);
+                            edge.setTextColor(Color.WHITE);
                         }
                     }
+
                     gVisualPanelWrapper.getgVisualPanel().repaint();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
+                } finally {
+                    FlatLaf.updateUI();
                 }
-                FlatLaf.updateUI();
             });
             themesMenuItem.add(themeMenuItem);
         }
-
-
         customizeMenu.add(themesMenuItem);
-        add(customizeMenu);
     }
 }

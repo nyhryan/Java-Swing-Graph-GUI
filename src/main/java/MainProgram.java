@@ -23,6 +23,13 @@ public class MainProgram {
                 throw new RuntimeException(e);
             }
 
+            UIManager.put("Component.arrowType", "chevron");
+            UIManager.put("Button.arc", 12);
+            UIManager.put("Component.arc", 12);
+            UIManager.put("ProgressBar.arc", 12);
+            UIManager.put("TextComponent.arc", 12);
+
+
             // 메인 프레임 생성
             new GMainFrame().setVisible(true);
         });

@@ -1,5 +1,7 @@
 package graph;
 
+import com.formdev.flatlaf.FlatLaf;
+
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -71,8 +73,13 @@ public class Graph implements Serializable {
 
         for (var edges: adjacencyList) {
             for (var edge : edges) {
-                edge.setStrokeColor(Color.BLACK);
-                edge.setTextColor(Color.WHITE);
+                if (FlatLaf.isLafDark()) {
+                    edge.setStrokeColor(Color.WHITE);
+                    edge.setTextColor(Color.BLACK);
+                } else {
+                    edge.setStrokeColor(Color.BLACK);
+                    edge.setTextColor(Color.WHITE);
+                }
                 edge.setStrokeWidth(1.0f);
             }
         }

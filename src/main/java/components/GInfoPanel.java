@@ -29,6 +29,18 @@ public class GInfoPanel extends JPanel {
         // 그래프 정보를 출력할 창에 CSS를 적용한다.
         HTMLEditorKit kit = new HTMLEditorKit();
         UIManager.put("EditorPane.foreground", Color.BLACK);
+
+        InputStream is = GInfoPanel.class.getResourceAsStream("/D2Coding-Ver1.3.2-20180524.ttf");
+
+        if (is != null) {
+            Font D2Coding = null;
+            try {
+                D2Coding = Font.createFont(Font.TRUETYPE_FONT, is);
+            } catch (FontFormatException | IOException e) {
+                throw new RuntimeException(e);
+            }
+            UIManager.put("EditorPane.font", D2Coding.deriveFont(12f));
+        }
         kit.getStyleSheet().addRule("span, p { margin: 0; padding: 0; font-size: 12px; } li { font-size: 12px; }");
         kit.getStyleSheet().addRule("table { table-layout: fixed; } table, th, td { border: 1px solid black; font-size: 14px; }");
 

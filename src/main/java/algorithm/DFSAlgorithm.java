@@ -54,7 +54,7 @@ public class DFSAlgorithm extends GraphAlgorithm {
         for (var edge : graph.getAdjacencyList().get(graph.getNodes().indexOf(node))) {
             var adjacentNode = edge.getTo();
 
-            if (!adjacentNode.isVisited()) {
+            if (adjacentNode.isNotVisited()) {
                 adjacentNode.setVisited(true);
                 adjacentNode.setFillColor(COLOR_2);
                 adjacentNode.setTextColor(COLOR_2_TEXT);

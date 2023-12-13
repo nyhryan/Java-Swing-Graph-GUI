@@ -17,7 +17,7 @@ public class GraphEdge implements Comparable<GraphEdge>, java.io.Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s -> %s (%.2f)", from, to, weight);
+        return String.format("%s -> %s (%.1f)", from, to, weight);
     }
 
     @Override

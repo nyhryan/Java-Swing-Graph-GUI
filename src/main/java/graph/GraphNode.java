@@ -75,8 +75,8 @@ public class GraphNode implements java.io.Serializable {
         this.distanceFromStart = distanceFromStart;
     }
 
-    public boolean isVisited() {
-        return visited;
+    public boolean isNotVisited() {
+        return !visited;
     }
 
     public void setVisited(boolean visited) {

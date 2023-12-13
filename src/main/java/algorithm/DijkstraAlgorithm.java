@@ -112,7 +112,7 @@ public class DijkstraAlgorithm extends GraphAlgorithm {
             adjacentNode.setTextColor(COLOR_2_TEXT);
             pollingLog.append(String.format("%s →", adjacentNode));
 
-            if (!adjacentNode.isVisited()) {
+            if (adjacentNode.isNotVisited()) {
                 adjacentNode.setVisited(true);
                 pq.offer(new DijkstraData(adjacentNode));
             }

@@ -1,7 +1,9 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
-import components.RandomColor;
+import graph.GraphEdge;
+import graph.GraphNode;
+import tools.RandomColor;
 import graph.Graph;
 
 import javax.swing.*;

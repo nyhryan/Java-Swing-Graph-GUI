@@ -1,4 +1,4 @@
-package components;
+package tools;
 
 public class RandomColor {
     public static java.awt.Color getRandomColor() {

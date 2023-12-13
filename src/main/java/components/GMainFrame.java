@@ -1,5 +1,7 @@
 package components;
 
+import tools.ImageIconLoader;
+
 import javax.swing.*;
 import java.awt.*;
 

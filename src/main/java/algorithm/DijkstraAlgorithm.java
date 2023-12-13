@@ -2,6 +2,7 @@ package algorithm;
 
 import components.GVisualPanelWrapper;
 import graph.GraphNode;
+import tools.RandomColor;
 
 import javax.swing.*;
 import java.awt.*;

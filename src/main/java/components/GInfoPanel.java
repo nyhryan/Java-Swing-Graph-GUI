@@ -3,7 +3,7 @@ package components;
 import algorithm.*;
 import graph.Graph;
 import graph.GraphEdge;
-import graph.GraphNode;
+import tools.ImageIconLoader;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

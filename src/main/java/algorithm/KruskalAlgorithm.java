@@ -1,7 +1,7 @@
 package algorithm;
 
 import components.GVisualPanelWrapper;
-import components.RandomColor;
+import tools.RandomColor;
 import graph.GraphEdge;
 import graph.GraphNode;
 

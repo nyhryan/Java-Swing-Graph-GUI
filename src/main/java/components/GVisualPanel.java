@@ -1,5 +1,6 @@
 package components;
 
+import com.formdev.flatlaf.FlatLaf;
 import graph.Graph;
 import graph.GraphNode;
 import graph.RandomGraph;

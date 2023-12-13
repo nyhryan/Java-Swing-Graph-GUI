@@ -55,6 +55,52 @@ public class GInfoPanel extends JPanel {
         scrollPane.setPreferredSize(new Dimension(300, 900));
         add(scrollPane);
 
+        JPanel randomGraphPanel = new JPanel();
+        randomGraphPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "랜덤 그래프", TitledBorder.LEFT, TitledBorder.TOP));
+        randomGraphPanel.setLayout(new GridLayout(4, 2, 4, 4));
+
+        // 랜덤 그래프에서 간선을 그릴 확률 입력 스피너
+        JSpinner edgeSpinner = new JSpinner(new SpinnerNumberModel(0.5, 0.0, 1.0, 0.1));
+        gVisualPanelWrapper.getgVisualPanel().setRandomEdgeProbability(((Double) edgeSpinner.getValue()).floatValue());
+        edgeSpinner.addChangeListener(e -> {
+            JSpinner _spinner = (JSpinner) e.getSource();
+            gVisualPanelWrapper.getgVisualPanel().setRandomEdgeProbability(((Double) _spinner.getValue()).floatValue());
+        });
+
+        JSpinner nodesSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 10, 1));
+        gVisualPanelWrapper.getgVisualPanel().setRandomNodeCount((Integer) nodesSpinner.getValue());
+        nodesSpinner.addChangeListener(e -> {
+            JSpinner _spinner = (JSpinner) e.getSource();
+            gVisualPanelWrapper.getgVisualPanel().setRandomNodeCount((Integer) _spinner.getValue());
+        });
+
+        JSpinner weightSpinner = new JSpinner(new SpinnerNumberModel(9.0, 1.0, 10.0, 1.0));
+        gVisualPanelWrapper.getgVisualPanel().setRandomWeightMax((Double) weightSpinner.getValue());
+        weightSpinner.addChangeListener(e -> {
+            JSpinner _spinner = (JSpinner) e.getSource();
+            gVisualPanelWrapper.getgVisualPanel().setRandomWeightMax((Double) _spinner.getValue());
+        });
+
+        // 랜덤 그래프 생성 버튼
+        ImageIcon randomIcon = ImageIconLoader.getImageIcon("/random.png", 16);
+        JButton randomBtn = new JButton(" 랜덤 그래프 생성");
+        randomBtn.setToolTipText("랜덤 그래프를 생성합니다.");
+        randomBtn.addActionListener(e -> {
+            gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DEFAULT);
+            gVisualPanelWrapper.getgVisualPanel().setRandomGraph();
+        });
+        randomBtn.setIcon(randomIcon);
+        randomGraphPanel.add(new JLabel("간선 그릴 확률"));
+        randomGraphPanel.add(edgeSpinner);
+        randomGraphPanel.add(new JLabel("노드 개수"));
+        randomGraphPanel.add(nodesSpinner);
+        randomGraphPanel.add(new JLabel("가중치 최대 값"));
+        randomGraphPanel.add(weightSpinner);
+        randomGraphPanel.add(randomBtn);
+
+        add(randomGraphPanel);
+
         // 알고리즘 버튼들과 애니메이션 속도 슬라이더 등을 모은 패널
         JPanel buttonPanel = panelWithAlgorithmButtons();
         buttonPanel.setSize(new Dimension(300, 300));

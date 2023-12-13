@@ -130,7 +130,7 @@ public class GVisualPanel extends JPanel {
     }
 
     public void setRandomGraph() {
-        Graph randomGraph = new RandomGraph();
+        Graph randomGraph = new RandomGraph(randomNodeCount, randomEdgeProbability);
         graph.setNodes(randomGraph.getNodes());
         graph.setEdges(randomGraph.getEdges());
         graph.setAdjacencyList(randomGraph.getAdjacencyList());
@@ -169,6 +169,18 @@ public class GVisualPanel extends JPanel {
         isAlgorithmRunning = algorithmRunning;
     }
 
+    public void setRandomEdgeProbability(float randomEdgeProbability) {
+        this.randomEdgeProbability = randomEdgeProbability;
+    }
+
+    public void setRandomNodeCount(int randomNodeCount) {
+        this.randomNodeCount = randomNodeCount;
+    }
+
+    public void setRandomWeightMax(double randomWeightMax) {
+        this.randomWeightMax = randomWeightMax;
+    }
+
     private final Graph graph = new Graph();
 
     public static final int NODE_RADIUS = 30;
@@ -184,5 +196,9 @@ public class GVisualPanel extends JPanel {
     private final GVisualPanelWrapper gVisualPanelWrapper;
 
     private int animationSpeed = 500;
+
+    private float randomEdgeProbability = 0.5f;
+    private int randomNodeCount = 5;
+    private double randomWeightMax = 9.0;
 }
 

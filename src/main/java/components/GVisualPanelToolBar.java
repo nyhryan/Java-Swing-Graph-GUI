@@ -7,14 +7,13 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 class GVisualPanelToolBar extends JToolBar {
-    public GVisualPanelToolBar(GVisualPanel gVisualPanel) {
-        this.gVisualPanel = gVisualPanel;
+    public GVisualPanelToolBar(GVisualPanelWrapper gVisualPanelWrapper) {
+        gVisualPanel = gVisualPanelWrapper.getgVisualPanel();
 
         setFloatable(false);
         setMargin(new Insets(1, 1, 1, 1));
 
         JLabel currentModeLabel = new JLabel("현재 모드: 선택");
-        currentModeLabel.setFont(gVisualPanel.getFont());
 
         ImageIcon addNodeIcon = ImageIconLoader.getImageIcon("/node.png", 16);
         JButton addNodeButton = addToolBarButton("노드 추가/제거", "좌 더블클릭으로 노드 추가, 우클릭으로 노드 제거", e -> {
@@ -46,14 +45,6 @@ class GVisualPanelToolBar extends JToolBar {
         add(currentModeLabel);
 
         addSeparator();
-        ImageIcon randomIcon = ImageIconLoader.getImageIcon("/random.png", 16);
-        JButton randomBtn = addToolBarButton("랜덤 그래프 생성", "랜덤 그래프를 생성합니다.", e -> {
-            gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
-            gVisualPanel.setRandomGraph();
-        });
-        randomBtn.setIcon(randomIcon);
-        add(randomBtn);
-
         ImageIcon resetIcon = ImageIconLoader.getImageIcon("/reset.png", 16);
         JButton resetBtn = addToolBarButton("그래프 초기화", "그래프를 초기화합니다.", e -> {
             gVisualPanel.setMode(GVisualPanel.Mode.DEFAULT);
@@ -96,7 +87,6 @@ class GVisualPanelToolBar extends JToolBar {
     private JButton addToolBarButton(String name, String toolTip, ActionListener listener) {
         JButton button = new JButton(name);
         button.setToolTipText(toolTip);
-        button.setFont(gVisualPanel.getFont());
         button.addActionListener(listener);
         return button;
     }

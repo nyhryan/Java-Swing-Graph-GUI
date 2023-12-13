@@ -6,4 +6,5 @@
 - FlatLaf (https://www.formdev.com/flatlaf/
 - FlatLaf IntelliJ Theme (https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-intellij-themes)
 - NotoSansKR font (https://fonts.google.com/specimen/Noto+Sans+KR)
+- D2Coding font (https://github.com/naver/d2codingfont)
 - IntelliJ IDEA + Maven + Java 17

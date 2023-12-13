@@ -8,23 +8,28 @@ import graph.RandomGraph;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
 
-/**
- * 그래프(노드, 간선)를 그리는 패널
- */
 public class GVisualPanel extends JPanel {
     public GVisualPanel(GVisualPanelWrapper gVisualPanelWrapper) {
         this.gVisualPanelWrapper = gVisualPanelWrapper;
-        var is = GVisualPanel.class.getResourceAsStream("/NotoSansKR-Regular.ttf");
-        assert is != null;
-        try {
-            font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(14f);
-        } catch (FontFormatException | IOException e) {
-            throw new RuntimeException(e);
+
+        // paintComponent에 사용할 글로벌 폰트 설정. 없으면 Sans Serif 폰트 사용
+        InputStream is = GVisualPanel.class.getResourceAsStream("/NotoSansKR-Regular.ttf");
+        if (is != null) {
+            try {
+                font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(14f);
+            } catch (FontFormatException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else {
+            font = new Font("Sans Serif", Font.PLAIN, 14);
         }
 
-        setBackground(new Color(0xB0B0B0));
-        setLayout(new BorderLayout());
+        Color bg = FlatLaf.isLafDark() ? new Color(0x222222) : new Color(0xF8F8F8);
+
+        setBackground(bg);
     }
 
     @Override
@@ -41,6 +46,7 @@ public class GVisualPanel extends JPanel {
         g2d.setRenderingHints(rh);
 
         // 간선을 먼저 그린다.
+        g2d.setFont(font);
         for (var edge : graph.getEdges()) {
             GraphNode from = edge.getFrom();
             GraphNode to = edge.getTo();
@@ -60,7 +66,6 @@ public class GVisualPanel extends JPanel {
             String weight = Double.toString(edge.getWeight());
 
             //간선 중앙에 가중치를 그린다.
-            g2d.setFont(font);
             int weightWidth = g2d.getFontMetrics().stringWidth(weight);
             int weightHeight = g2d.getFontMetrics().getHeight();
 
@@ -80,9 +85,8 @@ public class GVisualPanel extends JPanel {
             g2d.drawOval(node.getX() - NODE_RADIUS / 2, node.getY() - NODE_RADIUS / 2, NODE_RADIUS, NODE_RADIUS);
 
             // 노드 중앙에 이름을 그린다.
-            String nameToDraw = node.getName();
-            g2d.setFont(font);
             g2d.setColor(node.getTextColor());
+            String nameToDraw = node.getName();
 
             if (node.getName().length() == 3) {
                 g2d.setFont(new Font("Sans Serif", Font.PLAIN, 14));
@@ -183,7 +187,7 @@ public class GVisualPanel extends JPanel {
 
     private final Graph graph = new Graph();
 
-    public static final int NODE_RADIUS = 30;
+    public static final int NODE_RADIUS = 35;
 
     public enum Mode {NODE_MODE, EDGE_MODE, MOVE, ALGORITHM_MODE, DEFAULT}
 

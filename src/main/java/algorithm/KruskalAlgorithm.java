@@ -28,6 +28,10 @@ public class KruskalAlgorithm extends GraphAlgorithm {
         for (GraphNode node : nodes) {
             parent.put(node, node);
         }
+
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>Kruskal Algorithm</h1><hr/>%s", drawSortedEdges(-1)));
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
     }
 
     @Override
@@ -36,8 +40,8 @@ public class KruskalAlgorithm extends GraphAlgorithm {
 
         while (!isCompleted) {
             kruskal();
-            semaphore.release();
         }
+
         double totalWeight = 0.0;
 
         // MST 그리기
@@ -52,46 +56,45 @@ public class KruskalAlgorithm extends GraphAlgorithm {
                 edge.setStrokeColor(Color.GRAY);
                 edge.setStrokeWidth(0.1f);
             }
-            waitAndRepaint();
+            waitAndRepaint(100);
         }
 
         showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
 
-        String msg = String.format("최소 신장 트리의 가중치 합: %.1f", totalWeight);
-        String text = gVisualPanelWrapper.getgInfoPanel().getEditorPane().getText();
-        int startIndex = text.indexOf("<body>");
-        int endIndex = text.lastIndexOf("</body>");
-        String content = text.substring(startIndex + 6, endIndex);
-        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(content + String.format("<hr/><h2>탐색결과 : %s</h2>", msg));
+        String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</ul>", totalWeight);
+        appendMessageToEditorPane(msg);
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
 
         listener.onAlgorithmFinished();
     }
 
     private void kruskal() {
-        for (GraphEdge edge : sortedEdges) {
-            GraphNode u = edge.getFrom();
-            GraphNode v = edge.getTo();
-
-            GraphNode uRoot = find(parent, u);
-            GraphNode vRoot = find(parent, v);
-
-            if (uRoot != vRoot) {
-                chosen.put(edge, true);
-
-                union(parent, u, v);
-            }
-
-            gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
-                    String.format("<h1>Kruskal Algorithm</h1><hr/>%s", drawSortedEdges(sortedEdges.indexOf(edge))));
-
-            waitAndRepaint();
-            try {
-                semaphore.acquire();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        if (index >= sortedEdges.size()) {
+            isCompleted = true;
+            return;
         }
-        isCompleted = true;
+
+        GraphEdge edge = sortedEdges.get(index++);
+        GraphNode u = edge.getFrom();
+        GraphNode v = edge.getTo();
+
+        GraphNode uRoot = find(parent, u);
+        GraphNode vRoot = find(parent, v);
+
+        if (uRoot != vRoot) {
+            chosen.put(edge, true);
+            union(parent, u, v);
+        }
+
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>Kruskal Algorithm</h1><hr/>%s", drawSortedEdges(sortedEdges.indexOf(edge))));
+
+        waitAndRepaint();
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private GraphNode find(LinkedHashMap<GraphNode, GraphNode> parent, GraphNode i) {
@@ -183,12 +186,12 @@ public class KruskalAlgorithm extends GraphAlgorithm {
             if (chosen.get(edge))
                 sb.append("<td style=\"background-color:#7FFF00;\">&#10003;</td>");
             else
-                sb.append("<td>&#10007;</td>");
+                sb.append("<td style=\"background-color:#FF4646;\">&#10007;</td>");
 
             if (sortedEdges.indexOf(edge) == i)
                 sb.append("<td style=\"background-color:#FFFFFF\">&#9754;</td>");
             else
-                sb.append("<td style=\"background-color:#FFFFFF\"> </td>");
+                sb.append("<td style=\"background-color:#FFFFFF\">&nbsp;</td>");
 
             sb.append("</tr>");
         }
@@ -200,4 +203,5 @@ public class KruskalAlgorithm extends GraphAlgorithm {
     private final ArrayList<GraphEdge> sortedEdges;
     private final HashMap<GraphEdge, Boolean> chosen = new HashMap<>();
     private final LinkedHashMap<GraphNode, GraphNode> parent = new LinkedHashMap<>();
+    private int index = 0;
 }

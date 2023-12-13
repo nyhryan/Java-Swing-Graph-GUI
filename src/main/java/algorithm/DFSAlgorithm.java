@@ -16,6 +16,9 @@ public class DFSAlgorithm extends GraphAlgorithm {
         startNode.setVisited(true);
         stack.push(startNode);
         vistedNodes.add(startNode);
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>깊이 우선 탐색</h1><hr/>%s", drawStack()));
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
     }
 
 
@@ -24,14 +27,12 @@ public class DFSAlgorithm extends GraphAlgorithm {
         listener.onAlgorithmStarted();
 
         while (!isCompleted) {
-            try {
-                semaphore.acquire();
-                dfs();
-                semaphore.release();
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Thread interrupted", e);
-            }
+            dfs();
         }
+
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>깊이 우선 탐색</h1><hr/><ul>%s</ul><hr/>%s", vistedNodesString(vistedNodes), drawStack()));
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
 
         showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
         listener.onAlgorithmFinished();
@@ -62,20 +63,19 @@ public class DFSAlgorithm extends GraphAlgorithm {
                 vistedNodes.add(adjacentNode);
 
                 gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
-                        String.format("<h1>깊이 우선 탐색</h1><hr/><ul><li>현재 노드: %s</li>%s</ul><hr/>%s", node, vistedNodesString(vistedNodes), drawStack(stack)));
+                        String.format("<h1>깊이 우선 탐색</h1><hr/><ul><li>현재 노드: %s</li>%s</ul><hr/>%s", node, vistedNodesString(vistedNodes), drawStack()));
                 waitAndRepaint();
-
-                try {
-                    semaphore.acquire();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+            }
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 
         node.setFillColor(COLOR_2);
         node.setTextColor(COLOR_2_TEXT);
-        gVisualPanelWrapper.getgVisualPanel().repaint();
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgVisualPanel().repaint());
 
         if (vistedNodes.size() == graph.getNodes().size()) {
             isCompleted = true;
@@ -95,7 +95,7 @@ public class DFSAlgorithm extends GraphAlgorithm {
         return sb.toString();
     }
 
-    private String drawStack(Stack<GraphNode> stack) {
+    private String drawStack() {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("<h2>스택 크기: %d</h2>", stack.size()));
         sb.append("<table border=\"1\">")

@@ -19,20 +19,24 @@ public class BFSAlgorithm extends GraphAlgorithm {
         startNode.setVisited(true);
         queue.offer(startNode);
         vistedNodes.add(startNode);
+
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>너비 우선 탐색</h1><hr/>%s", drawQueue(false, null)));
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
     }
+
     @Override
     public void run() {
         listener.onAlgorithmStarted();
 
         while (!isCompleted) {
-            try {
-                semaphore.acquire();
-                bfs();
-                semaphore.release();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            bfs();
         }
+
+        gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                String.format("<h1>너비 우선 탐색</h1><hr/><ul>%s</ul><hr/>%s",
+                         DFSAlgorithm.vistedNodesString(vistedNodes), drawQueue(false, null)));
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
         showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
         listener.onAlgorithmFinished();
     }
@@ -51,6 +55,7 @@ public class BFSAlgorithm extends GraphAlgorithm {
         node.setTextColor(COLOR_1_TEXT);
         waitAndRepaint();
 
+        boolean isOffered = false;
         for (var edge : graph.getAdjacencyList().get(graph.getNodes().indexOf(node))) {
             var adjacentNode = edge.getTo();
 
@@ -59,40 +64,46 @@ public class BFSAlgorithm extends GraphAlgorithm {
                 adjacentNode.setFillColor(COLOR_2);
                 adjacentNode.setTextColor(COLOR_2_TEXT);
                 queue.offer(adjacentNode);
+                isOffered = true;
                 vistedNodes.add(adjacentNode);
-
-                gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
-                        String.format("<h1>너비 우선 탐색</h1><hr/><ul><li>현재 노드: %s</li>%s</ul><hr/>%s",
-                                node, DFSAlgorithm.vistedNodesString(vistedNodes), drawQueue(queue)));
                 waitAndRepaint();
+            }
+            gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
+                    String.format("<h1>너비 우선 탐색</h1><hr/><ul><li>현재 노드: %s</li>%s</ul><hr/>%s",
+                            node, DFSAlgorithm.vistedNodesString(vistedNodes), drawQueue(isOffered, adjacentNode)));
+            SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
 
-                try {
-                    semaphore.acquire();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 
         node.setFillColor(COLOR_2);
         node.setTextColor(COLOR_2_TEXT);
-        gVisualPanelWrapper.getgVisualPanel().repaint();
+        SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgVisualPanel().repaint());
 
         if (vistedNodes.size() == graph.getNodes().size()) {
             isCompleted = true;
         }
     }
 
-    private String drawQueue(Queue<GraphNode> nodeQueue) {
+    private String drawQueue(boolean isOffered, GraphNode offeredNode) {
         StringBuilder sb = new StringBuilder();
         sb.append("<h2>큐</h2>")
                 .append("<table border=\"1\">");
 
-        sb.append("<tr>");
-        for (GraphNode node : nodeQueue) {
-            sb.append(String.format("<td>%s</td>", node));
+        sb.append("<tr><td>←</td>");
+        for (GraphNode node : queue) {
+            if (isOffered && node.equals(offeredNode)) {
+                sb.append(String.format("<td style=\"background-color:#7FFF00;\">%s</td>", node));
+            }
+            else {
+                sb.append(String.format("<td>%s</td>", node));
+            }
         }
-        sb.append("</tr>");
+        sb.append("<td>←</td></tr>");
 
         sb.append("</table>");
         return sb.toString();

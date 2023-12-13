@@ -17,11 +17,12 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent e) {
         GVisualPanel panel = (GVisualPanel) e.getComponent();
+        if (panel.isAlgorithmRunning()) return;
+
         GVisualPanel.Mode currentMode = panel.getMode();
         var adjacencyList = graph.getAdjacencyList();
         var nodes = graph.getNodes();
 
-        if (panel.isAlgorithmRunning()) return;
 
         // 노드 추가 모드 + 왼쪽 더블클릭 한 경우에만 리스너 수행
         if (currentMode == GVisualPanel.Mode.NODE_MODE && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
@@ -45,6 +46,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
                 }
             }
 
+            // 이미 있는 노드를 클릭한 경우 새 이름으로 변경
             if (cursorNode != null) {
                 cursorNode.setName(nodeName);
                 e.getComponent().repaint();
@@ -65,16 +67,14 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
         if (currentMode == GVisualPanel.Mode.NODE_MODE && e.getButton() == MouseEvent.BUTTON3) {
             // 클릭한 노드를 찾아오기
             GraphNode node = selectNodeFromCursorPos(e);
+            if (node == null) return;
 
             // 찾는 것에 성공했다면, nodes 배열하고 인접리스트에서 제거
-            if (node != null) {
-                String name = node.getName();
+            adjacencyList.remove(graph.getNodes().indexOf(node));
+            adjacencyList.forEach(edges -> edges.removeIf(edge -> edge.getTo().equals(node)));
 
-                adjacencyList.remove(graph.getNodes().indexOf(node));
-                adjacencyList.forEach(list -> list.removeIf(edge -> edge.getTo().getName().equals(name)));
+            nodes.remove(node);
 
-                nodes.remove(node);
-            }
             e.getComponent().repaint();
             gVisualPanelWrapper.getgInfoPanel().repaint();
         }
@@ -84,11 +84,9 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
         GVisualPanel panel = (GVisualPanel) e.getComponent();
-        GVisualPanel.Mode currentMode = panel.getMode();
-
         if (panel.isAlgorithmRunning()) return;
 
-        if (currentMode == GVisualPanel.Mode.EDGE_MODE && e.getButton() == MouseEvent.BUTTON1) {
+        if (panel.getMode() == GVisualPanel.Mode.EDGE_MODE && e.getButton() == MouseEvent.BUTTON1) {
             edgeStartNode = selectNodeFromCursorPos(e);
         }
     }
@@ -97,16 +95,16 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
     @Override
     public void mouseDragged(MouseEvent e) {
         GVisualPanel panel = (GVisualPanel) e.getComponent();
-        GVisualPanel.Mode currentMode = panel.getMode();
+        if (panel.isAlgorithmRunning()) return;
 
         // 커서가 새로 이동한 위치로 노드의 좌표도 변경.
-        if (currentMode == GVisualPanel.Mode.MOVE) {
+        if (panel.getMode() == GVisualPanel.Mode.MOVE) {
             GraphNode node = selectNodeFromCursorPos(e);
             if (node != null) {
                 node.setX(e.getX());
                 node.setY(e.getY());
+                e.getComponent().repaint();
             }
-            e.getComponent().repaint();
         }
     }
 
@@ -114,15 +112,20 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
     @Override
     public void mouseReleased(MouseEvent e) {
         GVisualPanel panel = (GVisualPanel) e.getComponent();
-        GVisualPanel.Mode currentMode = panel.getMode();
+        if (panel.isAlgorithmRunning()) return;
+
         var adjacencyList = graph.getAdjacencyList();
         var nodes = graph.getNodes();
 
-        if (panel.isAlgorithmRunning()) return;
-
-        if (currentMode == GVisualPanel.Mode.EDGE_MODE) {
+        if (panel.getMode() == GVisualPanel.Mode.EDGE_MODE) {
             // 클릭을 뗀 곳에 노드가 있다면 해당 노드를 가져오기
             edgeEndNode = selectNodeFromCursorPos(e);
+            // 시작점과 끝점이 같으면 간선을 추가하지 않고 리턴
+            if (edgeStartNode.equals(edgeEndNode)) {
+                edgeStartNode = null;
+                edgeEndNode = null;
+                return;
+            }
 
             // 간선의 끝 노드가 정해졌으면 가중치를 입력 받고 간선을 추가.
             // 0을 입력해서 간선을 제거.
@@ -161,11 +164,7 @@ class GVisualPanelMouseAdapter extends MouseAdapter {
         }
     }
 
-    /**
-     * 커서가 있는 지점에 노드가 있다면, graph의 nodes로부터 찾아옴.
-     * @param e 마우스 이벤트
-     * @return 커서가 있는 지점의 노드 리턴
-     */
+    // 커서의 좌표에 있는 노드를 찾기
     private GraphNode selectNodeFromCursorPos(MouseEvent e) {
         GraphNode node = null;
         for (GraphNode n : graph.getNodes()) {

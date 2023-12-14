@@ -116,5 +116,17 @@ public class GMenuBar extends JMenuBar {
             themesMenuItem.add(themeMenuItem);
         }
         customizeMenu.add(themesMenuItem);
+
+        JMenu infoMenu = new JMenu("Info");
+        JMenuItem infoMenuItem = new JMenuItem("About");
+        infoMenuItem.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null, "그래프 학습 프로그램\n" +
+                    "Version 1.0.2(2023-12-15)\n" +
+                    "Made by 2023 - 2 - 객체지향언어 B분반 - 공학관 202호 조, 남윤혁, 이영우\n" +
+                    "GitHub : https://github.com/nyhryan/Java-Swing-Graph-GUI", "About", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        infoMenu.add(infoMenuItem);
+        add(infoMenu);
     }
 }

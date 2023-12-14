@@ -189,15 +189,16 @@ public class GQuizPanel extends JPanel {
                 Clip finalClip = clip;
                 AudioInputStream finalAudioInputStream = audioInputStream;
                 retryButton.addActionListener(event -> {
-                    assert finalClip != null;
-                    if (finalClip.isActive()) {
-                        finalClip.stop();
-                        try {
-                            finalAudioInputStream.close();
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
+//                    assert finalClip != null;
+  
+	                if (finalClip != null && finalClip.isActive()) {
+	                    finalClip.stop();
+	                    try {
+	                        finalAudioInputStream.close();
+	                    } catch (IOException ex) {
+	                        throw new RuntimeException(ex);
+	                    }
+                	}
                     frame.getContentPane().removeAll();
                     frame.getContentPane().add(new GQuizPanel(gVisualPanelWrapper));
                     frame.revalidate();
@@ -208,8 +209,8 @@ public class GQuizPanel extends JPanel {
                 graphButton.setFont(gVisualPanelWrapper.getFont().deriveFont(20f));
 //                graphButton.setPreferredSize(new Dimension(150, 50)); // 버튼의 사이즈를 설정
                 graphButton.addActionListener(event -> {
-                    assert finalClip != null;
-                    if (finalClip.isActive()) {
+//                    assert finalClip != null;
+                    if (finalClip != null && finalClip.isActive()) {
                         finalClip.stop();
                         try {
                             finalAudioInputStream.close();

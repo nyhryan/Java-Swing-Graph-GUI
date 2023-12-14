@@ -46,6 +46,7 @@ public class GAlgorithmButtons extends JPanel {
             @Override
             public void onAlgorithmStarted() {
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(true);
+                gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.ALGORITHM_MODE);
 
                 for (JButton btn : algorithmBtns) {
                     btn.setEnabled(false);
@@ -58,6 +59,8 @@ public class GAlgorithmButtons extends JPanel {
             @Override
             public void onAlgorithmFinished() {
                 gVisualPanelWrapper.getgVisualPanel().setAlgorithmRunning(false);
+                gVisualPanelWrapper.getgVisualPanel().setMode(GVisualPanel.Mode.DEFAULT);
+
                 for (JButton btn : algorithmBtns) {
                     btn.setEnabled(true);
                 }

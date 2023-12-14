@@ -81,7 +81,7 @@ public class FloydAlgorithm extends GraphAlgorithm {
             if (!n.equals(endNode))
                 route.append(" → ");
         }
-        String msg = String.format("<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul>",
+        String msg = String.format("<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul><hr/><em>이 창을 클릭하여 인접리스트 보이기</em>",
                 startNode, endNode, distance[graph.getNodes().indexOf(startNode)][graph.getNodes().indexOf(endNode)], route);
 
         String distMatrixString = distMatrixToString(-1, -1, -1, false);
@@ -226,5 +226,5 @@ public class FloydAlgorithm extends GraphAlgorithm {
     private final double[][] distance = new double[graph.getNodes().size()][graph.getNodes().size()];
     private final GraphNode[][] prev = new GraphNode[graph.getNodes().size()][graph.getNodes().size()];
     private int k;
-    private int size;
+    private final int size;
 }

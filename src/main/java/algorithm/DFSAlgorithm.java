@@ -31,7 +31,7 @@ public class DFSAlgorithm extends GraphAlgorithm {
         }
 
         gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
-                String.format("<h1>깊이 우선 탐색</h1><hr/><ul>%s</ul><hr/>%s", vistedNodesString(vistedNodes), drawStack()));
+                String.format("<h1>깊이 우선 탐색</h1><hr/><ul>%s</ul><hr/>%s<hr/><em>이 창을 클릭하여 인접리스트 보이기</em>", vistedNodesString(vistedNodes), drawStack()));
         SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
 
         showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
@@ -107,6 +107,8 @@ public class DFSAlgorithm extends GraphAlgorithm {
         for (int i = stack.size() - 1; i > -1; i--) {
             sb.append(String.format("<tr><td>%s</td></tr>", stack.get(i)));
         }
+
+        sb.append("</table>");
         return sb.toString();
     }
 

@@ -68,7 +68,7 @@ public class DijkstraAlgorithm extends GraphAlgorithm {
             if (!n.equals(endNode))
                 route.append(" → ");
         }
-        String msg = String.format("<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul>",
+        String msg = String.format("<ul><li>%s - %s의 최단 거리: %.1f</li><li>경로: %s</li></ul><hr/><em>이 창을 클릭하여 인접리스트 보이기</em>",
                 startNode, endNode, distance, route);
 
         appendMessageToEditorPane(msg);
@@ -186,7 +186,6 @@ public class DijkstraAlgorithm extends GraphAlgorithm {
     private final GraphNode startNode;
     private final GraphNode endNode;
     private final PriorityQueue<DijkstraData> pq = new PriorityQueue<>();
-    private final StringBuilder pollingLog = new StringBuilder();
 
     private final Color CURRENT_COLOR = new Color(0x30D39D);
     private final Color CURRENT_TEXT_COLOR = new Color(0x000000);

@@ -34,7 +34,7 @@ public class BFSAlgorithm extends GraphAlgorithm {
         }
 
         gVisualPanelWrapper.getgInfoPanel().setEditorPaneText(
-                String.format("<h1>너비 우선 탐색</h1><hr/><ul>%s</ul><hr/>%s",
+                String.format("<h1>너비 우선 탐색</h1><hr/><ul>%s</ul><hr/>%s<hr/><em>이 창을 클릭하여 인접리스트 보이기</em>",
                          DFSAlgorithm.vistedNodesString(vistedNodes), drawQueue(false, null)));
         SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
         showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);

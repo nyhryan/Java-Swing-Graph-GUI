@@ -57,7 +57,7 @@ public class PrimAlgorithm extends GraphAlgorithm {
         }
         showMessageDialog(null, "알고리즘 종료", "알림", JOptionPane.INFORMATION_MESSAGE);
 
-        String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</ul>", totalWeight);
+        String msg = String.format("<ul><li>최소 신장 트리의 가중치 합: %.1f</ul><hr/><em>이 창을 클릭하여 인접리스트 보이기</em>", totalWeight);
         appendMessageToEditorPane(msg);
         SwingUtilities.invokeLater(() -> gVisualPanelWrapper.getgInfoPanel().repaint());
 

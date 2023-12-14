@@ -10,7 +10,7 @@ import java.awt.*;
  */
 public class GMainFrame extends JFrame {
     public GMainFrame() {
-        setTitle("그래프 프로그램");
+        setTitle("그래프 학습 프로그램");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(400, 300));
         setSize(new Dimension(1280, 960));
